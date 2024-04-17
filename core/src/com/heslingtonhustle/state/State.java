@@ -1,12 +1,10 @@
 package com.heslingtonhustle.state;
 
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.heslingtonhustle.map.MapManager;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 
 /**
@@ -45,21 +43,68 @@ public class State {
         currentTrigger = null; // This stores the Tiled trigger box that we are currently stood inside of
     }
 
-    /** Given an Action, apply that action to the state. */
-    public void update(Action action, float timeDelta) {
+    /**
+     * Given an Action, apply that action to the state.
+     *
+     * @param action The most recent action
+     * @param actions The actions corresponding to all keypresses
+     * @param timeDelta Delta time
+     * */
+    public void update(Action action, HashSet<Action> actions, float timeDelta) {
         currentTrigger = mapManager.getTrigger(player.getCollisionBox());
         if (action != null) {
             handleAction(action);
         }
+        // Give the player the list of movements it needs to make
+        player.move(actions);
         Vector2 previousPlayerPos = player.getPosition();
+        // Move player
         player.update();
-        if (mapManager.isCollision(player.getCollisionBox())) {
-            player.setPosition(previousPlayerPos);
-        }
+
+        // If collisions with anything, revert back to old position
+        handlePlayerCollisions(previousPlayerPos, player.getCollisionBox());
+
         player.setInBounds(mapManager.getCurrentMapWorldDimensions());
         clock.increaseTime(timeDelta);
     }
 
+    /**
+     * Checks if the player is colliding with any objects, and restores them to their original position if they are
+     * Note: Assumes the player was not colliding with anything in the position oldPos
+     * @param oldPos The position of the player on the previous frame
+     */
+    public void handlePlayerCollisions(Vector2 oldPos, Rectangle playerBox) {
+        // Get rectangle of overlapping object
+        Rectangle collider = mapManager.getCollisionRectangle(player.getCollisionBox());
+        // Translate player's coordinates to world coordinates
+        playerBox = mapManager.worldRectangleToPixelRectangle(playerBox);
+        // We need a copy of the player's location not in world coordinates
+        Vector2 oldPosWorld = mapManager.worldToPixelCoords(oldPos);
+
+
+        // If null then the player is not colliding with anything, so do nothing
+        if (collider != null) {
+            // Find which previous dimension was not overlapping, and then only reset that one to allow
+            // sliding to happen
+
+            // If previously not overlapping in x direction, revert them back
+            if (!(oldPosWorld.x < collider.x + collider.width && oldPosWorld.x + playerBox.width > collider.x)) {
+                player.setX(oldPos.x);
+            }
+            // Same with y dimension
+            if (!(oldPosWorld.y < collider.y + collider.height && oldPosWorld.y + playerBox.height > collider.y)) {
+                player.setY(oldPos.y);
+            }
+        }
+
+
+
+    }
+
+    /**
+     * Passes the given action to dialogue box or interacting with a building
+     * @param action
+     */
     private void handleAction(Action action) {
         if (!dialogueManager.isEmpty()) {
             // A dialogue box is currently being displayed
@@ -68,7 +113,7 @@ public class State {
             handleInteraction();
         } else {
             // We have a normal action
-            player.move(action);
+//            player.move(action);
         }
     }
 
@@ -198,7 +243,7 @@ public class State {
     }
 
     public Action getPlayerMovement() {
-        return player.getMovement();
+        return player.getMovement().iterator().next();
     }
 
     public DialogueManager getDialogueManager() {

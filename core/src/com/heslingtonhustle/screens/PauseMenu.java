@@ -8,6 +8,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.heslingtonhustle.state.State;
 
@@ -20,10 +21,10 @@ public class PauseMenu {
     private final Skin skin;
     private boolean isVisible;
 
-    public PauseMenu(Screen parentClass, State gameState) {
+    public PauseMenu(Screen parentClass, State gameState, int width, int height) {
         playScreen = parentClass;
         isVisible = false;
-        stage = new Stage(new ScreenViewport());
+        stage = new Stage(new FitViewport(width, height));
         Gdx.input.setInputProcessor(stage);
         this.gameState = gameState;
 

@@ -12,6 +12,7 @@ public class DialogueManager {
         private int selectedOption;
         private DialogueCallback callback;
 
+
         private DialogueBox(String message, List<String> options, DialogueCallback callback) {
             this.message = message;
             this.options = options;
@@ -36,6 +37,8 @@ public class DialogueManager {
     // ~~~ DialogueManager's properties and methods ~~~
 
     private Queue<DialogueBox> dialogueQueue;
+    // True if changes have been made that means the dialogue box should be re-drawn
+    private boolean update;
 
     public DialogueManager() {
         dialogueQueue = new LinkedList<DialogueBox>();
@@ -49,22 +52,26 @@ public class DialogueManager {
     public void addDialogue(String message, List<String> options, DialogueCallback callback) {
         DialogueBox dialogueBox = new DialogueBox(message, options, callback);
         dialogueQueue.add(dialogueBox);
+        update = true;
     }
     public void addDialogue(String message, List<String> options) {
         DialogueCallback callback = null;
         DialogueBox dialogueBox = new DialogueBox(message, options, callback);
         dialogueQueue.add(dialogueBox);
+        update = true;
     }
     public void addDialogue(String message) {
         List<String> options = new ArrayList<String>(Arrays.asList("Close"));
         DialogueCallback callback = null;
         DialogueBox dialogueBox = new DialogueBox(message, options, callback);
         dialogueQueue.add(dialogueBox);
+        update = true;
     }
     public void addDialogue(String message, DialogueCallback callback) {
         List<String> options = new ArrayList<String>(Arrays.asList("Close"));
         DialogueBox dialogueBox = new DialogueBox(message, options, callback);
         dialogueQueue.add(dialogueBox);
+        update = true;
     }
 
     public String getMessage() {
@@ -94,11 +101,13 @@ public class DialogueManager {
     public void decreaseSelection() {
         DialogueBox dialogueBox = getDialogueBox();
         dialogueBox.decreaseSelection();
+        update = true;
     }
 
     public void increaseSelection() {
         DialogueBox dialogueBox = getDialogueBox();
         dialogueBox.increaseSelection();
+        update = true;
     }
 
     public int submit() {
@@ -107,6 +116,7 @@ public class DialogueManager {
         }
         DialogueBox dialogueBox = dialogueQueue.remove();
         dialogueBox.submit();
+        update = true;
         return dialogueBox.selectedOption;
     }
 
@@ -115,5 +125,16 @@ public class DialogueManager {
             throw new RuntimeException("There are no dialog boxes to get");
         }
         return dialogueQueue.peek();
+    }
+
+    /**
+     * Call if the dialogue box has been constructed, so doesn't need to be reconstructed on the next frame
+     */
+    public void setUpdated() {
+        update = false;
+    }
+
+    public boolean getUpdate() {
+        return update;
     }
 }
