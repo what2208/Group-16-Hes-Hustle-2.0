@@ -256,9 +256,9 @@ public class State {
     }
 
     public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Hello, welcome to the Heslington Hustle game by Pitstop Piazza! \n" +
-                "Instructions: move around the map with W,A,S,D. Interact with buildings with SPACE to do activities.\n" +
-                "The clock is at the bottom right. You cannot do anything at night time and must sleep by interacting with a house.");
+        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH! and Pitstop Piazza\n" +
+                "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n" +
+                "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
     }
 
     public void pushTestDialogue() {
