@@ -56,7 +56,12 @@ public class State {
             handleAction(action);
         }
         // Give the player the list of movements it needs to make
-        player.move(actions);
+        // Player can only move if dialogue box is not shown
+        if (dialogueManager.isEmpty()) {
+            player.move(actions);
+        } else {
+            player.freeze();
+        }
         Vector2 previousPlayerPos = player.getPosition();
         // Move player
         player.update();

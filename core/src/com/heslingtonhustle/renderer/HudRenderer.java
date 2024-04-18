@@ -41,6 +41,7 @@ public class HudRenderer implements Disposable {
     private final Window dialogueWindow;
     private final Label dialogueText;
     private final Table dialogueTable;
+    private final Table optionTable;
 
 
     public HudRenderer(State gameState, TextureAtlas textureAtlas, Skin skin, int width, int height){
@@ -83,7 +84,6 @@ public class HudRenderer implements Disposable {
         dialogueWindow.setPosition((width - dialogueWindow.getWidth())/2, 20);
 
         dialogueTable = new Table();
-        dialogueTable.setDebug(true);
         dialogueTable.setSize(860, 160);
         dialogueTable.setPosition(20, 20);
         dialogueWindow.addActor(dialogueTable);
@@ -92,8 +92,11 @@ public class HudRenderer implements Disposable {
         dialogueText = new Label("", skin, "dialoguesmall");
         dialogueText.setWrap(true);
         dialogueTable.add(dialogueText).expandX().expandY().left().top().prefWidth(860);
+        dialogueTable.row();
 
-
+        // Options
+        optionTable = new Table();
+        dialogueTable.add(optionTable).left().bottom();
 
         hudStage.addActor(clockImage);
         hudStage.addActor(calendarImage);
@@ -188,27 +191,15 @@ public class HudRenderer implements Disposable {
         if (dialogueManager.isEmpty()) {
             // No dialogue box to show
             dialogueWindow.setVisible(false);
+            return;
         } else {
             dialogueWindow.setVisible(true);
         }
 
         if (dialogueManager.getUpdate()) {
             reconstructDialogueBox();
+            dialogueManager.setUpdated();
         }
-
-//
-//        // Draw the box background
-//
-//        font.setColor(Color.BLACK);
-//        font.draw(batch, message, x + 20, y + height - 20, width - 40, Align.left, true);
-//
-//        // Draw options
-//        float optionY = y + height - 130; // Starting Y position for options
-//        for (int i = 0; i < options.size(); i++) {
-//            String optionPrefix = (selectedOption == i) ? "> " : "  ";
-//            font.draw(batch, optionPrefix + options.get(i), x + 20, optionY, width - 40, Align.left, false);
-//            optionY -= 20; // Move up for the next option
-//        }
     }
 
     public void reconstructDialogueBox() {
@@ -218,6 +209,19 @@ public class HudRenderer implements Disposable {
         int selectedOption = dialogueManager.getSelectedOption();
 
         dialogueText.setText(message);
+        optionTable.clearChildren();
+
+        // Add player's options to the options table
+        for (int i = 0; i < options.size(); i++) {
+            Label pointer = new Label(">>", skin, "dialoguesmall");
+            // Hide pointer if not selected
+            if (selectedOption != i) pointer.setVisible(false);
+            Label option = new Label(options.get(i), skin, "dialoguesmall");
+
+            optionTable.add(pointer).left().padRight(10);
+            optionTable.add(option).left();
+            optionTable.row();
+        }
 
 
     }
@@ -233,19 +237,6 @@ public class HudRenderer implements Disposable {
     }
 
     public void resize(int width, int height) {
-//        float clockX = Gdx.graphics.getWidth() - (clockSize+PADDING);
-//        float clockY = PADDING;
-//        clockSprite.setPosition(clockX,clockY);
-//
-//        float calendarX = PADDING;
-//        float calendarY = PADDING;
-//        calendarSprite.setPosition(calendarX, calendarY);
-//
-//        float interactX = PADDING;
-//        float interactY = height - PADDING - 34;
-//        interactSprite.setPosition(interactX, interactY);
-
-        
         viewport.update(width, height, true);
         hudStage.getViewport().update(width, height);
     }

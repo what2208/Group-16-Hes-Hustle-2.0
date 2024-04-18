@@ -148,6 +148,14 @@ public class Player {
         }
     }
 
+    /**
+     * Ensures the player does not move this frame
+     */
+    public void freeze() {
+        movement.clear();
+        movement.add(Action.STOP);
+    }
+
     public Facing getFacing() {
         return facing;
     }
