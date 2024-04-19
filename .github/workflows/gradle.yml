@@ -36,7 +36,7 @@ jobs:
       uses: actions/upload-artifact@v4.3.1
       with:
         name: lib-${{ matrix.os }}.jar
-        path: core/build/libs/HeslingtonHustle-1.0.jar
+        path: desktop/build/libs/desktop-1.0.jar
 
     - name: Upload Checkstyle report
       uses: actions/upload-artifact@v4.3.1
