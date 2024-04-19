@@ -53,9 +53,25 @@ project(":desktop") {
 
 project(":core") {
     apply plugin: "java-library"
+    apply plugin: "checkstyle"
+
+    def checkstyleVersion = '10.4'
+
+    configurations {
+        checkstyleRules
+    }
 
 
     dependencies {
         api "com.badlogicgames.gdx:gdx:$gdxVersion"
+
+        checkstyleRules("com.puppycrawl.tools:checkstyle:${checkstyleVersion}") {
+            transitive = false
+        }
+    }
+
+    checkstyle {
+        toolVersion "${checkstyleVersion}"
+        config = resources.text.fromArchiveEntry(configurations.checkstyleRules, 'google_checks.xml')
     }
 }
