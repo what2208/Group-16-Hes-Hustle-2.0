@@ -32,6 +32,7 @@ public class CharacterRenderer {
         characterSprite = new Sprite(characterTextures.retrieveTexture("idle-down"));
         characterSprite.setSize(width, height);
         characterSprite.setOriginCenter();
+        characterSprite.setScale(1.2f);
     }
 
     public void render(SpriteBatch batch, float x, float y, Facing direction, Action action) {
@@ -56,15 +57,17 @@ public class CharacterRenderer {
         // the findRegions() function will find all areas of the atlas that have the same name and a number suffix
         // For example findRegions("walking_left") will find "walking_left_00", "walking_left_01", "walking_left_02 etc.
 
+        float speed = 0.15f;
+
         // NB: finderegion is quite an expensive method, if performance is an issue consider caching the TextureRegions.
         Array<TextureAtlas.AtlasRegion> walkingLeft = textureAtlas.findRegions(textureRegionPrefix+"-walking-left");
-        characterTextures.addAnimation("walking-left", walkingLeft, 0.1f);
+        characterTextures.addAnimation("walking-left", walkingLeft, speed);
         Array<TextureAtlas.AtlasRegion> walkingRight = textureAtlas.findRegions(textureRegionPrefix+"-walking-right");
-        characterTextures.addAnimation("walking-right", walkingRight, 0.1f);
+        characterTextures.addAnimation("walking-right", walkingRight, speed);
         Array<TextureAtlas.AtlasRegion> walkingUp = textureAtlas.findRegions(textureRegionPrefix+"-walking-up");
-        characterTextures.addAnimation("walking-up", walkingUp, 0.1f);
+        characterTextures.addAnimation("walking-up", walkingUp, speed);
         Array<TextureAtlas.AtlasRegion> walkingDown = textureAtlas.findRegions(textureRegionPrefix+"-walking-down");
-        characterTextures.addAnimation("walking-down", walkingDown, 0.1f);
+        characterTextures.addAnimation("walking-down", walkingDown, speed);
     }
 
     private String getTextureKey(Facing direction, Action action) {

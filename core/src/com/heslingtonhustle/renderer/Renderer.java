@@ -1,5 +1,6 @@
 package com.heslingtonhustle.renderer;
 
+import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -7,9 +8,12 @@ import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.ExtendViewport;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.state.State;
 import com.heslingtonhustle.screens.PauseMenu;
@@ -25,7 +29,7 @@ public class Renderer implements Disposable {
     private int screenWidth;
     public int screenHeight;
 
-    private final ExtendViewport viewport;
+    private final FitViewport viewport;
     private final OrthographicCamera camera;
     private MapRenderer mapRenderer;
     private final State gameState;
@@ -40,10 +44,11 @@ public class Renderer implements Disposable {
 
     private final HudRenderer hudRenderer;
 
-    public Renderer(State state, MapManager mapManager, PauseMenu pauseMenu)
+    public Renderer(State state, MapManager mapManager, PauseMenu pauseMenu, Skin skin, int width, int height)
     {
-        screenWidth = 300;
-        screenHeight = 200;
+        screenWidth = width;
+        screenHeight = height;
+        float zoom = 4.5f;
 
         gameState = state;
         camera = new OrthographicCamera();
@@ -52,28 +57,36 @@ public class Renderer implements Disposable {
 
         batch = new SpriteBatch();
         mapRenderer = mapManager.getCurrentMapRenderer(batch);
-        viewport = new ExtendViewport(screenWidth, screenHeight, camera);
+        viewport = new FitViewport(screenWidth/zoom, screenHeight/zoom, camera);
 
         this.pauseMenu = pauseMenu;
 
         textureAtlas = new TextureAtlas("mainAtlas.atlas");
 
-        hudRenderer = new HudRenderer(gameState, textureAtlas);
+        hudRenderer = new HudRenderer(gameState, textureAtlas, skin, screenWidth, screenHeight);
 
         float playerWidthInPixels = mapManager.worldToPixelValue(state.getPlayerWidth());
         float playerHeightInPixels = mapManager.worldToPixelValue(state.getPlayerHeight());
         playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "character00");
     }
 
+    // Moves the camera and renders the map
     public void update() {
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(gameState.getPlayerPosition());
+        // Don't round, looks ugly
         Vector2 clampedPlayerPosition = clampCoordsToScreen(playerPixelPosition);
-        camera.position.set(clampedPlayerPosition, 0);
+        camera.position.slerp(
+                new Vector3(
+                        playerPixelPosition.x,
+                        playerPixelPosition.y,
+                        0
+                ),
+                0.016667f*5);
 
         viewport.update(screenWidth, screenHeight);
         batch.setProjectionMatrix(camera.combined);
 
-        ScreenUtils.clear(0.2f, 0.2f, 0.5f, 1);
+        ScreenUtils.clear(0f, 0f, 0f, 1);
 
         mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
         mapRenderer.setView(camera);
@@ -130,5 +143,12 @@ public class Renderer implements Disposable {
         viewport.update(width, height, true);
         hudRenderer.resize(width, height);
         pauseMenu.resize(width, height);
+    }
+
+    /**
+     * Immediately teleports the camera to the player's position, instead of 'slerping' it
+     */
+    public void snapCamToPlayer() {
+        camera.position.set(mapManager.worldToPixelCoords(gameState.getPlayerPosition()), 0);
     }
 }

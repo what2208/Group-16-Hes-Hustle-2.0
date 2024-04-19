@@ -3,6 +3,7 @@ package com.heslingtonhustle.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.input.InputHandler;
 import com.heslingtonhustle.input.KeyboardInputHandler;
@@ -10,6 +11,8 @@ import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.renderer.Renderer;
 import com.heslingtonhustle.state.Action;
 import com.heslingtonhustle.state.State;
+
+import java.util.HashSet;
 
 public class PlayScreen implements Screen {
     public HeslingtonHustleGame heslingtonHustleGame;
@@ -32,17 +35,19 @@ public class PlayScreen implements Screen {
 
         mapManager = new MapManager();
         gameState = new State(mapManager, playerWidth, playerHeight);
-        pauseMenu = new PauseMenu(this, gameState);
-        renderer = new Renderer(gameState, mapManager, pauseMenu);
+        pauseMenu = new PauseMenu(this, gameState, parentClass.WIDTH, parentClass.HEIGHT);
+        renderer = new Renderer(gameState, mapManager, pauseMenu, parentClass.skin, parentClass.WIDTH, parentClass.HEIGHT);
 
         inputHandler = new KeyboardInputHandler();
         addInputHandlers();
 
         gameState.pushWelcomeDialogue();
+        renderer.snapCamToPlayer();
     }
     @Override
     public void render(float delta) {
         Action action = inputHandler.getAction();
+        HashSet<Action> allActions = inputHandler.getAllActions();
         if (handleDebugAction(action)) {
             action = inputHandler.getAction();
         }
@@ -50,7 +55,7 @@ public class PlayScreen implements Screen {
             action = inputHandler.getAction();
         }
         if (!isPaused) {
-            gameState.update(action, delta);
+            gameState.update(action, allActions, delta);
         }
         renderer.update();
 
@@ -80,8 +85,11 @@ public class PlayScreen implements Screen {
     }
 
     private boolean handlePauseAction(Action action) {
-        if (action == Action.PAUSE) {
+        if (action == Action.PAUSE && !isPaused) {
             pause();
+            return true;
+        } else if (action == Action.PAUSE && isPaused) {
+            resume();
             return true;
         }
         return false;
@@ -89,11 +97,13 @@ public class PlayScreen implements Screen {
 
     private void addInputHandlers() {
         // We use an input multiplexer so that we can handle multiple sources of inputs at once
+        // Only used when the game is paused
         inputMultiplexer = new InputMultiplexer();
 
         inputMultiplexer.addProcessor(inputHandler);
         inputMultiplexer.addProcessor(pauseMenu.GetStage());
-        Gdx.input.setInputProcessor(inputMultiplexer);
+
+        Gdx.input.setInputProcessor(inputHandler);
     }
 
     @Override
@@ -104,17 +114,20 @@ public class PlayScreen implements Screen {
     @Override
     public void resize(int width, int height) {
         renderer.windowResized(width, height);
+        renderer.snapCamToPlayer();
     }
 
     @Override
     public void pause() {
         isPaused = true;
+        Gdx.input.setInputProcessor(inputMultiplexer);
         renderer.ShowPauseScreen();
     }
 
     @Override
     public void resume() {
         isPaused = false;
+        Gdx.input.setInputProcessor(inputHandler);
         renderer.HidePauseScreen();
     }
 

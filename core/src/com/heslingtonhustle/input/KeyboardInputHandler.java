@@ -16,13 +16,17 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
     public static final int INPUT_BUFFER_LIMIT = 5; // Higher limit = less responsive feel
     private final HashMap<Integer, Action> inputMap;
     private final HashSet<Integer> pressedKeys;
+    private final HashSet<Action> pressedActions;
     private final Queue<Action> inputBuffer;
 
     public KeyboardInputHandler() {
 
         inputMap = new HashMap<>();
         pressedKeys = new HashSet<>();
+        pressedActions = new HashSet<>();
         inputBuffer = new LinkedList<>();
+
+        // Player movement keys
 
         inputMap.put(Keys.D, Action.MOVE_RIGHT);
         inputMap.put(Keys.A, Action.MOVE_LEFT);
@@ -33,6 +37,8 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
         inputMap.put(Keys.LEFT, Action.MOVE_LEFT);
         inputMap.put(Keys.UP, Action.MOVE_UP);
         inputMap.put(Keys.DOWN, Action.MOVE_DOWN);
+
+        // Other keys
 
         inputMap.put(Keys.SPACE, Action.INTERACT);
         inputMap.put(Keys.ENTER, Action.INTERACT);
@@ -50,6 +56,7 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
         if (!inputMap.containsKey(keycode)) return false;
         if (inputBuffer.size() >= INPUT_BUFFER_LIMIT) return true;
         pressedKeys.add(keycode);
+        pressedActions.add(inputMap.get(keycode));
         return inputBuffer.add(inputMap.get(keycode));
     }
 
@@ -57,10 +64,14 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
     public boolean keyUp(int keycode) {
         if (!inputMap.containsKey(keycode)) return false;
         pressedKeys.remove(keycode);
+        pressedActions.remove(inputMap.get(keycode));
+        // Issue stop if no movement keys are pressed
+
         switch (pressedKeys.size()) {
             case 0:
                 return inputBuffer.add(Action.STOP);
             case 1:
+                // Switch keys
                 int key = pressedKeys.iterator().next();
                 return inputBuffer.add(inputMap.get(key));
             default:
@@ -71,5 +82,10 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
     public Action getAction() {
         if (inputBuffer.isEmpty()) return null;
         return inputBuffer.poll();
+    }
+
+    public HashSet<Action> getAllActions() {
+        return pressedActions;
+
     }
 }

@@ -100,6 +100,11 @@ public class MapManager implements Disposable {
         return collisionRenderer;
     }
 
+    /**
+     * Returns true if the player's hitbox is overlapping any rectangle in a collision layer
+     * @param playerRectangle Player's hitbox
+     * @return true if the player is colliding
+     */
     public boolean isCollision(Rectangle playerRectangle) {
         if (collisionObjects == null) {
             return false;
@@ -108,6 +113,27 @@ public class MapManager implements Disposable {
         Array<RectangleMapObject> mapCollisionRectangles = getRectangles(collisionRectangles, collisionObjects);
         RectangleMapObject overlappingRectangle = getOverlappingMapRectangle(playerRectangle, mapCollisionRectangles);
         return overlappingRectangle != null;
+    }
+
+    /**
+     * Returns rectangle the player is colliding with
+     * @param playerRectangle Player's hitbox
+     * @return null if player is not colliding with anything, the rectangle of the overlapping object otherwise
+     */
+    public Rectangle getCollisionRectangle(Rectangle playerRectangle) {
+        if (collisionObjects == null) {
+            return null;
+        }
+        playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
+        // Get list of map's collidable rectangles
+        Array<RectangleMapObject> mapCollisionRectangles = getRectangles(collisionRectangles, collisionObjects);
+        RectangleMapObject overlappingRectangle = getOverlappingMapRectangle(playerRectangle, mapCollisionRectangles);
+
+        if (overlappingRectangle != null) {
+            return overlappingRectangle.getRectangle();
+        } else {
+            return null;
+        }
     }
 
     public Trigger getTrigger(Rectangle playerRectangle) {
@@ -176,7 +202,7 @@ public class MapManager implements Disposable {
         return worldValue * getCurrentMapTileDimensions().x;
     }
 
-    private Rectangle worldRectangleToPixelRectangle(Rectangle rectangle) {
+    public Rectangle worldRectangleToPixelRectangle(Rectangle rectangle) {
         float x = rectangle.x * getCurrentMapTileDimensions().x;
         float y = rectangle.y * getCurrentMapTileDimensions().y;
         float width = rectangle.width * getCurrentMapTileDimensions().x;
