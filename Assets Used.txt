@@ -1,1 +1,9 @@
+UI:
+Buttons - https://cupnooble.itch.io/sprout-lands-ui-pack
+
+Fonts:
+Title/Button font - https://www.1001fonts.com/pixelfj8pt1-font.html
+
+Music:
 Menu Music - https://www.zapsplat.com/music/easy-cheesy-fun-up-tempo-funky-retro-action-arcade-game-music-great-for-menu-or-pause-sections/
+

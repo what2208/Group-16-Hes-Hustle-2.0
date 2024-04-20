@@ -3,6 +3,7 @@ package com.heslingtonhustle.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.input.InputHandler;
 import com.heslingtonhustle.input.KeyboardInputHandler;
@@ -26,6 +27,7 @@ public class PlayScreen implements Screen {
 
     public PlayScreen(HeslingtonHustleGame parentClass) {
         this.heslingtonHustleGame = parentClass;
+
         isPaused = false;
 
         // The player size is in world units
@@ -34,7 +36,7 @@ public class PlayScreen implements Screen {
 
         mapManager = new MapManager();
         gameState = new State(mapManager, parentClass.soundController, playerWidth, playerHeight);
-        pauseMenu = new PauseMenu(this, gameState, parentClass.soundController, parentClass.WIDTH, parentClass.HEIGHT);
+        pauseMenu = new PauseMenu(this, parentClass.skin, gameState, parentClass.soundController, parentClass.WIDTH, parentClass.HEIGHT);
         renderer = new Renderer(gameState, mapManager, pauseMenu, parentClass.skin, parentClass.WIDTH, parentClass.HEIGHT);
 
         inputHandler = new KeyboardInputHandler();

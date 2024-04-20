@@ -25,15 +25,15 @@ public class PauseMenu {
     private boolean isVisible;
     private final SoundController soundController;
 
-    public PauseMenu(Screen parentClass, State gameState, SoundController soundController, int width, int height) {
+    public PauseMenu(Screen parentClass, Skin skin, State gameState, SoundController soundController, int width, int height) {
         playScreen = parentClass;
         isVisible = false;
         stage = new Stage(new FitViewport(width, height));
         Gdx.input.setInputProcessor(stage);
         this.gameState = gameState;
         this.soundController = soundController;
+        this.skin = skin;
 
-        skin = new Skin(Gdx.files.internal("Graphics/UI/Skin/plain-james-ui.json"));
         createTable();
         addOptions();
     }
@@ -46,8 +46,9 @@ public class PauseMenu {
     }
 
     private void addOptions() {
-        TextButton resumeButton = new TextButton("Resume", skin, "special");
-        optionsTable.add(resumeButton).fillX().uniformX().prefWidth(300);
+        TextButton resumeButton = new TextButton("Resume", skin
+        );
+        optionsTable.add(resumeButton).fillX().uniformX().prefWidth(350);
         optionsTable.row().pad(10, 0, 10, 0);
         resumeButton.addListener(new ChangeListener() {
             @Override
@@ -58,7 +59,7 @@ public class PauseMenu {
         });
 
         optionsTable.row();
-        TextButton mainMenuButton = new TextButton("Menu", skin, "special");
+        TextButton mainMenuButton = new TextButton("Menu", skin);
         optionsTable.add(mainMenuButton).fillX().uniformX();
         optionsTable.row().pad(10, 0, 10, 0);
         mainMenuButton.addListener(new ChangeListener() {
@@ -68,17 +69,6 @@ public class PauseMenu {
                 gameState.setGameOver();
             }
         });
-
-//        optionsTable.row();
-//        TextButton exitButton = new TextButton("Exit", skin, "special");
-//        optionsTable.add(exitButton).fillX().uniformX();
-//        optionsTable.row().pad(10, 0, 10, 0);
-//        exitButton.addListener(new ChangeListener() {
-//            @Override
-//            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-//                Gdx.app.exit();
-//            }
-//        });
     }
 
     public void ShowPauseMenu() {
@@ -110,6 +100,5 @@ public class PauseMenu {
 
     public void dispose() {
         stage.dispose();
-        skin.dispose();
     }
 }

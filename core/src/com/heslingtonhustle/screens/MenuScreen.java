@@ -8,10 +8,7 @@ import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.Table;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
@@ -48,9 +45,12 @@ public class MenuScreen implements Screen {
     }
 
     private void addOptions(HeslingtonHustleGame parentClass) {
-        TextButton playGameButton = new TextButton("Play game", parentClass.skin, "special");
-        optionsTable.add(playGameButton).fillX().uniformX();
-        optionsTable.row().pad(10, 0, 10, 0);
+        Label titleText = new Label("Heslington Hustle", parentClass.skin, "title");
+        TextButton playGameButton = new TextButton("Start game", parentClass.skin);
+        optionsTable.add(titleText);
+        optionsTable.row();
+        optionsTable.add(playGameButton).prefWidth(350).padTop(100);
+        optionsTable.row().pad(15, 0, 15, 0);
         playGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -61,8 +61,8 @@ public class MenuScreen implements Screen {
 
         optionsTable.row();
 
-        TextButton exitButton = new TextButton("Exit", parentClass.skin, "special");
-        optionsTable.add(exitButton).fillX().uniformX();
+        TextButton exitButton = new TextButton("Exit", parentClass.skin);
+        optionsTable.add(exitButton).prefWidth(350);
         optionsTable.row().pad(10, 0, 10, 0);
         exitButton.addListener(new ChangeListener() {
             @Override
