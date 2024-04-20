@@ -79,7 +79,7 @@ public class HudRenderer implements Disposable {
         calendarImage.setScale(1f);
 
         // Dialogue box window
-        dialogueWindow = new Window("", skin);
+        dialogueWindow = new Window("", skin, "dialog");
         dialogueWindow.setSize(900, 200);
         dialogueWindow.setPosition((width - dialogueWindow.getWidth())/2, 20);
 

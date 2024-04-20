@@ -7,7 +7,9 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.scenes.scene2d.Actor;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -70,6 +72,15 @@ public class MenuScreen implements Screen {
                 Gdx.app.exit();
             }
         });
+
+        // Rotated text
+        Group versionGroup = new Group();
+        versionGroup.setPosition(1000, 575);
+        stage.addActor(versionGroup);
+        Label versionText = new Label("V2.0", parentClass.skin, "button");
+        versionGroup.addActor(versionText);
+        versionGroup.addAction(Actions.rotateBy(-25));
+
     }
 
     @Override

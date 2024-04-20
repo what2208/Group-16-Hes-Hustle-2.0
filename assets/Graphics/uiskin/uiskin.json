@@ -160,6 +160,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	dialoguesmall: {
 		font: nihonium113regular130px
 	}
+	button: {
+		font: button40px
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
@@ -252,15 +255,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
-		background: dialoguebox
-		titleFont: nihonium113regular40px
+		background: window9
+		titleFont: nihonium113regular130px
 		titleFontColor: black
 	}
 	dialog: {
-		background: window
-		titleFont: font
-		titleFontColor: black
-		stageBackground: white
+		background: dialoguebox
+		titleFont: nihonium113regular130px
 	}
 }
 }

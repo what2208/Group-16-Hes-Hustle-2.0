@@ -962,6 +962,26 @@ atlasData: {
 			type: TINTED
 			hidden: false
 		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/window9.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: window9
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{
@@ -1541,13 +1561,13 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: true
-						value: dialoguebox
+						value: window9
 					}
 					titleFont: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: titleFont
 						optional: false
-						value: nihonium113regular40px
+						value: nihonium113regular130px
 					}
 					titleFontColor: {
 						type: com.badlogic.gdx.graphics.Color
@@ -1574,25 +1594,25 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: true
-						value: window
+						value: dialoguebox
 					}
 					titleFont: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: titleFont
 						optional: false
-						value: font
+						value: nihonium113regular130px
 					}
 					titleFontColor: {
 						type: com.badlogic.gdx.graphics.Color
 						name: titleFontColor
 						optional: true
-						value: black
+						value: null
 					}
 					stageBackground: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: stageBackground
 						optional: true
-						value: white
+						value: null
 					}
 				}
 				deletable: true
@@ -3180,6 +3200,33 @@ jsonData: {
 						name: font
 						optional: false
 						value: nihonium113regular130px
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: button
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: button40px
 					}
 					fontColor: {
 						type: com.badlogic.gdx.graphics.Color

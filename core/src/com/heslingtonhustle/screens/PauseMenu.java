@@ -46,8 +46,7 @@ public class PauseMenu {
     }
 
     private void addOptions() {
-        TextButton resumeButton = new TextButton("Resume", skin
-        );
+        TextButton resumeButton = new TextButton("Resume", skin);
         optionsTable.add(resumeButton).fillX().uniformX().prefWidth(350);
         optionsTable.row().pad(10, 0, 10, 0);
         resumeButton.addListener(new ChangeListener() {
