@@ -211,16 +211,19 @@ public class HudRenderer implements Disposable {
         dialogueText.setText(message);
         optionTable.clearChildren();
 
-        // Add player's options to the options table
-        for (int i = 0; i < options.size(); i++) {
-            Label pointer = new Label(">>", skin, "dialoguesmall");
-            // Hide pointer if not selected
-            if (selectedOption != i) pointer.setVisible(false);
-            Label option = new Label(options.get(i), skin, "dialoguesmall");
+        // Only draw if the player has options to choose from
+        if (dialogueManager.getOptions() != null) {
+            // Add player's options to the options table
+            for (int i = 0; i < options.size(); i++) {
+                Label pointer = new Label(">>", skin, "dialoguesmall");
+                // Hide pointer if not selected
+                if (selectedOption != i) pointer.setVisible(false);
+                Label option = new Label(options.get(i), skin, "dialoguesmall");
 
-            optionTable.add(pointer).left().padRight(10);
-            optionTable.add(option).left();
-            optionTable.row();
+                optionTable.add(pointer).left().padRight(10);
+                optionTable.add(option).left();
+                optionTable.row();
+            }
         }
 
 

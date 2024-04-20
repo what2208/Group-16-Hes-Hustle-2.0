@@ -10,6 +10,7 @@ public enum Sounds {
     // Sound effects
     DIALOGUEOPEN,
     DIALOGUECLOSE,
+    OPTIONSWITCH,
     CONFIRM,
     FOOSTEP1,
     FOOTSTEP2

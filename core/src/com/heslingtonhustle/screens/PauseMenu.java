@@ -2,6 +2,7 @@ package com.heslingtonhustle.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -10,6 +11,8 @@ import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
+import com.heslingtonhustle.sound.SoundController;
+import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.State;
 
 public class PauseMenu {
@@ -20,13 +23,15 @@ public class PauseMenu {
     private Table optionsTable;
     private final Skin skin;
     private boolean isVisible;
+    private final SoundController soundController;
 
-    public PauseMenu(Screen parentClass, State gameState, int width, int height) {
+    public PauseMenu(Screen parentClass, State gameState, SoundController soundController, int width, int height) {
         playScreen = parentClass;
         isVisible = false;
         stage = new Stage(new FitViewport(width, height));
         Gdx.input.setInputProcessor(stage);
         this.gameState = gameState;
+        this.soundController = soundController;
 
         skin = new Skin(Gdx.files.internal("Graphics/UI/Skin/plain-james-ui.json"));
         createTable();
@@ -42,36 +47,38 @@ public class PauseMenu {
 
     private void addOptions() {
         TextButton resumeButton = new TextButton("Resume", skin, "special");
-        optionsTable.add(resumeButton).fillX().uniformX();
+        optionsTable.add(resumeButton).fillX().uniformX().prefWidth(300);
         optionsTable.row().pad(10, 0, 10, 0);
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                soundController.playSound(Sounds.CONFIRM);
                 playScreen.resume();
             }
         });
 
         optionsTable.row();
-        TextButton mainMenuButton = new TextButton("Return to main menu", skin, "special");
+        TextButton mainMenuButton = new TextButton("Menu", skin, "special");
         optionsTable.add(mainMenuButton).fillX().uniformX();
         optionsTable.row().pad(10, 0, 10, 0);
         mainMenuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                soundController.playSound(Sounds.CONFIRM);
                 gameState.setGameOver();
             }
         });
 
-        optionsTable.row();
-        TextButton exitButton = new TextButton("Exit", skin, "special");
-        optionsTable.add(exitButton).fillX().uniformX();
-        optionsTable.row().pad(10, 0, 10, 0);
-        exitButton.addListener(new ChangeListener() {
-            @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                Gdx.app.exit();
-            }
-        });
+//        optionsTable.row();
+//        TextButton exitButton = new TextButton("Exit", skin, "special");
+//        optionsTable.add(exitButton).fillX().uniformX();
+//        optionsTable.row().pad(10, 0, 10, 0);
+//        exitButton.addListener(new ChangeListener() {
+//            @Override
+//            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+//                Gdx.app.exit();
+//            }
+//        });
     }
 
     public void ShowPauseMenu() {

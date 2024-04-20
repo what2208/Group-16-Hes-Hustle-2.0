@@ -1,6 +1,7 @@
 package com.heslingtonhustle.sound;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.util.HashMap;
@@ -10,8 +11,10 @@ import java.util.HashMap;
  */
 public class SoundController implements Disposable {
     private Music gameMusic, menuMusic, currentMusic;
+    private Sound open, close, optionSwitch, confirm, footstep1, foostep2;
     private final HashMap<Sounds, Music> musicTypes = new HashMap<>();
-    private float musicVolume = 0.8f, sfxVolume = 0.8f;
+    private final HashMap<Sounds, Sound> sfxTypes = new HashMap<>();
+    private float musicVolume = 0.5f, sfxVolume = 0.8f;
 
 
     /**
@@ -30,9 +33,38 @@ public class SoundController implements Disposable {
         menuMusic.setVolume(musicVolume);
 
 
+        // SFX
+        open = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/open.ogg"));
+        close = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/close.ogg"));
+        optionSwitch = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/switch.ogg"));
+        confirm = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/confirm3.ogg"));
+
+
+
+
+        // Map values in Sounds to sound effects to play
 
         musicTypes.put(Sounds.MENU, menuMusic);
 //        musicTypes.put(Sounds.GAME, gameMusic);
+
+        sfxTypes.put(Sounds.DIALOGUEOPEN, open);
+        sfxTypes.put(Sounds.DIALOGUECLOSE, close);
+        sfxTypes.put(Sounds.OPTIONSWITCH, optionSwitch);
+        sfxTypes.put(Sounds.CONFIRM, confirm);
+
+
+    }
+
+    /**
+     * Plays a sound effect, prints a warning if the sound is unregistered
+     * @param sound The sound to play from the Sounds enum
+     */
+    public void playSound(Sounds sound) {
+        if (sfxTypes.containsKey(sound)) {
+            sfxTypes.get(sound).play(sfxVolume);
+        } else {
+            System.out.println("WARNING: Tried to play unregistered sound");
+        }
     }
 
 

@@ -16,6 +16,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
+import com.heslingtonhustle.sound.Sounds;
 
 public class MenuScreen implements Screen {
     private final boolean DEBUG = false;
@@ -53,6 +54,7 @@ public class MenuScreen implements Screen {
         playGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                parentClass.soundController.playSound(Sounds.CONFIRM);
                 heslingtonHustleGame.changeScreen(AvailableScreens.PlayScreen);
             }
         });

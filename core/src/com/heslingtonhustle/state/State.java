@@ -3,6 +3,7 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.heslingtonhustle.map.MapManager;
+import com.heslingtonhustle.sound.SoundController;
 
 import java.util.*;
 
@@ -19,18 +20,20 @@ public class State {
     private final Clock clock;
     private final MapManager mapManager;
     private final DialogueManager dialogueManager;
+    private final SoundController soundController;
     private final HashMap<String, Activity> activities;
     private Trigger currentTrigger;
     private int score;
     private int energy;
 
-    public State(MapManager mapManager, float playerWidth, float playerHeight) {
+    public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
         gameOver = false;
 
         player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
         clock = new Clock();
         this.mapManager = mapManager;
-        dialogueManager = new DialogueManager();
+        dialogueManager = new DialogueManager(soundController);
+        this.soundController = soundController;
 
         activities = new HashMap<>();
         activities.put("eat", new Activity(2));
@@ -253,6 +256,10 @@ public class State {
 
     public DialogueManager getDialogueManager() {
         return dialogueManager;
+    }
+
+    public boolean noDialogueOnScreen() {
+        return dialogueManager.queueEmpty();
     }
 
     public void pushWelcomeDialogue() {

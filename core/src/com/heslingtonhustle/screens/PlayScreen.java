@@ -33,8 +33,8 @@ public class PlayScreen implements Screen {
         float playerHeight = 0.9f;
 
         mapManager = new MapManager();
-        gameState = new State(mapManager, playerWidth, playerHeight);
-        pauseMenu = new PauseMenu(this, gameState, parentClass.WIDTH, parentClass.HEIGHT);
+        gameState = new State(mapManager, parentClass.soundController, playerWidth, playerHeight);
+        pauseMenu = new PauseMenu(this, gameState, parentClass.soundController, parentClass.WIDTH, parentClass.HEIGHT);
         renderer = new Renderer(gameState, mapManager, pauseMenu, parentClass.skin, parentClass.WIDTH, parentClass.HEIGHT);
 
         inputHandler = new KeyboardInputHandler();
@@ -70,13 +70,17 @@ public class PlayScreen implements Screen {
         // One of the debugging keys have been pressed. By default, these are ',' '.' '/' keys
         switch (action) {
             case DEBUGGING_ACTION1:
-                gameState.printActivities();
+                if (gameState.noDialogueOnScreen()) {
+                    gameState.printActivities();
+                }
                 return true;
             case DEBUGGING_ACTION2:
                 Gdx.app.debug("DEBUG", "Time: "+gameState.getDebugTime());
                 return true;
             case DEBUGGING_ACTION3:
-                gameState.pushTestDialogue();
+                if (gameState.noDialogueOnScreen()) {
+                    gameState.pushTestDialogue();
+                }
                 return true;
             default:
                 return false;
@@ -87,7 +91,7 @@ public class PlayScreen implements Screen {
         if (action == Action.PAUSE && !isPaused) {
             pause();
             return true;
-        } else if (action == Action.PAUSE && isPaused) {
+        } else if (action == Action.PAUSE) {
             resume();
             return true;
         }
