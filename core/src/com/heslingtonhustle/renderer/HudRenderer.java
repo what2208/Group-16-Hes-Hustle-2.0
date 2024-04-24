@@ -5,6 +5,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Align;
@@ -15,6 +16,7 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.State;
+import org.w3c.dom.Text;
 
 import java.util.List;
 
@@ -28,15 +30,12 @@ public class HudRenderer implements Disposable {
 
     private final TextureAtlas textureAtlas;
     private final SpriteBatch batch;
-    private final BitmapFont font;
-    private final float PADDING = 50f;
     private final Sprite interactSprite;
-    private TextureManager animationManager;
+    private final TextureManager animationManager;
 
 
     private final Skin skin;
     private final Stage hudStage;
-    private final Image clockImage;
     private final Image calendarImage;
     private final Window dialogueWindow;
     private final Label dialogueText;
@@ -63,17 +62,34 @@ public class HudRenderer implements Disposable {
         animationManager = new TextureManager();
         addAnimations();
 
-        font = new BitmapFont();
+        // Show time and day in top left
+        Group infoGroup = new Group();
+        infoGroup.setPosition(15, height-133);
+        hudStage.addActor(infoGroup);
+
+        // Images
+//        Image dayNightBox = new Image(skin, "time_image_background");
+//        infoGroup.addActor(dayNightBox);
+
+//        Image pegs = new Image(skin, "2peg");
+//        pegs.setPosition(width-125, 40);
+//        infoGroup.addActor(pegs);
+
+        TextButton timeButton = new TextButton("10:00am", skin, "informational");
+        timeButton.setWidth(200);
+        timeButton.setPosition(width-timeButton.getWidth()-30, 0);
+        infoGroup.addActor(timeButton);
+
+//        Image pegs2 = new Image(skin, "2peg");
+//        pegs2.setPosition(32, -100);
+//        infoGroup.addActor(pegs2);
+
 
         interactSprite = new Sprite();
         interactSprite.setSize(128, 34);
         interactSprite.setRegion(animationManager.retrieveTexture("interact"));
 
         // Create images to give to stage
-        clockImage = new Image(skin, "clock-morning");
-        clockImage.setPosition(width-170, 20);
-        clockImage.setScale(1.5f);
-
         calendarImage = new Image(skin, "calendar-empty");
         calendarImage.setPosition(20, 20);
         calendarImage.setScale(1f);
@@ -98,7 +114,6 @@ public class HudRenderer implements Disposable {
         optionTable = new Table();
         dialogueTable.add(optionTable).left().bottom();
 
-        hudStage.addActor(clockImage);
         hudStage.addActor(calendarImage);
         hudStage.addActor(dialogueWindow);
 
@@ -114,7 +129,6 @@ public class HudRenderer implements Disposable {
         hudCamera.update();
         batch.setProjectionMatrix(hudCamera.combined);
 
-        setClockTexture();
         setCalendarTexture();
         setInteractTexture();
 
@@ -124,12 +138,6 @@ public class HudRenderer implements Disposable {
         hudStage.draw();
 
         batch.begin();
-        font.draw(
-                batch,
-                "Energy: " + gameState.getEnergy(),
-                PADDING,
-                viewport.getScreenHeight() - PADDING/2
-        );
         if (gameState.isInteractionPossible()) {
             interactSprite.draw(batch);
         }
@@ -137,23 +145,23 @@ public class HudRenderer implements Disposable {
         batch.end();
     }
 
-    private void setClockTexture() {
-        switch (gameState.getTime()) {
-            case MORNING:
-                clockImage.setDrawable(skin, "clock-morning");
-                break;
-            case AFTERNOON:
-                clockImage.setDrawable(skin, "clock-afternoon");
-                break;
-            case EVENING:
-                clockImage.setDrawable(skin, "clock-evening");
-
-                break;
-            case NIGHT:
-                clockImage.setDrawable(skin, "clock-night");
-                break;
-        }
-    }
+//    private void setClockTexture() {
+//        switch (gameState.getTime()) {
+//            case MORNING:
+//                clockImage.setDrawable(skin, "clock-morning");
+//                break;
+//            case AFTERNOON:
+//                clockImage.setDrawable(skin, "clock-afternoon");
+//                break;
+//            case EVENING:
+//                clockImage.setDrawable(skin, "clock-evening");
+//
+//                break;
+//            case NIGHT:
+//                clockImage.setDrawable(skin, "clock-night");
+//                break;
+//        }
+//    }
 
     private void setCalendarTexture() {
         switch (gameState.getDay()) {

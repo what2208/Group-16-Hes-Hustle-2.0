@@ -77,7 +77,7 @@ public class MenuScreen implements Screen {
         Group versionGroup = new Group();
         versionGroup.setPosition(1000, 575);
         stage.addActor(versionGroup);
-        Label versionText = new Label("V2.0", parentClass.skin, "button");
+        Label versionText = new Label("V2.0", parentClass.skin, "version");
         versionGroup.addActor(versionText);
         versionGroup.addAction(Actions.rotateBy(-25));
 
