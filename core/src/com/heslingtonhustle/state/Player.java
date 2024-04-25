@@ -156,31 +156,52 @@ public class Player {
         movement.add(Action.STOP);
     }
 
+    /**
+     * @return The direction the player is facing from Facing
+     */
     public Facing getFacing() {
         return facing;
     }
 
+    /**
+     * @return The player's collision hitbox
+     */
     public Rectangle getCollisionBox() {
         return collisionBox;
     }
 
+    /**
+     * @return Width of the player
+     */
     public float getPlayerWidth() {
         return width;
     }
 
+    /**
+     * @return Height of the player
+     */
     public float getPlayerHeight() {
         return height;
     }
 
+    /**
+     * @return The scale the player is drawn at
+     */
     public float getScale() {
         return scale;
     }
 
+    /**
+     * @return Sets the player's position to be inside the map, assumes it is drawn from (0, 0)
+     */
     public void setInBounds(Vector2 mapSize) {
         position.x = MathUtils.clamp(position.x, 0, mapSize.x);
         position.y = MathUtils.clamp(position.y, 0, mapSize.y);
     }
 
+    /**
+     * @return The directions the player needs to move in each frame
+     */
     public HashSet<Action> getMovement() {
         return movement;
     }

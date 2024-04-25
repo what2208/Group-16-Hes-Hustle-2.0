@@ -1,63 +1,108 @@
 package com.heslingtonhustle.state;
 
 /**
- * Manages both the day and the time.
+ * A class to manage the day and time
+ * Provides methods to get a formatted time and day
  */
 public class Clock {
-    private final float MAX_TIME = 1000;  // This is the number of time units in a day.
-                                          // This doesn't really mean anything as the player cant do anything at night anyway
     private float speed;
     private float timeUnits;
     private int day;
 
+    /**
+     * Initialises default clock values
+     */
     public Clock() {
-        timeUnits = 0;
+        timeUnits = 420;
         day = 1;
-        speed = 8; // Probably want this to be less
+        speed = 1.5f; // Probably want this to be less
     }
 
 
-    public Time getTime() {
-        if (timeUnits < 250) {
-            return Time.MORNING;
-        } else if (timeUnits < 500) {
-            return Time.AFTERNOON;
-        } else if (timeUnits < 750) {
-            return Time.EVENING;
+    /**
+     * @return A 12 hour representation of the current in game time as a string
+     */
+    public String getTime() {
+        int hour = Math.floorDiv((int) timeUnits, 60);
+        String minutes = String.format("%02d", ((int) timeUnits - hour * 60));
+
+        // Make 12 hour
+        if (hour == 24 || hour == 0) {
+            return String.format("12:%sam", minutes);
+        } else if (hour == 12) {
+            return String.format("12:%spm", minutes);
+        } else if (hour > 12) {
+            return String.format("%d:%spm", hour-12, minutes);
         } else {
-            return Time.NIGHT;
+            return String.format("%d:%sam", hour, minutes);
         }
     }
 
+    /**
+     * @return The raw amount of time units elapsed in the day
+     */
+    public float getRawTime() {
+        return timeUnits;
+    }
+
+    /**
+     * Set the time to a certain value in 'seconds'
+     * @param timeUnits The value to set the time to in 'seconds'
+     */
+    public void setTime(float timeUnits) {
+        this.timeUnits = timeUnits;
+    }
+
+    /**
+     * @return The current day number
+     */
     public int getDay() {
         return day;
     }
 
+    /**
+     * Increases time by a certain amount, increments the day if necessary
+     * @param delta The real time passed in seconds
+     */
     public void increaseTime(float delta) {
-        if (timeUnits >= MAX_TIME) {
-            return;
-        }
         timeUnits += delta * speed;
+        if (timeUnits >= 1440) {
+            timeUnits -= 1440;
+            day += 1;
+        }
     }
 
-    public int incrementDay() {
-        timeUnits = 0;
+    /**
+     * Increments the day by 1
+     */
+    public void incrementDay() {
+        // 7 am
+        timeUnits = 420;
         day += 1;
-        return day;
     }
 
-    // Is this method necessary? Should the day ever decrease?
-    public int decrementDay() {
+    // Debug methods
+
+    /**
+     * Decrements the day by 1, used for debugging
+     */
+    public void decrementDay() {
         timeUnits = 0;
         day -= 1;
-        return day;
     }
 
-    public void setSpeed(int speed) {
+    /**
+     * Changes the speed at which time elapses
+     * @param speed The speed multiplier to set
+     */
+    public void setSpeed(float speed) {
         // This is mainly used for debugging
         this.speed = speed;
     }
 
+    /**
+     * @return Debug information about the current time
+     */
     public String getDebugString() {
         return timeUnits +" "+getTime() + " Day: "+getDay() + " Speed: "+speed;
     }

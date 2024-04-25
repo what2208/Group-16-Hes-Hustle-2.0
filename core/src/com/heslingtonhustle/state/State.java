@@ -184,14 +184,14 @@ public class State {
         if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
             return false;
         }
-        if (clock.getTime() == Time.NIGHT) {
+        if (clock.getRawTime() > 750) {
             return false;
         }
         return true;
     }
 
     private void advanceDay() {
-        if (clock.getDay() == MAX_DAYS) {
+        if (clock.getDay() >= MAX_DAYS) {
             printActivities();
             dialogueManager.addDialogue("Game Over. Your score was: "+score, selectedOption -> {
                 gameOver = true;
@@ -199,7 +199,7 @@ public class State {
             return;
         }
 
-        // The player is only allowed to do the same activity twice once in a week
+        // The player is only allowed to do the same activity twice once in a day
         Activity study = activities.get("study");
         if (study.getTimesPerformedToday() == 2) {
             study.changeMaxTimesPerDay(1);
@@ -229,7 +229,7 @@ public class State {
         return player.getPosition();
     }
 
-    public Time getTime() {
+    public String getTime() {
         return clock.getTime();
     }
     public int getDay() {
@@ -274,16 +274,16 @@ public class State {
         dialogueManager.addDialogue("This is the debugging console. Please select an option", options, selectedOption -> {
             switch (selectedOption) {
                 case 0: // Option 0 selected
-                    nextDay();
+                    advanceDay();
                     break;
                 case 1: // Option 1 selected
                     clock.decrementDay();
                     break;
                 case 2:
-                    clock.setSpeed(15);
+                    clock.setSpeed(15f);
                     break;
                 case 3:
-                    clock.setSpeed(6);
+                    clock.setSpeed(1.5f);
                     break;
             }
         });
