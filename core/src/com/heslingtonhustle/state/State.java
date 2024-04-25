@@ -3,6 +3,7 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.heslingtonhustle.map.MapManager;
+import com.heslingtonhustle.sound.SoundController;
 
 import java.util.*;
 
@@ -19,18 +20,20 @@ public class State {
     private final Clock clock;
     private final MapManager mapManager;
     private final DialogueManager dialogueManager;
+    private final SoundController soundController;
     private final HashMap<String, Activity> activities;
     private Trigger currentTrigger;
     private int score;
     private int energy;
 
-    public State(MapManager mapManager, float playerWidth, float playerHeight) {
+    public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
         gameOver = false;
 
         player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
         clock = new Clock();
         this.mapManager = mapManager;
-        dialogueManager = new DialogueManager();
+        dialogueManager = new DialogueManager(soundController);
+        this.soundController = soundController;
 
         activities = new HashMap<>();
         activities.put("eat", new Activity(2));
@@ -181,14 +184,14 @@ public class State {
         if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
             return false;
         }
-        if (clock.getTime() == Time.NIGHT) {
+        if (clock.getRawTime() > 750) {
             return false;
         }
         return true;
     }
 
     private void advanceDay() {
-        if (clock.getDay() == MAX_DAYS) {
+        if (clock.getDay() >= MAX_DAYS) {
             printActivities();
             dialogueManager.addDialogue("Game Over. Your score was: "+score, selectedOption -> {
                 gameOver = true;
@@ -196,7 +199,7 @@ public class State {
             return;
         }
 
-        // The player is only allowed to do the same activity twice once in a week
+        // The player is only allowed to do the same activity twice once in a day
         Activity study = activities.get("study");
         if (study.getTimesPerformedToday() == 2) {
             study.changeMaxTimesPerDay(1);
@@ -226,7 +229,7 @@ public class State {
         return player.getPosition();
     }
 
-    public Time getTime() {
+    public String getTime() {
         return clock.getTime();
     }
     public int getDay() {
@@ -255,6 +258,10 @@ public class State {
         return dialogueManager;
     }
 
+    public boolean noDialogueOnScreen() {
+        return dialogueManager.queueEmpty();
+    }
+
     public void pushWelcomeDialogue() {
         dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH! and Pitstop Piazza\n" +
                 "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n" +
@@ -267,16 +274,16 @@ public class State {
         dialogueManager.addDialogue("This is the debugging console. Please select an option", options, selectedOption -> {
             switch (selectedOption) {
                 case 0: // Option 0 selected
-                    nextDay();
+                    advanceDay();
                     break;
                 case 1: // Option 1 selected
                     clock.decrementDay();
                     break;
                 case 2:
-                    clock.setSpeed(15);
+                    clock.setSpeed(15f);
                     break;
                 case 3:
-                    clock.setSpeed(6);
+                    clock.setSpeed(1.5f);
                     break;
             }
         });

@@ -1,7 +1,19 @@
 {
 com.badlogic.gdx.graphics.g2d.BitmapFont: {
+	button40px: {
+		file: pixelFJ8pt1__.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 	font: {
 		file: font-export.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	info24px: {
+		file: Minecraftia-Regular(3).fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -24,6 +36,18 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: false
 		flip: false
 	}
+	title80px: {
+		file: pixelFJ8pt1__(1).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	version35px: {
+		file: pixelFJ8pt1__(2).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 }
 com.badlogic.gdx.graphics.Color: {
 	black: {
@@ -38,10 +62,28 @@ com.badlogic.gdx.graphics.Color: {
 		b: 0.68333334
 		a: 1
 	}
+	red: {
+		r: 0.9137255
+		g: 0.07058824
+		b: 0.07058824
+		a: 1
+	}
+	RGBA_80_48_0_255: {
+		r: 0.3137255
+		g: 0.1882353
+		b: 0
+		a: 1
+	}
 	RGBA_86_68_0_255: {
 		r: 0.3372549
 		g: 0.26666668
 		b: 0
+		a: 1
+	}
+	time_font: {
+		r: 0.5647059
+		g: 0.38431373
+		b: 0.3647059
 		a: 1
 	}
 	white: {
@@ -58,15 +100,6 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 			r: 0.22
 			g: 0.22
 			b: 0.22
-			a: 1
-		}
-	}
-	round-light-gray: {
-		name: round-white
-		color: {
-			r: 0.86333334
-			g: 0.86333334
-			b: 0.86333334
 			a: 1
 		}
 	}
@@ -100,16 +133,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Skin$TintedDrawable: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
 	default: {
-		up: round-gray
-		down: round-dark-gray
-		over: round-light-gray
+		up: button_ready
+		down: button_pressed
+		over: button_hover
 	}
 	toggle: {
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 		checked: round-dark-gray
-		checkedOver: round-light-gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
@@ -122,46 +152,43 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 	default: {
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 	}
 	toggle: {
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 		checked: round-dark-gray
-		checkedOver: round-light-gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
+		imageUp: button_ready
+		imageDown: button_pressed
+		imageOver: button_hover
 		font: font
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 	}
 	toggle: {
 		font: font
 		fontColor: black
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 		checked: round-dark-gray
-		checkedOver: round-light-gray
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	default: {
-		font: nihonium113regular40px
-		fontColor: black
+		font: nihonium113regular130px
 	}
 	title: {
-		font: title
-		fontColor: black
+		font: title80px
 	}
 	dialoguesmall: {
 		font: nihonium113regular130px
+	}
+	button: {
+		font: button40px
+	}
+	version: {
+		font: version35px
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -219,27 +246,27 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: font
-		fontColor: black
-		up: round-gray
-		down: round-dark-gray
-		over: round-light-gray
+		font: button40px
+		up: button_ready
+		down: button_pressed
+		over: button_hover
+		pressedOffsetY: -7
 	}
 	toggle: {
 		font: font
 		fontColor: black
-		up: round-gray
 		down: round-dark-gray
-		over: round-light-gray
 		checked: round-dark-gray
-		checkedOver: round-light-gray
 	}
-	special: {
-		font: title
-		fontColor: black
-		up: round-gray
-		down: round-dark-gray
-		over: round-light-gray
+	informational: {
+		font: info24px
+		up: time_backdrop
+		down: time_backdrop
+		over: time_backdrop
+		disabled: time_backdrop
+		pressedOffsetY: -18
+		unpressedOffsetY: -18
+		checkedOffsetY: -18
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
@@ -257,12 +284,6 @@ com.badlogic.gdx.scenes.scene2d.ui.TextTooltip$TextTooltipStyle: {
 		background: round-white
 	}
 }
-com.badlogic.gdx.scenes.scene2d.ui.Touchpad$TouchpadStyle: {
-	default: {
-		background: touchpad
-		knob: touchpad-knob
-	}
-}
 com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 	default: {
 		plus: plus
@@ -271,15 +292,13 @@ com.badlogic.gdx.scenes.scene2d.ui.Tree$TreeStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	default: {
-		background: dialoguebox
-		titleFont: nihonium113regular40px
+		background: window9
+		titleFont: nihonium113regular130px
 		titleFontColor: black
 	}
 	dialog: {
-		background: window
-		titleFont: font
-		titleFontColor: black
-		stageBackground: white
+		background: dialoguebox
+		titleFont: nihonium113regular130px
 	}
 }
 }

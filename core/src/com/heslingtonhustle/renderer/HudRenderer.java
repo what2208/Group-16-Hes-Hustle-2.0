@@ -1,18 +1,14 @@
 package com.heslingtonhustle.renderer;
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.*;
+import com.badlogic.gdx.scenes.scene2d.Group;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.badlogic.gdx.utils.Scaling;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.State;
 
@@ -28,20 +24,17 @@ public class HudRenderer implements Disposable {
 
     private final TextureAtlas textureAtlas;
     private final SpriteBatch batch;
-    private final BitmapFont font;
-    private final float PADDING = 50f;
     private final Sprite interactSprite;
-    private TextureManager animationManager;
+    private final TextureManager animationManager;
 
 
     private final Skin skin;
     private final Stage hudStage;
-    private final Image clockImage;
-    private final Image calendarImage;
     private final Window dialogueWindow;
     private final Label dialogueText;
-    private final Table dialogueTable;
     private final Table optionTable;
+    private final TextButton dayButton;
+    private final TextButton timeButton;
 
 
     public HudRenderer(State gameState, TextureAtlas textureAtlas, Skin skin, int width, int height){
@@ -56,34 +49,39 @@ public class HudRenderer implements Disposable {
 
         dialogueManager = gameState.getDialogueManager();
 
-
         this.textureAtlas = textureAtlas;
         batch = new SpriteBatch();
 
         animationManager = new TextureManager();
         addAnimations();
 
-        font = new BitmapFont();
+        // Show time and day in top left
+        Group infoGroup = new Group();
+        infoGroup.setPosition(15, height-133);
+        hudStage.addActor(infoGroup);
+
+        // Display time
+        timeButton = new TextButton("10:00am", skin, "informational");
+        timeButton.setWidth(200);
+        timeButton.setPosition(width-timeButton.getWidth()-30, 0);
+        infoGroup.addActor(timeButton);
+
+        // Display day
+        dayButton = new TextButton("Day 1", skin, "informational");
+        dayButton.setWidth(200);
+        dayButton.setPosition(10, 0);
+        infoGroup.addActor(dayButton);
 
         interactSprite = new Sprite();
         interactSprite.setSize(128, 34);
         interactSprite.setRegion(animationManager.retrieveTexture("interact"));
 
-        // Create images to give to stage
-        clockImage = new Image(skin, "clock-morning");
-        clockImage.setPosition(width-170, 20);
-        clockImage.setScale(1.5f);
-
-        calendarImage = new Image(skin, "calendar-empty");
-        calendarImage.setPosition(20, 20);
-        calendarImage.setScale(1f);
-
         // Dialogue box window
-        dialogueWindow = new Window("", skin);
+        dialogueWindow = new Window("", skin, "dialog");
         dialogueWindow.setSize(900, 200);
         dialogueWindow.setPosition((width - dialogueWindow.getWidth())/2, 20);
 
-        dialogueTable = new Table();
+        Table dialogueTable = new Table();
         dialogueTable.setSize(860, 160);
         dialogueTable.setPosition(20, 20);
         dialogueWindow.addActor(dialogueTable);
@@ -98,8 +96,6 @@ public class HudRenderer implements Disposable {
         optionTable = new Table();
         dialogueTable.add(optionTable).left().bottom();
 
-        hudStage.addActor(clockImage);
-        hudStage.addActor(calendarImage);
         hudStage.addActor(dialogueWindow);
 
         dialogueWindow.setVisible(false);
@@ -114,9 +110,8 @@ public class HudRenderer implements Disposable {
         hudCamera.update();
         batch.setProjectionMatrix(hudCamera.combined);
 
-        setClockTexture();
-        setCalendarTexture();
         setInteractTexture();
+        updateLabels();
 
         // Instead of using a spritebatch, just use a stage
         hudStage.setViewport(viewport);
@@ -124,12 +119,6 @@ public class HudRenderer implements Disposable {
         hudStage.draw();
 
         batch.begin();
-        font.draw(
-                batch,
-                "Energy: " + gameState.getEnergy(),
-                PADDING,
-                viewport.getScreenHeight() - PADDING/2
-        );
         if (gameState.isInteractionPossible()) {
             interactSprite.draw(batch);
         }
@@ -137,50 +126,10 @@ public class HudRenderer implements Disposable {
         batch.end();
     }
 
-    private void setClockTexture() {
-        switch (gameState.getTime()) {
-            case MORNING:
-                clockImage.setDrawable(skin, "clock-morning");
-                break;
-            case AFTERNOON:
-                clockImage.setDrawable(skin, "clock-afternoon");
-                break;
-            case EVENING:
-                clockImage.setDrawable(skin, "clock-evening");
+    private void updateLabels() {
+        dayButton.setText("Day " + gameState.getDay());
+        timeButton.setText(gameState.getTime());
 
-                break;
-            case NIGHT:
-                clockImage.setDrawable(skin, "clock-night");
-                break;
-        }
-    }
-
-    private void setCalendarTexture() {
-        switch (gameState.getDay()) {
-            case 1:
-                calendarImage.setDrawable(skin, "calendar-1");
-                break;
-            case 2:
-                calendarImage.setDrawable(skin, "calendar-2");
-                break;
-            case 3:
-                calendarImage.setDrawable(skin, "calendar-3");
-                break;
-            case 4:
-                calendarImage.setDrawable(skin, "calendar-4");
-                break;
-            case 5:
-                calendarImage.setDrawable(skin, "calendar-5");
-                break;
-            case 6:
-                calendarImage.setDrawable(skin, "calendar-6");
-                break;
-            case 7:
-                calendarImage.setDrawable(skin, "calendar-7");
-                break;
-            default:
-                calendarImage.setDrawable(skin, "calendar-empty");
-        }
     }
 
     private void setInteractTexture() {
@@ -211,16 +160,19 @@ public class HudRenderer implements Disposable {
         dialogueText.setText(message);
         optionTable.clearChildren();
 
-        // Add player's options to the options table
-        for (int i = 0; i < options.size(); i++) {
-            Label pointer = new Label(">>", skin, "dialoguesmall");
-            // Hide pointer if not selected
-            if (selectedOption != i) pointer.setVisible(false);
-            Label option = new Label(options.get(i), skin, "dialoguesmall");
+        // Only draw if the player has options to choose from
+        if (dialogueManager.getOptions() != null) {
+            // Add player's options to the options table
+            for (int i = 0; i < options.size(); i++) {
+                Label pointer = new Label(">>", skin, "dialoguesmall");
+                // Hide pointer if not selected
+                if (selectedOption != i) pointer.setVisible(false);
+                Label option = new Label(options.get(i), skin, "dialoguesmall");
 
-            optionTable.add(pointer).left().padRight(10);
-            optionTable.add(option).left();
-            optionTable.row();
+                optionTable.add(pointer).left().padRight(10);
+                optionTable.add(option).left();
+                optionTable.row();
+            }
         }
 
 
@@ -230,7 +182,7 @@ public class HudRenderer implements Disposable {
         TextureRegion[] clockAnimationFrames = new TextureRegion[2];
 //        clockAnimationFrames[0] = clockTexture = textureAtlas.findRegion("clock-night");
 //        clockAnimationFrames[1] = clockTexture = textureAtlas.findRegion("clock-red");
-        animationManager.addAnimation("clock-night", clockAnimationFrames, 0.4f);
+//        animationManager.addAnimation("clock-night", clockAnimationFrames, 0.4f);
 
         Array<TextureAtlas.AtlasRegion> interact = textureAtlas.findRegions("interact");
         animationManager.addAnimation("interact", interact, 0.4f);
