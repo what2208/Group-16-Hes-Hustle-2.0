@@ -2,6 +2,7 @@ package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.sound.SoundController;
@@ -48,25 +49,32 @@ public class State {
         currentTrigger = null; // This stores the Tiled trigger box that we are currently stood inside of
     }
 
+
     /**
-     * Given an Action, apply that action to the state.
+     * Updates the game's state based on the pressed and held actions
+     * Handles player movement and collision, time as well as interactions
      *
-     * @param action The most recent action
-     * @param actions The actions corresponding to all keypresses
-     * @param timeDelta Delta time
-     * */
-    public void update(Action action, HashSet<Action> actions, float timeDelta) {
+     * @param heldActions A set of all held down actions
+     * @param pressedActions A set of all actions called only on this frame
+     * @param timeDelta Time passed since the last update
+     */
+    public void update(HashSet<Action> heldActions, HashSet<Action> pressedActions, float timeDelta) {
         currentTrigger = mapManager.getTrigger(player.getCollisionBox());
-        if (action != null) {
+
+        // Checks for an interaction or dialogue skip
+        for (Action action : pressedActions) {
             handleAction(action);
         }
-        // Give the player the list of movements it needs to make
-        // Player can only move if dialogue box is not shown
+
+        // The player only deals with actions that are held down, for its movement
         if (dialogueManager.isEmpty()) {
-            player.move(actions);
+            player.move(heldActions);
         } else {
+            // Specifically tell the player not to move anywhere this frame
             player.freeze();
         }
+
+        // Store old pos in case player is colliding with something
         Vector2 previousPlayerPos = player.getPosition();
         // Move player
         player.update();
@@ -116,7 +124,7 @@ public class State {
 
     /**
      * Passes the given action to dialogue box or interacting with a building
-     * @param action
+     * @param action The action to pass
      */
     private void handleAction(Action action) {
         if (!dialogueManager.isEmpty()) {
@@ -124,9 +132,6 @@ public class State {
             handleDialogueAction(action);
         } else if (action == Action.INTERACT) {
             handleInteraction();
-        } else {
-            // We have a normal action
-//            player.move(action);
         }
     }
 

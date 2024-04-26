@@ -3,7 +3,6 @@ package com.heslingtonhustle.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.input.InputHandler;
 import com.heslingtonhustle.input.KeyboardInputHandler;
@@ -47,22 +46,41 @@ public class PlayScreen implements Screen {
     }
     @Override
     public void render(float delta) {
-        Action action = inputHandler.getAction();
-        HashSet<Action> allActions = inputHandler.getAllActions();
-        if (handleDebugAction(action)) {
-            action = inputHandler.getAction();
-        }
-        if (handlePauseAction(action)) {
-            action = inputHandler.getAction();
-        }
+
+        // Get the actions just called in this frame and the actions currently held down
+        HashSet<Action> heldActions = inputHandler.getHeldActions();
+        HashSet<Action> pressedActions = inputHandler.getPressedActions();
+        // Game screen doesn't deal with any held actions
+        handleActions(pressedActions);
+
         if (!isPaused) {
-            gameState.update(action, allActions, delta);
+            gameState.update(heldActions, pressedActions, delta);
         }
         renderer.update();
+        inputHandler.resetPressedActions();
 
         if (gameState.isGameOver()) {
             heslingtonHustleGame.changeScreen(AvailableScreens.MenuScreen);
         }
+    }
+
+    /**
+     * Calls events related to the actions called by the player on the current frame
+     * @param pressedActions All actions related to key presses this frame
+     */
+    private void handleActions(HashSet<Action> pressedActions) {
+
+        if (pressedActions.contains(Action.PAUSE)) {
+            // If pause or unpause, ignore everything else
+            handlePauseAction(Action.PAUSE);
+            return;
+        }
+
+        // For all other actions
+        for (Action action : pressedActions) {
+            handleDebugAction(action);
+        }
+
     }
 
     private boolean handleDebugAction(Action action) {
@@ -126,14 +144,14 @@ public class PlayScreen implements Screen {
     public void pause() {
         isPaused = true;
         Gdx.input.setInputProcessor(inputMultiplexer);
-        renderer.ShowPauseScreen();
+        renderer.showPauseScreen();
     }
 
     @Override
     public void resume() {
         isPaused = false;
         Gdx.input.setInputProcessor(inputHandler);
-        renderer.HidePauseScreen();
+        renderer.hidePauseScreen();
     }
 
     @Override
