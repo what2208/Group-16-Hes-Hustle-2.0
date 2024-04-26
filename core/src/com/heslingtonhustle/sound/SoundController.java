@@ -28,10 +28,15 @@ public class SoundController implements Disposable {
      * Loads game music and sound effects
      */
     private void load() {
+        // Menu Music
         menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/music_zapsplat_easy_cheesy.mp3"));
         menuMusic.setLooping(true);
         menuMusic.setVolume(musicVolume);
 
+        // Game music
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/keyboard-collection-progressive-pop.mp3"));
+        gameMusic.setLooping(true);
+        gameMusic.setVolume(musicVolume);
 
         // SFX
         open = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/open.ogg"));
@@ -40,19 +45,14 @@ public class SoundController implements Disposable {
         confirm = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/confirm3.ogg"));
 
 
-
-
         // Map values in Sounds to sound effects to play
-
         musicTypes.put(Sounds.MENU, menuMusic);
-//        musicTypes.put(Sounds.GAME, gameMusic);
+        musicTypes.put(Sounds.GAME, gameMusic);
 
         sfxTypes.put(Sounds.DIALOGUEOPEN, open);
         sfxTypes.put(Sounds.DIALOGUECLOSE, close);
         sfxTypes.put(Sounds.OPTIONSWITCH, optionSwitch);
         sfxTypes.put(Sounds.CONFIRM, confirm);
-
-
     }
 
     /**
@@ -72,14 +72,14 @@ public class SoundController implements Disposable {
      * Resumes playback of the current music track
      */
     public void playMusic() {
-
+        currentMusic.play();
     }
 
     /**
      * Pauses the current music track
      */
     public void pauseMusic() {
-
+        currentMusic.pause();
     }
 
     /**
@@ -121,9 +121,17 @@ public class SoundController implements Disposable {
     }
 
 
+    /**
+     * Disposes of all music and sound effects
+     */
     @Override
     public void dispose() {
         menuMusic.dispose();
+        gameMusic.dispose();
+        open.dispose();
+        close.dispose();
+        optionSwitch.dispose();
+        confirm.dispose();
     }
 
 

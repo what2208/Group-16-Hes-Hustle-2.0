@@ -194,10 +194,7 @@ public class State {
         if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
             return false;
         }
-        if (clock.getRawTime() > 750) {
-            return false;
-        }
-        return true;
+        return !(clock.getRawTime() > 750);
     }
 
     private void advanceDay() {
