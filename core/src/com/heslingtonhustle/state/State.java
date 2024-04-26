@@ -2,8 +2,10 @@ package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.sound.SoundController;
+import org.w3c.dom.css.Rect;
 
 import java.util.*;
 
@@ -82,30 +84,33 @@ public class State {
      * @param oldPos The position of the player on the previous frame
      */
     public void handlePlayerCollisions(Vector2 oldPos, Rectangle playerBox) {
-        // Get rectangle of overlapping object
-        Rectangle collider = mapManager.getCollisionRectangle(player.getCollisionBox());
+        // Get an array of objects the player is colliding with
+        Array<Rectangle> colliders = mapManager.getCollisionRectangles(player.getCollisionBox());
         // Translate player's coordinates to world coordinates
         playerBox = mapManager.worldRectangleToPixelRectangle(playerBox);
         // We need a copy of the player's location not in world coordinates
         Vector2 oldPosWorld = mapManager.worldToPixelCoords(oldPos);
 
 
-        // If null then the player is not colliding with anything, so do nothing
-        if (collider != null) {
-            // Find which previous dimension was not overlapping, and then only reset that one to allow
-            // sliding to happen
+        // For each object
+        for (Rectangle collider : colliders) {
+            // If null then the player is not colliding with anything, so do nothing
+            if (collider != null) {
+                // Find which previous dimension was not overlapping, and then only reset that one to allow
+                // sliding to happen
 
-            // If previously not overlapping in x direction, revert them back
-            if (!(oldPosWorld.x < collider.x + collider.width && oldPosWorld.x + playerBox.width > collider.x)) {
-                player.setX(oldPos.x);
-            }
-            // Same with y dimension
-            if (!(oldPosWorld.y < collider.y + collider.height && oldPosWorld.y + playerBox.height > collider.y)) {
-                player.setY(oldPos.y);
+                // If previously not overlapping in x direction, revert them back
+                if (!(oldPosWorld.x < collider.x + collider.width &&
+                        oldPosWorld.x + playerBox.width > collider.x)) {
+                    player.setX(oldPos.x);
+                }
+                // Same with y dimension
+                if (!(oldPosWorld.y < collider.y + collider.height &&
+                        oldPosWorld.y + playerBox.height > collider.y)) {
+                    player.setY(oldPos.y);
+                }
             }
         }
-
-
 
     }
 

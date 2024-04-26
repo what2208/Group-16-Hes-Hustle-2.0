@@ -120,20 +120,16 @@ public class MapManager implements Disposable {
      * @param playerRectangle Player's hitbox
      * @return null if player is not colliding with anything, the rectangle of the overlapping object otherwise
      */
-    public Rectangle getCollisionRectangle(Rectangle playerRectangle) {
+    public Array<Rectangle> getCollisionRectangles(Rectangle playerRectangle) {
         if (collisionObjects == null) {
             return null;
         }
         playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
         // Get list of map's collidable rectangles
         Array<RectangleMapObject> mapCollisionRectangles = getRectangles(collisionRectangles, collisionObjects);
-        RectangleMapObject overlappingRectangle = getOverlappingMapRectangle(playerRectangle, mapCollisionRectangles);
 
-        if (overlappingRectangle != null) {
-            return overlappingRectangle.getRectangle();
-        } else {
-            return null;
-        }
+        // Return a list of all collidable objects the player is colliding with
+        return getAllRectangleOverlaps(playerRectangle, mapCollisionRectangles);
     }
 
     public Trigger getTrigger(Rectangle playerRectangle) {
@@ -210,6 +206,12 @@ public class MapManager implements Disposable {
         return new Rectangle(x, y, width, height);
     }
 
+    /**
+     * Returns the first RectangleMapObject the player is overlapping
+     * @param playerRectangle The player's hitbox
+     * @param mapRectangles The rectangles the player would overlap
+     * @return The first rectangle the player is overlapping
+     */
     private RectangleMapObject getOverlappingMapRectangle(Rectangle playerRectangle, Array<RectangleMapObject> mapRectangles) {
         // For each rectangle in the collisions layer, check whether the player rectangle intercepts
         for (RectangleMapObject rectangleObject : mapRectangles) {
@@ -220,6 +222,27 @@ public class MapManager implements Disposable {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns a list of all the rectangles the player is overlapping with,
+     * useful for collision
+     * @param playerRectangle The player's hitbox
+     * @param mapRectangles All collision rectangles in the map
+     * @return A list of rectangles the player is overlapping, empty if none
+     */
+    private Array<Rectangle> getAllRectangleOverlaps(Rectangle playerRectangle, Array<RectangleMapObject> mapRectangles) {
+        Array<Rectangle> overlaps = new Array<>();
+
+        // For each rectangle in the collisions layer, check whether the player rectangle intercepts
+        for (RectangleMapObject rectangleObject : mapRectangles) {
+            Rectangle collisionRectangle = rectangleObject.getRectangle();
+            if (Intersector.overlaps(collisionRectangle, playerRectangle)) {
+                overlaps.add(collisionRectangle);
+            }
+        }
+
+        return overlaps;
     }
 
     @Override
