@@ -2,7 +2,6 @@ package com.heslingtonhustle.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -10,7 +9,6 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
-import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.State;
@@ -70,12 +68,12 @@ public class PauseMenu {
         });
     }
 
-    public void ShowPauseMenu() {
+    public void showPauseMenu() {
         isVisible = true;
         optionsTable.setVisible(true);
     }
 
-    public void HidePauseMenu() {
+    public void hidePauseMenu() {
         isVisible = false;
         optionsTable.setVisible(false);
     }

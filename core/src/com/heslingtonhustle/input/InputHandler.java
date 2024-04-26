@@ -10,6 +10,7 @@ import java.util.HashSet;
  * Extends LibGDX's InputProcessor for convenience, but this could be omitted.
  */
 public interface InputHandler extends InputProcessor {
-    Action getAction();
-    HashSet<Action> getAllActions();
+    HashSet<Action> getHeldActions();
+    HashSet<Action> getPressedActions();
+    void resetPressedActions();
 }

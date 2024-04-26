@@ -1,6 +1,5 @@
 package com.heslingtonhustle.renderer;
 
-import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
@@ -12,7 +11,6 @@ import com.badlogic.gdx.math.Vector3;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
-import com.badlogic.gdx.utils.viewport.ExtendViewport;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.state.State;
@@ -106,12 +104,12 @@ public class Renderer implements Disposable {
         pauseMenu.render();
     }
 
-    public void ShowPauseScreen() {
-        pauseMenu.ShowPauseMenu();
+    public void showPauseScreen() {
+        pauseMenu.showPauseMenu();
     }
 
-    public void HidePauseScreen() {
-        pauseMenu.HidePauseMenu();
+    public void hidePauseScreen() {
+        pauseMenu.hidePauseMenu();
     }
 
     private Vector2 clampCoordsToScreen(Vector2 coords) {
