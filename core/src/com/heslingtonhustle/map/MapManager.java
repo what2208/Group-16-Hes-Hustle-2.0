@@ -101,21 +101,6 @@ public class MapManager implements Disposable {
     }
 
     /**
-     * Returns true if the player's hitbox is overlapping any rectangle in a collision layer
-     * @param playerRectangle Player's hitbox
-     * @return true if the player is colliding
-     */
-    public boolean isCollision(Rectangle playerRectangle) {
-        if (collisionObjects == null) {
-            return false;
-        }
-        playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
-        Array<RectangleMapObject> mapCollisionRectangles = getRectangles(collisionRectangles, collisionObjects);
-        RectangleMapObject overlappingRectangle = getOverlappingMapRectangle(playerRectangle, mapCollisionRectangles);
-        return overlappingRectangle != null;
-    }
-
-    /**
      * Returns rectangle the player is colliding with
      * @param playerRectangle Player's hitbox
      * @return null if player is not colliding with anything, the rectangle of the overlapping object otherwise
