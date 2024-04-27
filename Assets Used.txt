@@ -1,5 +1,7 @@
 UI:
 Buttons - https://cupnooble.itch.io/sprout-lands-ui-pack
+Energy Bar - https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
+Game over background - https://github.com/minetest/minetest_game
 
 Fonts:
 Title/Button font - https://www.1001fonts.com/pixelfj8pt1-font.html

@@ -29,6 +29,8 @@ public class State {
     private Trigger currentTrigger;
     private int score;
     private int energy;
+    private int hoursSlept;
+
 
     public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
         gameOver = false;
@@ -165,6 +167,7 @@ public class State {
                 List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
                 dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
                         if (selectedOption == 0) {
+                            addHoursSlept();
                             advanceDay();
                             activity.increaseValue(1);
                             dialogueManager.addDialogue("You have just slept!");
@@ -234,7 +237,6 @@ public class State {
 
     private void advanceDay() {
         if (clock.getDay() >= MAX_DAYS) {
-            printActivities();
             dialogueManager.addDialogue("Game Over. Your score was: "
                     + score, selectedOption -> gameOver = true);
             return;
@@ -304,19 +306,28 @@ public class State {
         return dialogueManager.queueEmpty();
     }
 
+    /**
+     * Gives the player an intro dialogue
+     */
     public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza\n"
-                + "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n"
-                + "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
+        dialogueManager.addDialogue("You can move around with W,A,S,D and press E to interact with buildings and complete activities.\n"
+                + "You cannot do anything after midnight and must sleep by interacting with a house. Good luck!");
+
+        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza!");
     }
 
+    /**
+     * DEBUG
+     * Displays a debug panel
+     * TODO: Remove
+     */
     public void pushTestDialogue() {
         // This is a debugging function that creates a useful control dialog box when you press '/'
-        List<String> options = new ArrayList<>(Arrays.asList("Increment day", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
+        List<String> options = new ArrayList<>(Arrays.asList("End Game", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
         dialogueManager.addDialogue("This is the debugging console. Please select an option", options, selectedOption -> {
             switch (selectedOption) {
                 case 0: // Option 0 selected
-                    advanceDay();
+                    setGameOver();
                     break;
                 case 1: // Option 1 selected
                     clock.decrementDay();
@@ -331,37 +342,92 @@ public class State {
         });
     }
 
+    /**
+     * Sets the player's energy to 100
+     */
     public void replenishEnergy() {
         // This is the amount of energy that the player starts with at the beginning of each day
         energy = 100;
     }
-    
+
+    /**
+     * Adds the number of hours slept until 8 am to the total amount
+     * of hours slept
+     */
+    private void addHoursSlept() {
+        // Before midnight
+        if (clock.getRawTime() <= 1440) {
+            hoursSlept += (1440 - clock.getRawTime()) + 8*60;
+        } else {
+            // After midnight
+            hoursSlept += (8*60) - clock.getRawTime();
+        }
+    }
+
+
+    /**
+     * @return The total hours slept in the game
+     */
+    public int getHoursSlept() {
+        return hoursSlept;
+    }
+
+    /**
+     * Decreases the player's energy by a set amount
+     * @param energyCost The amount to decrease by
+     */
     private void exertEnergy(int energyCost) {
         energy -= energyCost;
     }
 
+    /**
+     * @param energyCost The energy cost
+     * @return True if the player has more energy than the energy cost
+     */
     private boolean hasEnoughEnergy(int energyCost) {
         return energy - energyCost >= 0;
     }
 
+    /**
+     * @return True if the player is near a trigger that can be interacted with
+     */
     public boolean isInteractionPossible() {
         return  currentTrigger != null;
     }
 
+    /**
+     * Advances the game to the next day and restores the player's energy
+     */
     public void nextDay() {
         clock.incrementDay();
         replenishEnergy();
     }
 
+    /**
+     * @return True if the last day has finished
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * Sets the game to be over
+     */
     public void setGameOver() {
         gameOver = true;
     }
 
+    /**
+     * @return The player's energy level, max is 100
+     */
     public int getEnergy() {
         return energy;
+    }
+
+    /**
+     * @return A hashmap of activities so their data can be used for scoring
+     */
+    public HashMap<String, Activity> getActivities() {
+        return activities;
     }
 }

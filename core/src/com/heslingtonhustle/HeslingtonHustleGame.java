@@ -5,11 +5,15 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.heslingtonhustle.screens.GameOverScreen;
 import com.heslingtonhustle.screens.MenuScreen;
 import com.heslingtonhustle.screens.PlayScreen;
 import com.heslingtonhustle.screens.AvailableScreens;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
+import com.heslingtonhustle.state.Activity;
+
+import java.util.HashMap;
 
 public class HeslingtonHustleGame extends Game {
 	private Screen currentScreen;
@@ -64,4 +68,22 @@ public class HeslingtonHustleGame extends Game {
 		}
 		setScreen(currentScreen);
     }
+
+	/**
+	 * Specifically changes the screen to the game over screen,
+	 * passing along information about the player's scoring info
+	 * @param activitiesCompleted A hashmap containing instances of activities
+	 *                            the player completed.
+	 * @param stats A list of ints representing the number of hours slept,
+	 *              achievements found, and penalties respectively.
+	 */
+	public void gameOver(HashMap<String, Activity> activitiesCompleted, int[] stats) {
+		if (currentScreen != null) {
+			currentScreen.dispose();
+		}
+		currentScreen = new GameOverScreen(this, activitiesCompleted, stats);
+		setScreen(currentScreen);
+
+
+	}
 }
