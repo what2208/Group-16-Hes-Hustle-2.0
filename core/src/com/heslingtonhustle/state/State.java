@@ -2,13 +2,14 @@ package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.utils.Array;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.sound.SoundController;
-import org.w3c.dom.css.Rect;
-
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Arrays;
 
 
 /**
@@ -157,31 +158,63 @@ public class State {
             player.setPosition(currentTrigger.getNewMapCoords());
         }
 
-        score += currentTrigger.changeScore();
 
         if (currentTrigger.canSleep()) {
-            advanceDay();
             Activity activity  = activities.get("sleep");
             if (activity != null) {
-                activity.increaseValue(1);
-                dialogueManager.addDialogue("You have just slept!");
+                List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+                dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
+                        if (selectedOption == 0) {
+                            advanceDay();
+                            activity.increaseValue(1);
+                            dialogueManager.addDialogue("You have just slept!");
+                        }
+                    }
+                );
             }
         }
         
         String activityID = currentTrigger.getActivity();
         if (activityID != null) {
-            int i = currentTrigger.getValue();
             if (!activities.containsKey(activityID)) {
                 activities.put(activityID, new Activity()); // Useful feature?
             }
             Activity activity = activities.get(activityID);
-            if (canDoActivity(activity)) {
-                activity.increaseValue(i);
-                exertEnergy(currentTrigger.getEnergyCost());
-                dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
+            // Call confirmation box
+            // Get prompt message if one exists
+            String prompt;
+            if (currentTrigger.hasProperty("prompt_message")) {
+                prompt = currentTrigger.getPromptMessage();
             } else {
-                dialogueManager.addDialogue(currentTrigger.getFailedMessage());
+                prompt = String.format("Do you want to %s?", activityID);
             }
+
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            // Call a dialogue box to prompt the player if they want to do
+            // the listed activity
+            dialogueManager.addDialogue(prompt, options, selectedOption -> {
+                    if (selectedOption == 0) {
+                        doActivity(activity);
+                    }
+                }
+            );
+        }
+    }
+
+    private void doActivity(Activity activity) {
+        if (canDoActivity(activity)) {
+            activity.increaseValue(currentTrigger.getValue());
+            exertEnergy(currentTrigger.getEnergyCost());
+            score += currentTrigger.changeScore();
+            dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
+        } else if (!activity.canIncreaseValue()) {
+            dialogueManager.addDialogue("You've done this too much today!\nGo do something else!");
+        } else if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
+            dialogueManager.addDialogue("You don't have enough energy to do this right now!");
+        } else if (!(clock.getRawTime() > 480)) {
+            dialogueManager.addDialogue("This building opens at 8am.");
+        } else {
+            dialogueManager.addDialogue(currentTrigger.getFailedMessage());
         }
     }
 
@@ -194,19 +227,21 @@ public class State {
         if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
             return false;
         }
-        return !(clock.getRawTime() > 750);
+
+        // Can't do things before 8am
+        return clock.getRawTime() > 480;
     }
 
     private void advanceDay() {
         if (clock.getDay() >= MAX_DAYS) {
             printActivities();
-            dialogueManager.addDialogue("Game Over. Your score was: "+score, selectedOption -> {
-                gameOver = true;
-            });
+            dialogueManager.addDialogue("Game Over. Your score was: "
+                    + score, selectedOption -> gameOver = true);
             return;
         }
 
-        // The player is only allowed to do the same activity twice once in a day
+        // The player is only allowed to do the same activity twice once
+        // in a day
         Activity study = activities.get("study");
         if (study.getTimesPerformedToday() == 2) {
             study.changeMaxTimesPerDay(1);
@@ -270,9 +305,9 @@ public class State {
     }
 
     public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH! and Pitstop Piazza\n" +
-                "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n" +
-                "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
+        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza\n"
+                + "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n"
+                + "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
     }
 
     public void pushTestDialogue() {
@@ -298,7 +333,7 @@ public class State {
 
     public void replenishEnergy() {
         // This is the amount of energy that the player starts with at the beginning of each day
-        energy = 15;
+        energy = 100;
     }
     
     private void exertEnergy(int energyCost) {

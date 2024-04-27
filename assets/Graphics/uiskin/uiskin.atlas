@@ -4,23 +4,37 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
+energy_bar
+  rotate: false
+  xy: 36, 25
+  size: 9, 156
+  orig: 9, 156
+  offset: 0, 0
+  index: -1
+energy_bar_outline
+  rotate: false
+  xy: 1, 1
+  size: 33, 180
+  orig: 33, 180
+  offset: 0, 0
+  index: -1
 1peg
   rotate: false
-  xy: 703, 1405
+  xy: 181, 345
   size: 12, 24
   orig: 12, 24
   offset: 0, 0
   index: -1
 2peg
   rotate: false
-  xy: 645, 1405
+  xy: 123, 345
   size: 56, 24
   orig: 56, 24
   offset: 0, 0
   index: -1
 day_background
   rotate: false
-  xy: 1701, 1990
+  xy: 1701, 1902
   size: 104, 52
   split: 13, 13, 13, 17
   pad: 0, 0, 0, 0
@@ -29,7 +43,7 @@ day_background
   index: -1
 time_backdrop
   rotate: false
-  xy: 1023, 1717
+  xy: 1023, 1629
   size: 200, 116
   split: 37, 37, 37, 29
   pad: 0, 0, 0, 0
@@ -38,7 +52,7 @@ time_backdrop
   index: -1
 time_background
   rotate: false
-  xy: 1531, 1970
+  xy: 1531, 1882
   size: 168, 72
   split: 13, 12, 12, 17
   pad: 0, 0, 0, 0
@@ -47,37 +61,23 @@ time_background
   index: -1
 window9
   rotate: false
-  xy: 1, 1
+  xy: 1, 183
   size: 64, 64
   split: 17, 16, 17, 17
   pad: 0, 0, 0, 0
   orig: 64, 64
   offset: 0, 0
   index: -1
-moon
-  rotate: false
-  xy: 1873, 1978
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
-sun
-  rotate: false
-  xy: 1807, 1978
-  size: 64, 64
-  orig: 64, 64
-  offset: 0, 0
-  index: -1
 time_image_background
   rotate: false
-  xy: 1531, 1848
+  xy: 1, 249
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 button_hover
   rotate: false
-  xy: 1225, 1721
+  xy: 264, 524
   size: 104, 112
   split: 17, 17, 17, 25
   pad: 0, 0, 0, 0
@@ -86,7 +86,7 @@ button_hover
   index: -1
 button_pressed
   rotate: false
-  xy: 1, 475
+  xy: 1225, 1641
   size: 104, 104
   split: 17, 17, 25, 21
   pad: 0, 0, 0, 0
@@ -95,128 +95,30 @@ button_pressed
   index: -1
 button_ready
   rotate: false
-  xy: 145, 612
+  xy: 1531, 1768
   size: 104, 112
   split: 17, 17, 18, 25
   pad: 0, 0, 0, 0
   orig: 104, 112
   offset: 0, 0
   index: -1
-calendar-1
-  rotate: false
-  xy: 515, 1290
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-2
-  rotate: false
-  xy: 778, 1557
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-3
-  rotate: false
-  xy: 1331, 1733
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-4
-  rotate: false
-  xy: 1, 373
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-5
-  rotate: false
-  xy: 251, 624
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-6
-  rotate: false
-  xy: 515, 1188
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-7
-  rotate: false
-  xy: 778, 1455
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-calendar-empty
-  rotate: false
-  xy: 1, 271
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
 checkbox
   rotate: false
-  xy: 880, 1639
+  xy: 1701, 1882
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 checkbox-on
   rotate: false
-  xy: 778, 1435
+  xy: 589, 1082
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
-clock-afternoon
-  rotate: false
-  xy: 353, 624
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-clock-empty
-  rotate: false
-  xy: 515, 1086
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-clock-evening
-  rotate: false
-  xy: 1, 169
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-clock-morning
-  rotate: false
-  xy: 1, 67
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-clock-night
-  rotate: false
-  xy: 1433, 1733
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
-clock-red
-  rotate: false
-  xy: 1535, 1746
-  size: 100, 100
-  orig: 100, 100
-  offset: 0, 0
-  index: -1
 cursor
   rotate: false
-  xy: 582, 1003
+  xy: 509, 919
   size: 4, 7
   split: 1, 1, 2, 2
   pad: 0, 0, 0, 0
@@ -225,7 +127,7 @@ cursor
   index: -1
 dialoguebox
   rotate: false
-  xy: 515, 1012
+  xy: 515, 1028
   size: 72, 72
   split: 13, 12, 13, 13
   pad: 0, 0, 0, 0
@@ -234,43 +136,29 @@ dialoguebox
   index: -1
 font-export
   rotate: false
-  xy: 1, 581
+  xy: 515, 1102
   size: 142, 143
   orig: 142, 143
   offset: 0, 0
   index: -1
 font-title-export
   rotate: false
-  xy: 515, 1431
+  xy: 1, 371
   size: 261, 265
   orig: 261, 265
   offset: 0, 0
   index: -1
 horizontal-split-pane
   rotate: false
-  xy: 1535, 1733
+  xy: 370, 577
   size: 5, 11
   split: 2, 2, 2, 2
   orig: 5, 11
   offset: 0, 0
   index: -1
-interact_00
-  rotate: false
-  xy: 515, 1392
-  size: 128, 37
-  orig: 128, 37
-  offset: 0, 0
-  index: -1
-interact_01
-  rotate: false
-  xy: 778, 1659
-  size: 128, 37
-  orig: 128, 37
-  offset: 0, 0
-  index: -1
 list
   rotate: false
-  xy: 1023, 1703
+  xy: 1023, 1615
   size: 51, 12
   split: 2, 2, 2, 2
   pad: 5, 5, 5, 5
@@ -279,35 +167,35 @@ list
   index: -1
 minus
   rotate: false
-  xy: 1637, 1833
+  xy: 67, 234
   size: 12, 13
   orig: 12, 13
   offset: 0, 0
   index: -1
 nihonium113.regular
   rotate: false
-  xy: 1, 870
+  xy: 1, 782
   size: 506, 144
   orig: 506, 144
   offset: 0, 0
   index: -1
 nihonium113.regular(1)
   rotate: false
-  xy: 515, 1952
+  xy: 515, 1864
   size: 506, 90
   orig: 506, 90
   offset: 0, 0
   index: -1
 plus
   rotate: false
-  xy: 1939, 2029
+  xy: 123, 330
   size: 12, 13
   orig: 12, 13
   offset: 0, 0
   index: -1
 progress-bar
   rotate: false
-  xy: 1653, 1922
+  xy: 370, 590
   size: 46, 46
   split: 10, 10, 10, 10
   pad: 6, 6, 6, 6
@@ -316,35 +204,35 @@ progress-bar
   index: -1
 progress-bar-fill
   rotate: false
-  xy: 103, 439
+  xy: 1020, 1574
   size: 1, 34
   orig: 1, 34
   offset: 0, 0
   index: -1
 progress-bar-fill-vert
   rotate: false
-  xy: 908, 1695
+  xy: 1225, 1638
   size: 34, 1
   orig: 34, 1
   offset: 0, 0
   index: -1
 radio
   rotate: false
-  xy: 589, 1068
+  xy: 659, 1136
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 radio-on
   rotate: false
-  xy: 67, 49
+  xy: 732, 1229
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 round-white
   rotate: false
-  xy: 509, 875
+  xy: 1331, 1703
   size: 42, 42
   split: 13, 13, 13, 13
   pad: 9, 9, 5, 5
@@ -353,7 +241,7 @@ round-white
   index: -1
 round-white-small
   rotate: false
-  xy: 107, 555
+  xy: 1807, 1930
   size: 24, 24
   split: 10, 10, 10, 10
   pad: 10, 10, 2, 2
@@ -362,7 +250,7 @@ round-white-small
   index: -1
 selectbox
   rotate: false
-  xy: 455, 684
+  xy: 264, 482
   size: 51, 40
   split: 2, 31, 2, 27
   pad: 2, 35, 2, 2
@@ -371,7 +259,7 @@ selectbox
   index: -1
 selection
   rotate: false
-  xy: 251, 613
+  xy: 264, 471
   size: 9, 9
   split: 2, 1, 2, 1
   pad: 4, 3, 4, 3
@@ -380,7 +268,7 @@ selection
   index: -1
 slider-horizontal
   rotate: false
-  xy: 617, 1380
+  xy: 1531, 1756
   size: 20, 10
   split: 4, 4, 4, 4
   pad: 1, 2, 2, 2
@@ -389,14 +277,14 @@ slider-horizontal
   index: -1
 slider-knob
   rotate: false
-  xy: 145, 586
+  xy: 515, 1002
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 slider-vertical
   rotate: false
-  xy: 455, 662
+  xy: 317, 502
   size: 9, 20
   split: 4, 3, 3, 3
   pad: 3, 3, 2, 2
@@ -405,7 +293,7 @@ slider-vertical
   index: -1
 textfield
   rotate: false
-  xy: 1701, 1946
+  xy: 1637, 1838
   size: 42, 42
   split: 8, 8, 8, 8
   orig: 42, 42
@@ -413,7 +301,7 @@ textfield
   index: -1
 vertical-split-pane
   rotate: false
-  xy: 1331, 1726
+  xy: 1076, 1622
   size: 11, 5
   split: 2, 2, 1, 1
   pad: 1, 1, 1, 1
@@ -422,14 +310,14 @@ vertical-split-pane
   index: -1
 white
   rotate: false
-  xy: 1225, 1718
+  xy: 1023, 1612
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 509, 919
+  xy: 659, 1154
   size: 71, 91
   split: 15, 15, 35, 15
   pad: 9, 10, 37, 5
@@ -438,35 +326,42 @@ window
   index: -1
 Minecraftia-Regular(3)
   rotate: false
-  xy: 1, 726
+  xy: 1, 638
   size: 505, 142
   orig: 505, 142
   offset: 0, 0
   index: -1
+Minecraftia-Regular(4)
+  rotate: false
+  xy: 515, 1247
+  size: 503, 361
+  orig: 503, 361
+  offset: 0, 0
+  index: -1
 pixelFJ8pt1__
   rotate: false
-  xy: 515, 1698
+  xy: 515, 1610
   size: 506, 252
   orig: 506, 252
   offset: 0, 0
   index: -1
 pixelFJ8pt1__(1)_0
   rotate: false
-  xy: 1, 1530
+  xy: 1, 1442
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 pixelFJ8pt1__(1)_1
   rotate: false
-  xy: 1, 1016
+  xy: 1, 928
   size: 512, 512
   orig: 512, 512
   offset: 0, 0
   index: -1
 pixelFJ8pt1__(2)
   rotate: false
-  xy: 1023, 1835
+  xy: 1023, 1747
   size: 506, 207
   orig: 506, 207
   offset: 0, 0

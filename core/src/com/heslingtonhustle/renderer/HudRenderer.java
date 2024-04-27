@@ -14,18 +14,16 @@ import com.heslingtonhustle.state.State;
 
 import java.util.List;
 
+/**
+ * A class to render static information to the screen that the player needs
+ * Displays the time and date, and the current energy level
+ * Also displays a label when the player can interact with an event
+ */
 public class HudRenderer implements Disposable {
     private final State gameState;
-
     private final OrthographicCamera hudCamera;
     private final FitViewport viewport;
-
     private final DialogueManager dialogueManager;
-
-    private final TextureAtlas textureAtlas;
-    private final SpriteBatch batch;
-    private final Sprite interactSprite;
-    private final TextureManager animationManager;
 
 
     private final Skin skin;
@@ -35,8 +33,21 @@ public class HudRenderer implements Disposable {
     private final Table optionTable;
     private final TextButton dayButton;
     private final TextButton timeButton;
+    private final Label interactLabel;
+    private final Image energyBar;
 
 
+    /**
+     * Initalises images and labels to display to the screen
+     * Also initalises the dialogue window to display dialogue from
+     * dialogueManager
+     *
+     * @param gameState
+     * @param textureAtlas
+     * @param skin The loaded UI skin
+     * @param width Width of the game window
+     * @param height Height of the game window
+     */
     public HudRenderer(State gameState, TextureAtlas textureAtlas, Skin skin, int width, int height){
         this.gameState = gameState;
         this.skin = skin;
@@ -45,97 +56,111 @@ public class HudRenderer implements Disposable {
         hudCamera = new OrthographicCamera();
         viewport = new FitViewport(width, height, hudCamera);
 
+        // Stage for UI elements
         hudStage = new Stage(new FitViewport(width, height));
 
+        // Store a reference to the dialogueManager to fetch dialogue
         dialogueManager = gameState.getDialogueManager();
-
-        this.textureAtlas = textureAtlas;
-        batch = new SpriteBatch();
-
-        animationManager = new TextureManager();
-        addAnimations();
-
-        // Show time and day in top left
-        Group infoGroup = new Group();
-        infoGroup.setPosition(15, height-133);
-        hudStage.addActor(infoGroup);
 
         // Display time
         timeButton = new TextButton("10:00am", skin, "informational");
         timeButton.setWidth(200);
-        timeButton.setPosition(width-timeButton.getWidth()-30, 0);
-        infoGroup.addActor(timeButton);
+        timeButton.setPosition(width-timeButton.getWidth()-15, height-133);
+        hudStage.addActor(timeButton);
 
         // Display day
         dayButton = new TextButton("Day 1", skin, "informational");
         dayButton.setWidth(200);
-        dayButton.setPosition(10, 0);
-        infoGroup.addActor(dayButton);
+        dayButton.setPosition(25, height-133);
+        hudStage.addActor(dayButton);
 
-        interactSprite = new Sprite();
-        interactSprite.setSize(128, 34);
-        interactSprite.setRegion(animationManager.retrieveTexture("interact"));
+        // Label to tell the user they can interact with something
+        interactLabel = new Label("E - Interact", skin, "interaction");
+        interactLabel.setPosition((width - interactLabel.getWidth()) / 2 + 15, 200);
+        hudStage.addActor(interactLabel);
+
+        // Energy bar
+        energyBar = new Image(skin, "energy_bar");
+        energyBar.setPosition(27, 27);
+        hudStage.addActor(energyBar);
+
+        // Energy Bar Outline
+        Image energyBarOutline = new Image(skin, "energy_bar_outline");
+        energyBarOutline.setPosition(15, 15);
+        hudStage.addActor(energyBarOutline);
 
         // Dialogue box window
         dialogueWindow = new Window("", skin, "dialog");
         dialogueWindow.setSize(900, 200);
         dialogueWindow.setPosition((width - dialogueWindow.getWidth())/2, 20);
+        hudStage.addActor(dialogueWindow);
+        dialogueWindow.setVisible(false);
 
+        // Dialogue box table
         Table dialogueTable = new Table();
         dialogueTable.setSize(860, 160);
         dialogueTable.setPosition(20, 20);
         dialogueWindow.addActor(dialogueTable);
 
-        // Text
+        // Dialogue text
         dialogueText = new Label("", skin, "dialoguesmall");
         dialogueText.setWrap(true);
         dialogueTable.add(dialogueText).expandX().expandY().left().top().prefWidth(860);
         dialogueTable.row();
 
-        // Options
+        // Dialogue options
         optionTable = new Table();
         dialogueTable.add(optionTable).left().bottom();
-
-        hudStage.addActor(dialogueWindow);
-
-        dialogueWindow.setVisible(false);
-
-
-
-
-
     }
 
+    /**
+     * Updates and renders the time and date to the screen
+     * Also displays the user's energy, and a prompt if they can itneract with
+     * a building.
+     * Displays a dialogue window if dialogueQueue is not empty
+     */
     public void render(){
+        hudStage.setViewport(viewport);
         hudCamera.update();
-        batch.setProjectionMatrix(hudCamera.combined);
-
-        setInteractTexture();
+        // Update day and time labels
         updateLabels();
 
-        // Instead of using a spritebatch, just use a stage
-        hudStage.setViewport(viewport);
+        updateEnergy();
+
+        // Show an interaction label if player is near an interactable object
+        if (gameState.isInteractionPossible()) {
+            interactLabel.setVisible(true);
+        } else {
+            interactLabel.setVisible(false);
+        }
+
+        showDialogue();
+
         hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
         hudStage.draw();
-
-        batch.begin();
-        if (gameState.isInteractionPossible()) {
-            interactSprite.draw(batch);
-        }
-        showDialogue();
-        batch.end();
     }
 
+    /**
+     * Fetches the correct values for time and date from gameState
+     * and updates the labels.
+     */
     private void updateLabels() {
         dayButton.setText("Day " + gameState.getDay());
         timeButton.setText(gameState.getTime());
 
     }
 
-    private void setInteractTexture() {
-        interactSprite.setRegion(animationManager.retrieveTexture("interact"));
+    /**
+     * Scales the energy bar to the correct level
+     */
+    private void updateEnergy() {
+        energyBar.setScaleY(gameState.getEnergy() / 100f);
     }
 
+    /**
+     * Shows/hides the dialoueBox if there is dialogue in the queue
+     * Also restructures the dialoguebox table contents if there is an update
+     */
     private void showDialogue() {
         if (dialogueManager.isEmpty()) {
             // No dialogue box to show
@@ -151,6 +176,12 @@ public class HudRenderer implements Disposable {
         }
     }
 
+    /**
+     * Builds a dialogue box using scene2d elements
+     * Displays the main dialogue text, a list of options and a pointer if
+     * necessary.
+     * Called when text is changed or an option pointer is moved.
+     */
     public void reconstructDialogueBox() {
         // Check dialogue details
         String message = dialogueManager.getMessage();
@@ -178,23 +209,21 @@ public class HudRenderer implements Disposable {
 
     }
 
-    private void addAnimations() {
-        TextureRegion[] clockAnimationFrames = new TextureRegion[2];
-//        clockAnimationFrames[0] = clockTexture = textureAtlas.findRegion("clock-night");
-//        clockAnimationFrames[1] = clockTexture = textureAtlas.findRegion("clock-red");
-//        animationManager.addAnimation("clock-night", clockAnimationFrames, 0.4f);
-
-        Array<TextureAtlas.AtlasRegion> interact = textureAtlas.findRegions("interact");
-        animationManager.addAnimation("interact", interact, 0.4f);
-    }
-
+    /**
+     * Corrects resizes the screen elements
+     * @param width New width of the game window
+     * @param height New height of the game window
+     */
     public void resize(int width, int height) {
         viewport.update(width, height, true);
         hudStage.getViewport().update(width, height);
     }
 
+    /**
+     * Correctly disposes of any elements
+     */
     @Override
     public void dispose() {
-        batch.dispose();
+
     }
 }

@@ -7,7 +7,6 @@ import com.badlogic.gdx.math.Vector2;
  * A trigger that can be populated from an external editor. Defines behaviour when the player interacts with an object.
  */
 public class Trigger {
-
     private final int id;
     private final String activity;
 
@@ -42,6 +41,16 @@ public class Trigger {
             return getPropertyValue("energy_cost", false);
         }
         return 0;
+    }
+
+    /**
+     * Used to determine whether this trigger has a certain property
+     *
+     * @param key They property to check for
+     * @return true if the trigger has the property
+     */
+    public boolean hasProperty(String key) {
+        return mapProperties.containsKey(key);
     }
 
     public int changeScore() {
@@ -90,6 +99,17 @@ public class Trigger {
     public String getFailedMessage() {
         if (mapProperties.containsKey("failed_message")) {
             return (String)mapProperties.get("failed_message");
+        }
+        return null;
+    }
+
+    /**
+     * @return The prompt message that should appear before a user
+     * completes an action
+     */
+    public String getPromptMessage() {
+        if (mapProperties.containsKey("prompt_message")) {
+            return (String)mapProperties.get("prompt_message");
         }
         return null;
     }
