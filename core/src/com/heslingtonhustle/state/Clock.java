@@ -13,7 +13,7 @@ public class Clock {
      * Initialises default clock values
      */
     public Clock() {
-        timeUnits = 420;
+        timeUnits = 480;
         day = 1;
         speed = 1.5f; // Probably want this to be less
     }
@@ -77,7 +77,7 @@ public class Clock {
      */
     public void incrementDay() {
         // 7 am
-        timeUnits = 420;
+        timeUnits = 480;
         day += 1;
     }
 

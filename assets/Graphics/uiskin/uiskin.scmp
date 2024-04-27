@@ -63,166 +63,6 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-1.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-1
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-2.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-2
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-3.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-3
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-4.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-4
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-5.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-5
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-6.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-6
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-7.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-7
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/calendar-empty.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: calendar-empty
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
 			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/checkbox.png
 			bgColor: {
 				r: 1
@@ -253,126 +93,6 @@ atlasData: {
 			tint: null
 			tintName: null
 			name: checkbox-on
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-afternoon.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-afternoon
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-empty.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-empty
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-evening.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-evening
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-morning.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-morning
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-night.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-night
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/clock-red.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: clock-red
 			tiled: false
 			minWidth: -1
 			minHeight: -1
@@ -440,46 +160,6 @@ atlasData: {
 			tenPatchData: null
 			tvgData: null
 			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/interact_00.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: interact_00
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/interact_01.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: interact_01
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
 			hidden: false
 		}
 		{
@@ -1023,46 +703,6 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/sun.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: sun
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/moon.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: moon
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
 			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/1peg.png
 			bgColor: {
 				r: 1
@@ -1140,6 +780,46 @@ atlasData: {
 			tenPatchData: null
 			tvgData: null
 			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/Energy Bar/energy_bar_outline.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: energy_bar_outline
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/Energy Bar/energy_bar.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: energy_bar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
 			hidden: false
 		}
 	]

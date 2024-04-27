@@ -160,12 +160,12 @@ public class State {
 
 
         if (currentTrigger.canSleep()) {
-            advanceDay();
             Activity activity  = activities.get("sleep");
             if (activity != null) {
                 List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
                 dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
                         if (selectedOption == 0) {
+                            advanceDay();
                             activity.increaseValue(1);
                             dialogueManager.addDialogue("You have just slept!");
                         }
@@ -180,9 +180,19 @@ public class State {
                 activities.put(activityID, new Activity()); // Useful feature?
             }
             Activity activity = activities.get(activityID);
-            // Call confirmation box here
+            // Call confirmation box
+            // Get prompt message if one exists
+            String prompt;
+            if (currentTrigger.hasProperty("prompt_message")) {
+                prompt = currentTrigger.getPromptMessage();
+            } else {
+                prompt = String.format("Do you want to %s?", activityID);
+            }
+
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
-            dialogueManager.addDialogue(String.format("Do you want to %s?", activityID), options, selectedOption -> {
+            // Call a dialogue box to prompt the player if they want to do
+            // the listed activity
+            dialogueManager.addDialogue(prompt, options, selectedOption -> {
                     if (selectedOption == 0) {
                         doActivity(activity);
                     }
@@ -197,6 +207,12 @@ public class State {
             exertEnergy(currentTrigger.getEnergyCost());
             score += currentTrigger.changeScore();
             dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
+        } else if (!activity.canIncreaseValue()) {
+            dialogueManager.addDialogue("You've done this too much today!\nGo do something else!");
+        } else if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
+            dialogueManager.addDialogue("You don't have enough energy to do this right now!");
+        } else if (!(clock.getRawTime() > 480)) {
+            dialogueManager.addDialogue("This building opens at 8am.");
         } else {
             dialogueManager.addDialogue(currentTrigger.getFailedMessage());
         }
@@ -211,7 +227,9 @@ public class State {
         if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
             return false;
         }
-        return !(clock.getRawTime() > 750);
+
+        // Can't do things before 8am
+        return clock.getRawTime() > 480;
     }
 
     private void advanceDay() {
@@ -315,7 +333,7 @@ public class State {
 
     public void replenishEnergy() {
         // This is the amount of energy that the player starts with at the beginning of each day
-        energy = 15;
+        energy = 100;
     }
     
     private void exertEnergy(int energyCost) {

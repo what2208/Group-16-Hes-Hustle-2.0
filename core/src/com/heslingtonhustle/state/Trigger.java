@@ -43,6 +43,16 @@ public class Trigger {
         return 0;
     }
 
+    /**
+     * Used to determine whether this trigger has a certain property
+     *
+     * @param key They property to check for
+     * @return true if the trigger has the property
+     */
+    public boolean hasProperty(String key) {
+        return mapProperties.containsKey(key);
+    }
+
     public int changeScore() {
         return getPropertyValue("score", false);
     }
@@ -89,6 +99,17 @@ public class Trigger {
     public String getFailedMessage() {
         if (mapProperties.containsKey("failed_message")) {
             return (String)mapProperties.get("failed_message");
+        }
+        return null;
+    }
+
+    /**
+     * @return The prompt message that should appear before a user
+     * completes an action
+     */
+    public String getPromptMessage() {
+        if (mapProperties.containsKey("prompt_message")) {
+            return (String)mapProperties.get("prompt_message");
         }
         return null;
     }

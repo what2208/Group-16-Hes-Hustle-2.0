@@ -34,6 +34,7 @@ public class HudRenderer implements Disposable {
     private final TextButton dayButton;
     private final TextButton timeButton;
     private final Label interactLabel;
+    private final Image energyBar;
 
 
     /**
@@ -78,6 +79,16 @@ public class HudRenderer implements Disposable {
         interactLabel.setPosition((width - interactLabel.getWidth()) / 2 + 15, 200);
         hudStage.addActor(interactLabel);
 
+        // Energy bar
+        energyBar = new Image(skin, "energy_bar");
+        energyBar.setPosition(27, 27);
+        hudStage.addActor(energyBar);
+
+        // Energy Bar Outline
+        Image energyBarOutline = new Image(skin, "energy_bar_outline");
+        energyBarOutline.setPosition(15, 15);
+        hudStage.addActor(energyBarOutline);
+
         // Dialogue box window
         dialogueWindow = new Window("", skin, "dialog");
         dialogueWindow.setSize(900, 200);
@@ -109,20 +120,24 @@ public class HudRenderer implements Disposable {
      * Displays a dialogue window if dialogueQueue is not empty
      */
     public void render(){
+        hudStage.setViewport(viewport);
         hudCamera.update();
+        // Update day and time labels
         updateLabels();
 
-        // Instead of using a spritebatch, just use a stage
-        hudStage.setViewport(viewport);
-        hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
-        hudStage.draw();
+        updateEnergy();
 
+        // Show an interaction label if player is near an interactable object
         if (gameState.isInteractionPossible()) {
             interactLabel.setVisible(true);
         } else {
             interactLabel.setVisible(false);
         }
+
         showDialogue();
+
+        hudStage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
+        hudStage.draw();
     }
 
     /**
@@ -133,6 +148,13 @@ public class HudRenderer implements Disposable {
         dayButton.setText("Day " + gameState.getDay());
         timeButton.setText(gameState.getTime());
 
+    }
+
+    /**
+     * Scales the energy bar to the correct level
+     */
+    private void updateEnergy() {
+        energyBar.setScaleY(gameState.getEnergy() / 100f);
     }
 
     /**

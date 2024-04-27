@@ -378,8 +378,9 @@
   <object id="438" x="533.75" y="863.875" width="66.625" height="31.625">
    <properties>
     <property name="activity" value="study"/>
-    <property name="energy_cost" type="int" value="5"/>
+    <property name="energy_cost" type="int" value="20"/>
     <property name="failed_message" value="You can't do that at the moment"/>
+    <property name="prompt_message" value="Do you want to study in the Piazza?"/>
     <property name="score" type="int" value="15"/>
     <property name="study" type="int" value="2"/>
     <property name="success_message" value="You have just studied"/>
@@ -391,7 +392,7 @@
     <property name="sleep" type="bool" value="true"/>
    </properties>
   </object>
-  <object id="451" x="452" y="576" width="36" height="20">
+  <object id="451" x="456.333" y="576" width="36" height="20">
    <properties>
     <property name="sleep" type="bool" value="true"/>
    </properties>
