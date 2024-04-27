@@ -1324,6 +1324,26 @@ atlasData: {
 			type: FONT
 			hidden: false
 		}
+		{
+			file: C:/Users/samha/Downloads/minecraftia/Minecraftia-Regular(4).png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: Minecraftia-Regular(4)
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: FONT
+			hidden: false
+		}
 	]
 }
 jsonData: {
@@ -1423,6 +1443,14 @@ jsonData: {
 			markupEnabled: false
 			scaling: -1
 			file: C:/Users/samha/Downloads/minecraftia/Minecraftia-Regular(3).fnt
+		}
+		{
+			class: com.ray3k.skincomposer.data.FontData
+			name: interact32px
+			flip: false
+			markupEnabled: false
+			scaling: -1
+			file: C:/Users/samha/Downloads/minecraftia/Minecraftia-Regular(4).fnt
 		}
 		{
 			class: com.ray3k.skincomposer.data.FontData
@@ -3649,6 +3677,33 @@ jsonData: {
 						name: font
 						optional: false
 						value: version35px
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: interaction
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: interact32px
 					}
 					fontColor: {
 						type: com.badlogic.gdx.graphics.Color
