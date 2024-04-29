@@ -25,10 +25,12 @@ public class State {
     private final MapManager mapManager;
     private final DialogueManager dialogueManager;
     private final SoundController soundController;
-    private final HashMap<String, Activity> activities;
+    private final HashMap<String, Activity> activities = new HashMap<>();
     private Trigger currentTrigger;
     private int score;
     private int energy;
+    private int hoursSlept;
+
 
     public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
         gameOver = false;
@@ -38,12 +40,6 @@ public class State {
         this.mapManager = mapManager;
         dialogueManager = new DialogueManager(soundController);
         this.soundController = soundController;
-
-        activities = new HashMap<>();
-        activities.put("eat", new Activity(2));
-        activities.put("recreation", new Activity(3));
-        activities.put("study", new Activity(2));
-        activities.put("sleep", new Activity());
 
         score = 0;
         replenishEnergy();
@@ -153,47 +149,53 @@ public class State {
         if (currentTrigger == null) {
             return;
         }
+
         if (currentTrigger.getNewMap() != null) {
             mapManager.loadMap("Maps/" + currentTrigger.getNewMap());
             player.setPosition(currentTrigger.getNewMapCoords());
+            return;
         }
-
 
         if (currentTrigger.canSleep()) {
-            Activity activity  = activities.get("sleep");
-            if (activity != null) {
-                List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
-                dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
-                        if (selectedOption == 0) {
-                            advanceDay();
-                            activity.increaseValue(1);
-                            dialogueManager.addDialogue("You have just slept!");
-                        }
-                    }
+            // If player has not slept yet
+            if (!activities.containsKey("sleep")) {
+                activities.put("sleep", new Activity(
+                        "sleep", "sleep",
+                        5, 0, 8, -1)
                 );
             }
+
+            Activity activity  = activities.get("sleep");
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
+                    if (selectedOption == 0) {
+                        addHoursSlept();
+                        advanceDay();
+                        activity.completeActivity();
+                        dialogueManager.addDialogue("You have just slept!");
+                    }
+                }
+            );
+            return;
         }
-        
-        String activityID = currentTrigger.getActivity();
-        if (activityID != null) {
-            if (!activities.containsKey(activityID)) {
-                activities.put(activityID, new Activity()); // Useful feature?
-            }
-            Activity activity = activities.get(activityID);
-            // Call confirmation box
-            // Get prompt message if one exists
-            String prompt;
-            if (currentTrigger.hasProperty("prompt_message")) {
-                prompt = currentTrigger.getPromptMessage();
-            } else {
-                prompt = String.format("Do you want to %s?", activityID);
+
+        // Call an activity that is not sleeping
+        String activityName = currentTrigger.getActivityName();
+        if (activityName != null) {
+            // On the first encounter with an activity, create a new Activity class
+            // to store how many times this activity has been completed
+            if (!activities.containsKey(activityName)) {
+                activities.put(activityName, currentTrigger.toActivity());
             }
 
-            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            Activity activity = activities.get(activityName);
+
             // Call a dialogue box to prompt the player if they want to do
             // the listed activity
-            dialogueManager.addDialogue(prompt, options, selectedOption -> {
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            dialogueManager.addDialogue(currentTrigger.getPromptMessage(), options, selectedOption -> {
                     if (selectedOption == 0) {
+                        // If 'yes', do activity
                         doActivity(activity);
                     }
                 }
@@ -201,50 +203,45 @@ public class State {
         }
     }
 
+
+    /**
+     * Checks whether a player can do an activity, and if so updates
+     * appropriate values
+     * Also shows a success/fail dialogue box
+     * @param activity The activity to complete
+     */
     private void doActivity(Activity activity) {
-        if (canDoActivity(activity)) {
-            activity.increaseValue(currentTrigger.getValue());
-            exertEnergy(currentTrigger.getEnergyCost());
-            score += currentTrigger.changeScore();
-            dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
-        } else if (!activity.canIncreaseValue()) {
+
+        // Various checks for if the player can do the activity
+        if (!activity.canDoActivity()) {
             dialogueManager.addDialogue("You've done this too much today!\nGo do something else!");
-        } else if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
+        } else if (energy < activity.getEnergyUse()) {
             dialogueManager.addDialogue("You don't have enough energy to do this right now!");
         } else if (!(clock.getRawTime() > 480)) {
             dialogueManager.addDialogue("This building opens at 8am.");
         } else {
-            dialogueManager.addDialogue(currentTrigger.getFailedMessage());
+            // They can do it
+            activity.completeActivity();
+            exertEnergy(activity.getEnergyUse());
+            clock.passHours(activity.getHours());
+            dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
         }
-    }
-
-    private boolean canDoActivity(Activity activity) {
-        // Check if the player is allowed to do the activity that is assigned to the current
-        // trigger that the player is stood in
-        if (!activity.canIncreaseValue()) {
-            return false;
-        }
-        if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
-            return false;
-        }
-
-        // Can't do things before 8am
-        return clock.getRawTime() > 480;
     }
 
     private void advanceDay() {
         if (clock.getDay() >= MAX_DAYS) {
-            printActivities();
-            dialogueManager.addDialogue("Game Over. Your score was: "
-                    + score, selectedOption -> gameOver = true);
+            dialogueManager.addDialogue("Today is the day of your exam!" +
+                    "\nI hope you studied well!", selectedOption -> gameOver = true);
             return;
         }
 
         // The player is only allowed to do the same activity twice once
         // in a day
-        Activity study = activities.get("study");
-        if (study.getTimesPerformedToday() == 2) {
-            study.changeMaxTimesPerDay(1);
+        if (activities.containsKey("study")) {
+            Activity study = activities.get("study");
+            if (study.getTimesCompletedToday() == 2) {
+                study.setMaxPerDay(1);
+            }
         }
 
         for (Activity activity : activities.values()) {
@@ -259,7 +256,7 @@ public class State {
         StringBuilder builder = new StringBuilder();
 
         for (String s : activities.keySet()) {
-            builder.append(s).append(" count: ").append(activities.get(s).getCount()).append("\n");
+            builder.append(s).append(" count: ").append(activities.get(s).getTimesCompleted()).append("\n");
             //builder.append(s).append(" value: ").append(activities.get(s).getValue()).append("\n");
         }
 
@@ -304,19 +301,28 @@ public class State {
         return dialogueManager.queueEmpty();
     }
 
+    /**
+     * Gives the player an intro dialogue
+     */
     public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza\n"
-                + "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n"
-                + "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
+        dialogueManager.addDialogue("You can move around with W,A,S,D and press E to interact with buildings and complete activities.\n"
+                + "You cannot do anything after midnight and must sleep by interacting with a house. Good luck!");
+
+        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza!");
     }
 
+    /**
+     * DEBUG
+     * Displays a debug panel
+     * TODO: Remove
+     */
     public void pushTestDialogue() {
         // This is a debugging function that creates a useful control dialog box when you press '/'
-        List<String> options = new ArrayList<>(Arrays.asList("Increment day", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
+        List<String> options = new ArrayList<>(Arrays.asList("End Game", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
         dialogueManager.addDialogue("This is the debugging console. Please select an option", options, selectedOption -> {
             switch (selectedOption) {
                 case 0: // Option 0 selected
-                    advanceDay();
+                    setGameOver();
                     break;
                 case 1: // Option 1 selected
                     clock.decrementDay();
@@ -331,37 +337,91 @@ public class State {
         });
     }
 
+    /**
+     * Sets the player's energy to 100
+     */
     public void replenishEnergy() {
         // This is the amount of energy that the player starts with at the beginning of each day
         energy = 100;
     }
-    
+
+    /**
+     * Adds the number of hours slept until 8 am to the total amount
+     * of hours slept
+     */
+    private void addHoursSlept() {
+        // Before midnight
+        if (clock.getRawTime() <= 1440) {
+            hoursSlept += (1440 - clock.getRawTime()) + 8*60;
+        } else {
+            // After midnight
+            hoursSlept += (8*60) - clock.getRawTime();
+        }
+    }
+
+
+    /**
+     * @return The total hours slept in the game
+     */
+    public int getHoursSlept() {
+        return hoursSlept;
+    }
+
+    /**
+     * Decreases the player's energy by a set amount
+     * @param energyCost The amount to decrease by
+     */
     private void exertEnergy(int energyCost) {
         energy -= energyCost;
     }
 
-    private boolean hasEnoughEnergy(int energyCost) {
-        return energy - energyCost >= 0;
-    }
-
+    /**
+     * @return True if the player is near a trigger that can be interacted with
+     */
     public boolean isInteractionPossible() {
         return  currentTrigger != null;
     }
 
+    /**
+     * Advances the game to the next day and restores the player's energy
+     */
     public void nextDay() {
         clock.incrementDay();
         replenishEnergy();
     }
 
+    /**
+     * @return True if the last day has finished
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * Sets the game to be over
+     */
     public void setGameOver() {
         gameOver = true;
     }
 
+    /**
+     * @return The player's energy level, max is 100
+     */
     public int getEnergy() {
         return energy;
+    }
+
+    /**
+     * @return A hashmap of activities so their data can be used for scoring
+     */
+    public HashMap<String, Activity> getActivities() {
+        return activities;
+    }
+
+    /**
+     * @return True if the player walked at least x steps on each day
+     */
+    public boolean getPlayerStepAchievement() {
+        return player.getStepAchievement();
     }
 }

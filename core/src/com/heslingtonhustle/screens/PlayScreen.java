@@ -60,7 +60,9 @@ public class PlayScreen implements Screen {
         inputHandler.resetPressedActions();
 
         if (gameState.isGameOver()) {
-            heslingtonHustleGame.changeScreen(AvailableScreens.MenuScreen);
+            heslingtonHustleGame.gameOver(
+                    gameState.getActivities(),
+                    gameState.getPlayerStepAchievement());
         }
     }
 

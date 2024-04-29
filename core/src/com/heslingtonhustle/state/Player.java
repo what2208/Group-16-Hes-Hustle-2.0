@@ -9,7 +9,9 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 
-/** Represents the player character. Is responsible for the movement of the player. */
+/**
+ * Represents the player character. Is responsible for the movement of the player.
+ * */
 public class Player {
     public static final float SPEED = 0.1f;
 
@@ -20,6 +22,8 @@ public class Player {
     private final float width;
     private final float height;
     private final float scale = 2f;
+    private float distanceTravelled = 0;
+    private int daysWalkedOver200Steps = 0;
 
     /**
      * @param startingX Spawn location
@@ -51,18 +55,22 @@ public class Player {
                 case MOVE_LEFT:
                     facing = Facing.LEFT;
                     setPosition(position.x-speed, position.y);
+                    distanceTravelled += speed;
                     break;
                 case MOVE_RIGHT:
                     facing = Facing.RIGHT;
                     setPosition(position.x+speed, position.y);
+                    distanceTravelled += speed;
                     break;
                 case MOVE_UP:
                     facing = Facing.UP;
                     setPosition(position.x, position.y+speed);
+                    distanceTravelled += speed;
                     break;
                 case MOVE_DOWN:
                     facing = Facing.DOWN;
                     setPosition(position.x, position.y-speed);
+                    distanceTravelled += speed;
                     break;
                 default:
                     break;
@@ -204,5 +212,34 @@ public class Player {
      */
     public HashSet<Action> getMovement() {
         return movement;
+    }
+
+    /**
+     * @return The number of units the player has moved
+     */
+    public float getDistanceTravelled() {
+        return distanceTravelled;
+    }
+
+    /**
+     * Sets the player's distance travelled to 0
+     */
+    public void resetDistanceTravelled() {
+        distanceTravelled = 0;
+    }
+
+    /**
+     * Reset's the player's daily step count
+     * If the player walked over 200 steps, this is counted
+     */
+    public void resetStepCounter() {
+        if (distanceTravelled > 200) {
+            daysWalkedOver200Steps++;
+        }
+        distanceTravelled = 0;
+    }
+
+    public boolean getStepAchievement() {
+        return daysWalkedOver200Steps == 7;
     }
 }

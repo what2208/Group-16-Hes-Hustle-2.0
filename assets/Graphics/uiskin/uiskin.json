@@ -24,6 +24,24 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 		markupEnabled: false
 		flip: false
 	}
+	Minecraftia16px: {
+		file: Minecraftia-Regular(6).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Minecraftia24pxachievement: {
+		file: Minecraftia-Regular(5).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Minecraftia8px: {
+		file: Minecraftia-Regular(7).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
 	nihonium113regular130px: {
 		file: nihonium113.regular(1).fnt
 		scaledSize: -1
@@ -32,6 +50,30 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	}
 	nihonium113regular40px: {
 		file: nihonium113.regular.fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Notepen32px: {
+		file: Notepen(4).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Notepen48px: {
+		file: Notepen(6).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Notepen64px: {
+		file: Notepen(7).fnt
+		scaledSize: -1
+		markupEnabled: false
+		flip: false
+	}
+	Notepen80px: {
+		file: Notepen(8).fnt
 		scaledSize: -1
 		markupEnabled: false
 		flip: false
@@ -56,6 +98,12 @@ com.badlogic.gdx.graphics.g2d.BitmapFont: {
 	}
 }
 com.badlogic.gdx.graphics.Color: {
+	achievement: {
+		r: 0.1882353
+		g: 0.21960784
+		b: 0.2627451
+		a: 1
+	}
 	black: {
 		r: 0
 		g: 0
@@ -199,6 +247,28 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	interaction: {
 		font: interact32px
 	}
+	handwriting80px: {
+		font: Notepen80px
+		fontColor: RGBA_80_48_0_255
+	}
+	handwriting64px: {
+		font: Notepen64px
+		fontColor: RGBA_80_48_0_255
+	}
+	handwriting48px: {
+		font: Notepen48px
+		fontColor: RGBA_80_48_0_255
+	}
+	handwriting32px: {
+		font: Notepen32px
+		fontColor: RGBA_80_48_0_255
+	}
+	achievementlabel: {
+		font: Minecraftia16px
+	}
+	achievementscore: {
+		font: Minecraftia8px
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
@@ -276,6 +346,16 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 		pressedOffsetY: -18
 		unpressedOffsetY: -18
 		checkedOffsetY: -18
+	}
+	banner: {
+		font: Minecraftia24pxachievement
+		up: achievement
+		down: achievement
+		over: achievement
+		disabled: penalty
+		pressedOffsetY: -16
+		unpressedOffsetY: -16
+		checkedOffsetY: -16
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {

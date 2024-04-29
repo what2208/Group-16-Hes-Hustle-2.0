@@ -31,7 +31,7 @@ public class MenuScreen implements Screen {
         stage = new Stage(new FitViewport(parentClass.WIDTH, parentClass.HEIGHT));
         Gdx.input.setInputProcessor(stage);
 
-        backgroundTexture = new Texture("Graphics/UI/menu-background.jpg");
+        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
 
