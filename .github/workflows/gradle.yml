@@ -13,34 +13,34 @@ jobs:
     strategy:
       matrix:
         os: [ubuntu-22.04, windows-2022, macos-12]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}    # Will run the build job on 3 different operating systems
     permissions:
       contents: read
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 11              # Sets up Java Development Kit for Java 11
         uses: actions/setup-java@v4
         with:
           java-version: '11'
           distribution: 'temurin'
 
-      - name: Setup Gradle
+      - name: Setup Gradle               # Sets up Gradle
         uses: gradle/actions/setup-gradle@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
         with:
           gradle-version: '8.5'
 
-      - name: Build with Gradle 8.5
+      - name: Build with Gradle 8.5      # Builds the Gradle project
         run: gradle build
 
-      - name: Upload library JAR
+      - name: Upload library JAR         # Uploads the JAR file as an artifact
         uses: actions/upload-artifact@v4.3.1
         if: startsWith(matrix.os, 'ubuntu')
         with:
           name: desktop-1.0.jar
           path: desktop/build/libs/desktop-1.0.jar
 
-      - name: Upload Checkstyle report
+      - name: Upload Checkstyle report   # Uploads the checkstyle report as an artifact
         uses: actions/upload-artifact@v4.3.1
         if: startsWith(matrix.os, 'ubuntu')
         with:
@@ -55,7 +55,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Set up JDK 11
+      - name: Set up JDK 11          # Sets up the Java Development Kit for Java 11
         uses: actions/setup-java@v4
         with:
           java-version: '11'
@@ -63,23 +63,23 @@ jobs:
 
       # Generates and submits a dependency graph, enabling Dependabot Alerts for all project dependencies.
       # See: https://github.com/gradle/actions/blob/main/dependency-submission/README.md
-      - name: Generate and submit dependency graph
+      - name: Generate and submit dependency graph            # 
         uses: gradle/actions/dependency-submission@417ae3ccd767c252f5661f1ace9f835f9654f2b5 # v3.1.0
 
   release:
     runs-on: ubuntu-22.04
     needs: [ "build" ]
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/')        # Will only run when a new tag has been created as this indicates a new release
 
     permissions:
       contents: write
 
     steps:
-      - name: Download Ubuntu Build Artifact
+      - name: Download Ubuntu Build Artifact         # Download the Jar file that was uploaded as an artifact in the Build job
         uses: actions/download-artifact@v4.1.4
         with:
           name: desktop-1.0.jar
-      - name: Release
+      - name: Release                       # Create a new release for the project using the tag provided
         uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
         with:
-          files: desktop-1.0.jar
+          files: desktop-1.0.jar            # The release will include the JAR file
