@@ -230,8 +230,8 @@ public class State {
 
     private void advanceDay() {
         if (clock.getDay() >= MAX_DAYS) {
-            dialogueManager.addDialogue("Game Over. Your score was: "
-                    + score, selectedOption -> gameOver = true);
+            dialogueManager.addDialogue("Today is the day of your exam!" +
+                    "\nI hope you studied well!", selectedOption -> gameOver = true);
             return;
         }
 
