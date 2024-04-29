@@ -92,9 +92,9 @@ public class GameOverScreen implements Screen {
         // Get game stats
         int[] gameInfo = new int[]{
                 stats[0],
-                activities.get("study").getCount(),
-                activities.get("recreation").getCount(),
-                activities.get("eat").getCount(),
+                activities.get("study").getTimesCompleted(),
+                activities.get("recreation").getTimesCompleted(),
+                activities.get("eat").getTimesCompleted(),
                 numAchievements,
                 achievements.size() - numAchievements
         };

@@ -303,7 +303,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Collisions">
+ <objectgroup id="4" name="Collisions" visible="0">
   <object id="208" x="208" y="192" width="112" height="160"/>
   <object id="209" x="192" y="284" width="112" height="164"/>
   <object id="210" x="184" y="420" width="104" height="124"/>
@@ -468,22 +468,25 @@
    <properties>
     <property name="activity" value="eat"/>
     <property name="energy_cost" type="int" value="10"/>
-    <property name="failed_message" value="You can't do that at the moment"/>
-    <property name="hours" value="1"/>
+    <property name="hours" type="int" value="1"/>
+    <property name="limit" type="int" value="4"/>
+    <property name="prompt_message" value="Do you want to eat a meal in the Ron Cooke Hub?"/>
     <property name="score" type="int" value="100"/>
     <property name="success_message" value="You took an hour to eat, you lost 10 energy."/>
+    <property name="type" value="eat"/>
    </properties>
   </object>
   <object id="438" x="544" y="864" width="48" height="32">
    <properties>
     <property name="activity" value="study"/>
     <property name="energy_cost" type="int" value="20"/>
-    <property name="failed_message" value="You can't do that at the moment"/>
-    <property name="hours" value="2"/>
-    <property name="prompt_message" value="Do you want to study in the Piazza?"/>
+    <property name="hours" type="int" value="2"/>
+    <property name="limit" type="int" value="2"/>
+    <property name="prompt_message" value="Do you want to study in the Computer Science Building?"/>
     <property name="score" type="int" value="200"/>
     <property name="success_message">You studied for 2 hours!
 You lost 20 energy</property>
+    <property name="type" value="study"/>
    </properties>
   </object>
   <object id="444" x="1536" y="364" width="16" height="16"/>
@@ -544,25 +547,27 @@ You lost 20 energy</property>
   </object>
   <object id="462" x="1808" y="560" width="48" height="32">
    <properties>
-    <property name="activity" value="recreation"/>
+    <property name="activity" value="gym"/>
     <property name="energy_cost" type="int" value="20"/>
-    <property name="failed_message" value="You can't do that at the moment"/>
-    <property name="hours" value="2"/>
+    <property name="hours" type="int" value="2"/>
+    <property name="limit" type="int" value="2"/>
     <property name="prompt_message" value="Do you want to spend 2 hours in the gym?"/>
     <property name="score" type="int" value="20"/>
     <property name="success_message">You spent 2 hours in the gym!
 You lost 20 energy</property>
+    <property name="type" value="recreation"/>
    </properties>
   </object>
   <object id="469" x="528" y="1248" width="64" height="32">
    <properties>
     <property name="activity" value="ducks"/>
     <property name="energy_cost" type="int" value="10"/>
-    <property name="failed_message" value="You can't relax at the moment"/>
-    <property name="hours" value="1"/>
+    <property name="hours" type="int" value="1"/>
+    <property name="limit" type="int" value="-1"/>
     <property name="prompt_message" value="Do you want to feed the ducks?"/>
     <property name="score" type="int" value="100"/>
     <property name="success_message" value="You spent an hour feeding the ducks!"/>
+    <property name="type" value="recreation"/>
    </properties>
   </object>
   <object id="472" x="64" y="1432" width="60" height="48">
@@ -577,11 +582,13 @@ You lost 20 energy</property>
     <property name="activity" value="study"/>
     <property name="energy_cost" type="int" value="20"/>
     <property name="failed_message" value="You can't do that at the moment"/>
-    <property name="hours" value="2"/>
+    <property name="hours" type="int" value="2"/>
+    <property name="limit" type="int" value="2"/>
     <property name="prompt_message" value="Do you want to study in the Piazza?"/>
     <property name="score" type="int" value="200"/>
     <property name="success_message">You studied for 2 hours!
 You lost 20 energy!</property>
+    <property name="type" value="study"/>
    </properties>
   </object>
  </objectgroup>

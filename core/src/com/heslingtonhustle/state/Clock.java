@@ -73,6 +73,18 @@ public class Clock {
     }
 
     /**
+     * Passes a number of hours of in game time
+     * @param hours The hours to pass
+     */
+    public void passHours(float hours) {
+        timeUnits += hours * 60;
+        if (timeUnits >= 1440) {
+            timeUnits -= 1440;
+            day += 1;
+        }
+    }
+
+    /**
      * Increments the day by 1
      */
     public void incrementDay() {
