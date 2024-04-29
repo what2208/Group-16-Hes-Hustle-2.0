@@ -8,14 +8,17 @@ import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.Achievement;
 import com.heslingtonhustle.state.Activity;
+import sun.awt.image.ImageWatched;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 
 /**
  * A screen to display the user's score, along with any secret achievements
@@ -27,22 +30,26 @@ public class GameOverScreen implements Screen {
     private final Texture backgroundTexture;
     private Texture pageTexture;
     private HashMap<String, Activity> activities;
-    private int[] stats;
-
+    private boolean stepAchievement;
 
     private HashSet<Achievement> achievements = new HashSet<>();
     private int numAchievements = 0;
     private final HeslingtonHustleGame parentClass;
+
+    // The scores for each category
+    private HashMap<String, Integer> categoryScores = new HashMap<String, Integer>();
+    // The number of times an event in each category was completed
+    private HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
 
 
     /**
      * Creates the screen and fills in all the user's score information
      * @param parentClass
      */
-    public GameOverScreen(HeslingtonHustleGame parentClass, HashMap<String, Activity> activities, int[] stats) {
+    public GameOverScreen(HeslingtonHustleGame parentClass, HashMap<String, Activity> activities, boolean stepAchievement) {
         this.parentClass = parentClass;
         this.activities = activities;
-        this.stats = stats;
+        this.stepAchievement = stepAchievement;
 
         // UI Stage
         stage = new Stage(new FitViewport(parentClass.WIDTH, parentClass.HEIGHT));
@@ -54,6 +61,7 @@ public class GameOverScreen implements Screen {
         stage.addActor(backgroundImage);
 
         // Figure out which achievements/penalties the player has got
+        populateCategoryInformation();
         getAchievements();
         getPenalties();
 
@@ -67,16 +75,68 @@ public class GameOverScreen implements Screen {
     /**
      * Calculates the final score the player got
      * @return The player's score
-     * TODO: Change
      */
     private int calcScore() {
-        return 1400;
+        int score = 0;
+
+        // Add score for activities
+        for (Activity activity : activities.values()) {
+            score += activity.getScore() * activity.getTimesCompleted();
+        }
+
+        // Add/minus penalties and achievements
+        for (Achievement achievement : achievements) {
+            score += achievement.getScore();
+        }
+
+//        if (score < 0) {
+//            return 0;
+//        }
+        return score;
+    }
+
+    /**
+     * Populates the HashMaps for the amount of score gained from
+     * each category and the number of times an event in each category
+     * was completed.
+     */
+    private void populateCategoryInformation() {
+        categoryScores.put("sleep", 0);
+        categoryScores.put("study", 0);
+        categoryScores.put("recreation", 0);
+        categoryScores.put("eat", 0);
+
+        categoryHours.put("sleep", 0);
+        categoryHours.put("study", 0);
+        categoryHours.put("recreation", 0);
+        categoryHours.put("eat", 0);
+
+        // For each activity
+        for (Activity activity : activities.values()) {
+            // Find the score for this type, and add this activity's score
+            int score = categoryScores.get(activity.getScoreType());
+            categoryScores.put(activity.getScoreType(), score + activity.getScore() * activity.getTimesCompleted());
+
+            // Same with the number of times completed
+            // For eating just add times done
+            if (activity.getScoreType() == "eat") {
+                int times = categoryHours.get(activity.getScoreType());
+                categoryHours.put("eat", times + activity.getTimesCompleted());
+            } else {
+                int hours = categoryHours.get(activity.getScoreType());
+                categoryHours.put(activity.getScoreType(), hours + activity.getHoursSpent());
+            }
+        }
+
     }
 
 
+    /**
+     * Formats and draws the player's score breakdown in the form
+     * of a report card
+     */
     private void drawScorePaper() {
-
-        // Page texture
+        // Background page
         pageTexture = new Texture("Graphics/UI/Gameover/page.png");
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
@@ -89,37 +149,28 @@ public class GameOverScreen implements Screen {
         gameOver.setPosition((parentClass.WIDTH - gameOver.getWidth()) / 2 - 20, parentClass.HEIGHT-150);
         stage.addActor(gameOver);
 
-        // Get game stats
-        int[] gameInfo = new int[]{
-                stats[0],
-                activities.get("study").getTimesCompleted(),
-                activities.get("recreation").getTimesCompleted(),
-                activities.get("eat").getTimesCompleted(),
-                numAchievements,
-                achievements.size() - numAchievements
-        };
 
-        // Lines
-        String[] lines = new String[]{
-                "Hours slept: ",
-                "Hours studied: ",
-                "Hours of fun: ",
-                "Times ate: ",
-                "Achievements: ",
-                "Penalties: "
-        };
+        // The individual score lines to write to the paper
+        Array<String> scoreLines = new Array<String>();
+        scoreLines.add("Hours slept: " + categoryHours.get("sleep"));
+        scoreLines.add("Hours studied: " + categoryHours.get("study"));
+        scoreLines.add("Hours of fun: " + categoryHours.get("recreation"));
+        scoreLines.add("Times ate: " + categoryHours.get("eat"));
+        scoreLines.add("Achievements: " + numAchievements);
+        scoreLines.add("Penalties: " + (achievements.size() - numAchievements));
 
         // Draw lines of text
-        for (int i = 0; i < gameInfo.length; i++) {
+        for (int i = 0; i < scoreLines.size; i++) {
             // After the 4th line add a break
             int j = (i >= 4) ? 1 : 0;
-            Label line = new Label(lines[i] + gameInfo[i], parentClass.skin, "handwriting48px");
+            Label line = new Label(scoreLines.get(i), parentClass.skin, "handwriting48px");
 
             line.setPosition(parentClass.WIDTH / 2 - 183, parentClass.HEIGHT - ((i+j)*48 + 239));
             stage.addActor(line);
         }
 
-        // Score text
+
+        // Final score text
         Label scoreText = new Label("Score: " + calcScore(), parentClass.skin, "handwriting64px");
         scoreText.setPosition((parentClass.WIDTH - gameOver.getWidth()) / 2 - 20, 93);
         stage.addActor(scoreText);
@@ -150,19 +201,24 @@ public class GameOverScreen implements Screen {
         for (Achievement achievement : achievements) {
             TextButton banner = new TextButton(achievement.getTitle(), parentClass.skin, "banner");
             Label description = new Label(achievement.getDescription(), parentClass.skin, "achievementlabel");
+            Label score = new Label(Integer.toString(achievement.getScore()), parentClass.skin, "achievementscore");
 
             if (achievement.isPositive()) {
                 // Achievement
                 achievementTable.add(banner).padBottom(20).prefWidth(300);
                 achievementTable.row();
-                achievementTable.add(description).padBottom(20);
+                achievementTable.add(description).padBottom(10);
+                achievementTable.row();
+                achievementTable.add(score);
                 achievementTable.row();
             } else {
                 // Penalty
                 banner.setDisabled(true);
                 penaltyTable.add(banner).padBottom(20).prefWidth(300);
                 penaltyTable.row();
-                penaltyTable.add(description).padBottom(20);
+                penaltyTable.add(description).padBottom(10);
+                penaltyTable.row();
+                penaltyTable.add(score);
                 penaltyTable.row();
             }
 
@@ -174,7 +230,7 @@ public class GameOverScreen implements Screen {
         stage.addActor(achievementTable);
 
         penaltyTable.setWidth(300);
-        penaltyTable.setPosition(60, (parentClass.HEIGHT - achievementTable.getHeight()) / 2 + 30);
+        penaltyTable.setPosition(30, (parentClass.HEIGHT - achievementTable.getHeight()) / 2 + 30);
         stage.addActor(penaltyTable);
 
 
@@ -221,57 +277,82 @@ public class GameOverScreen implements Screen {
      * TODO: Make these conditional
      */
     private void getAchievements() {
-        achievements.add(new Achievement(
-                "Walker",
-                "Walk 200 steps each day",
-                200
-        ));
+        if (stepAchievement) {
+            achievements.add(new Achievement(
+                    "Walker",
+                    "Walk 200 steps each day",
+                    200
+            ));
+            numAchievements += 1;
+        }
 
-        achievements.add(new Achievement(
-                "Clubber",
-                "Go clubbing at least once",
-                500
-        ));
+        // Give if the player went clubbing at least once
+        if (activities.containsKey("club")) {
+            achievements.add(new Achievement(
+                    "Clubber",
+                    "Go clubbing at least once",
+                    500
+            ));
+            numAchievements += 1;
+        }
 
-        achievements.add(new Achievement(
-                "Duck duck go",
-                "Feed the ducks 6 times",
-                300
-        ));
-
-        numAchievements += 3;
+        // Give if the player fed the ducks at least six times
+        if (activities.containsKey("ducks")) {
+            if (activities.get("ducks").getTimesCompleted() >= 6) {
+                achievements.add(new Achievement(
+                        "Duck duck go",
+                        "Feed the ducks 6 times",
+                        300
+                ));
+                numAchievements += 1;
+            }
+        }
 
     }
 
     /**
      * Adds negative achievements, or 'penalties' if the player has not eaten
      * or studied enough etc.
-     * TODO: Make these conditional
+     * If the player hasn't done a type of activity, they get given a
+     * 'super' penalty, which takes off even more points.
      */
     private void getPenalties() {
-        achievements.add(new Achievement(
-                "Zombie",
-                "You didn't get enough sleep!",
-                -500
-        ));
+        // Player should ideally get between 50-60 hours of sleep each week
+        if (categoryHours.get("sleep") < 50 ) {
+            achievements.add(new Achievement(
+                    "Zombie",
+                    "You didn't get enough sleep!",
+                    -500
+            ));
+        }
 
-        achievements.add(new Achievement(
-                "Clueless",
-                "You didn't study enough!",
-                -1000
-        ));
+        // 2 hours of study each day
+        if (categoryHours.get("study") < 14) {
+            achievements.add(new Achievement(
+                    "Clueless",
+                    "You didn't study enough!",
+                    -1000
+            ));
+        }
 
-        achievements.add(new Achievement(
-                "Hungry",
-                "You didn't eat well enough!",
-                -500
-        ));
+        // Eat 3 meals a day
+        if (categoryHours.get("eat") < 21) {
+            achievements.add(new Achievement(
+                    "Hungry",
+                    "You didn't eat well enough!",
+                    -500
+            ));
+        }
 
-        achievements.add(new Achievement(
-                "Party Pooper",
-                "You didn't have enough fun!",
-                -200
-        ));
+        // Two hours of fun each day
+        if (categoryHours.get("recreation") < 14) {
+            achievements.add(new Achievement(
+                    "Party Pooper",
+                    "You didn't have enough fun!",
+                    -500
+            ));
+        }
+
     }
 
 

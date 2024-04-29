@@ -14,6 +14,7 @@ public class Activity {
     private int hours;
     private int timesCompleted = 0;
     private int timesCompletedToday = 0;
+    private int hoursSpent = 0;
     private int maxPerDay;
 
 
@@ -90,12 +91,20 @@ public class Activity {
     }
 
     /**
+     * @return The total hours spent doing this particular activity
+     */
+    public int getHoursSpent() {
+        return hoursSpent;
+    }
+
+    /**
      * Increments the value for the number of times the activity has
      * been completed. Doesn't check for any limits
      */
     public void completeActivity() {
         timesCompleted++;
         timesCompletedToday++;
+        hoursSpent += hours;
     }
 
     /**

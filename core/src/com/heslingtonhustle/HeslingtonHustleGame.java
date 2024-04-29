@@ -77,11 +77,11 @@ public class HeslingtonHustleGame extends Game {
 	 * @param stats A list of ints representing the number of hours slept,
 	 *              achievements found, and penalties respectively.
 	 */
-	public void gameOver(HashMap<String, Activity> activitiesCompleted, int[] stats) {
+	public void gameOver(HashMap<String, Activity> activitiesCompleted, boolean stepAchievement) {
 		if (currentScreen != null) {
 			currentScreen.dispose();
 		}
-		currentScreen = new GameOverScreen(this, activitiesCompleted, stats);
+		currentScreen = new GameOverScreen(this, activitiesCompleted, stepAchievement);
 		setScreen(currentScreen);
 
 

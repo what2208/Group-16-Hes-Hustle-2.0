@@ -23,6 +23,7 @@ public class Player {
     private final float height;
     private final float scale = 2f;
     private float distanceTravelled = 0;
+    private int daysWalkedOver200Steps = 0;
 
     /**
      * @param startingX Spawn location
@@ -225,5 +226,20 @@ public class Player {
      */
     public void resetDistanceTravelled() {
         distanceTravelled = 0;
+    }
+
+    /**
+     * Reset's the player's daily step count
+     * If the player walked over 200 steps, this is counted
+     */
+    public void resetStepCounter() {
+        if (distanceTravelled > 200) {
+            daysWalkedOver200Steps++;
+        }
+        distanceTravelled = 0;
+    }
+
+    public boolean getStepAchievement() {
+        return daysWalkedOver200Steps == 7;
     }
 }

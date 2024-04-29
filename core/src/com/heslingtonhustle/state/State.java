@@ -161,7 +161,7 @@ public class State {
             if (!activities.containsKey("sleep")) {
                 activities.put("sleep", new Activity(
                         "sleep", "sleep",
-                        5, 0, 0, -1)
+                        5, 0, 8, -1)
                 );
             }
 
@@ -416,5 +416,12 @@ public class State {
      */
     public HashMap<String, Activity> getActivities() {
         return activities;
+    }
+
+    /**
+     * @return True if the player walked at least x steps on each day
+     */
+    public boolean getPlayerStepAchievement() {
+        return player.getStepAchievement();
     }
 }

@@ -471,7 +471,7 @@
     <property name="hours" type="int" value="1"/>
     <property name="limit" type="int" value="4"/>
     <property name="prompt_message" value="Do you want to eat a meal in the Ron Cooke Hub?"/>
-    <property name="score" type="int" value="100"/>
+    <property name="score" type="int" value="50"/>
     <property name="success_message" value="You took an hour to eat, you lost 10 energy."/>
     <property name="type" value="eat"/>
    </properties>
@@ -483,7 +483,7 @@
     <property name="hours" type="int" value="2"/>
     <property name="limit" type="int" value="2"/>
     <property name="prompt_message" value="Do you want to study in the Computer Science Building?"/>
-    <property name="score" type="int" value="200"/>
+    <property name="score" type="int" value="400"/>
     <property name="success_message">You studied for 2 hours!
 You lost 20 energy</property>
     <property name="type" value="study"/>
@@ -552,7 +552,7 @@ You lost 20 energy</property>
     <property name="hours" type="int" value="2"/>
     <property name="limit" type="int" value="2"/>
     <property name="prompt_message" value="Do you want to spend 2 hours in the gym?"/>
-    <property name="score" type="int" value="20"/>
+    <property name="score" type="int" value="200"/>
     <property name="success_message">You spent 2 hours in the gym!
 You lost 20 energy</property>
     <property name="type" value="recreation"/>
@@ -565,7 +565,7 @@ You lost 20 energy</property>
     <property name="hours" type="int" value="1"/>
     <property name="limit" type="int" value="-1"/>
     <property name="prompt_message" value="Do you want to feed the ducks?"/>
-    <property name="score" type="int" value="100"/>
+    <property name="score" type="int" value="75"/>
     <property name="success_message" value="You spent an hour feeding the ducks!"/>
     <property name="type" value="recreation"/>
    </properties>
@@ -585,7 +585,7 @@ You lost 20 energy</property>
     <property name="hours" type="int" value="2"/>
     <property name="limit" type="int" value="2"/>
     <property name="prompt_message" value="Do you want to study in the Piazza?"/>
-    <property name="score" type="int" value="200"/>
+    <property name="score" type="int" value="400"/>
     <property name="success_message">You studied for 2 hours!
 You lost 20 energy!</property>
     <property name="type" value="study"/>

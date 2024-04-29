@@ -20,7 +20,7 @@ energy_bar_outline
   index: -1
 1peg
   rotate: false
-  xy: 229, 16
+  xy: 2017, 1661
   size: 12, 24
   orig: 12, 24
   offset: 0, 0
@@ -34,7 +34,7 @@ energy_bar_outline
   index: -1
 achievement
   rotate: false
-  xy: 772, 374
+  xy: 1, 12
   size: 160, 80
   split: 51, 51, 16, 16
   pad: 0, 0, 0, 0
@@ -43,7 +43,7 @@ achievement
   index: -1
 day_background
   rotate: false
-  xy: 508, 135
+  xy: 163, 40
   size: 104, 52
   split: 13, 13, 13, 17
   pad: 0, 0, 0, 0
@@ -52,7 +52,7 @@ day_background
   index: -1
 penalty
   rotate: false
-  xy: 203, 42
+  xy: 772, 256
   size: 160, 80
   split: 51, 51, 16, 16
   pad: 0, 0, 0, 0
@@ -61,7 +61,7 @@ penalty
   index: -1
 time_backdrop
   rotate: false
-  xy: 1, 6
+  xy: 772, 338
   size: 200, 116
   split: 37, 37, 37, 29
   pad: 0, 0, 0, 0
@@ -79,7 +79,7 @@ time_background
   index: -1
 window9
   rotate: false
-  xy: 687, 123
+  xy: 342, 28
   size: 64, 64
   split: 17, 16, 17, 17
   pad: 0, 0, 0, 0
@@ -88,14 +88,14 @@ window9
   index: -1
 time_image_background
   rotate: false
-  xy: 365, 2
+  xy: 1851, 1639
   size: 120, 120
   orig: 120, 120
   offset: 0, 0
   index: -1
 button_hover
   rotate: false
-  xy: 1707, 1647
+  xy: 772, 142
   size: 104, 112
   split: 17, 17, 17, 25
   pad: 0, 0, 0, 0
@@ -104,7 +104,7 @@ button_hover
   index: -1
 button_pressed
   rotate: false
-  xy: 1813, 1655
+  xy: 508, 83
   size: 104, 104
   split: 17, 17, 25, 21
   pad: 0, 0, 0, 0
@@ -113,7 +113,7 @@ button_pressed
   index: -1
 button_ready
   rotate: false
-  xy: 1919, 1647
+  xy: 614, 75
   size: 104, 112
   split: 17, 17, 18, 25
   pad: 0, 0, 0, 0
@@ -122,14 +122,14 @@ button_ready
   index: -1
 checkbox
   rotate: false
-  xy: 487, 104
+  xy: 342, 8
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
   index: -1
 checkbox-on
   rotate: false
-  xy: 772, 195
+  xy: 1087, 1557
   size: 18, 18
   orig: 18, 18
   offset: 0, 0
@@ -145,7 +145,7 @@ cursor
   index: -1
 dialoguebox
   rotate: false
-  xy: 934, 382
+  xy: 1973, 1687
   size: 72, 72
   split: 13, 12, 13, 13
   pad: 0, 0, 0, 0
@@ -154,7 +154,7 @@ dialoguebox
   index: -1
 font-export
   rotate: false
-  xy: 772, 229
+  xy: 1707, 1616
   size: 142, 143
   orig: 142, 143
   offset: 0, 0
@@ -168,7 +168,7 @@ font-title-export
   index: -1
 horizontal-split-pane
   rotate: false
-  xy: 753, 176
+  xy: 1590, 1674
   size: 5, 11
   split: 2, 2, 2, 2
   orig: 5, 11
@@ -176,7 +176,7 @@ horizontal-split-pane
   index: -1
 list
   rotate: false
-  xy: 772, 215
+  xy: 1537, 1673
   size: 51, 12
   split: 2, 2, 2, 2
   pad: 5, 5, 5, 5
@@ -185,7 +185,7 @@ list
   index: -1
 minus
   rotate: false
-  xy: 203, 1
+  xy: 1537, 1658
   size: 12, 13
   orig: 12, 13
   offset: 0, 0
@@ -206,14 +206,14 @@ nihonium113.regular(1)
   index: -1
 plus
   rotate: false
-  xy: 217, 1
+  xy: 974, 397
   size: 12, 13
   orig: 12, 13
   offset: 0, 0
   index: -1
 progress-bar
   rotate: false
-  xy: 1536, 1597
+  xy: 720, 141
   size: 46, 46
   split: 10, 10, 10, 10
   pad: 6, 6, 6, 6
@@ -229,28 +229,28 @@ progress-bar-fill
   index: -1
 progress-bar-fill-vert
   rotate: false
-  xy: 1, 3
+  xy: 934, 335
   size: 34, 1
   orig: 34, 1
   offset: 0, 0
   index: -1
 radio
   rotate: false
-  xy: 916, 356
+  xy: 878, 196
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 radio-on
   rotate: false
-  xy: 2025, 1743
+  xy: 720, 123
   size: 16, 16
   orig: 16, 16
   offset: 0, 0
   index: -1
 round-white
   rotate: false
-  xy: 1590, 1643
+  xy: 974, 412
   size: 42, 42
   split: 13, 13, 13, 13
   pad: 9, 9, 5, 5
@@ -259,7 +259,7 @@ round-white
   index: -1
 round-white-small
   rotate: false
-  xy: 203, 16
+  xy: 163, 14
   size: 24, 24
   split: 10, 10, 10, 10
   pad: 10, 10, 2, 2
@@ -268,7 +268,7 @@ round-white-small
   index: -1
 selectbox
   rotate: false
-  xy: 1537, 1645
+  xy: 878, 214
   size: 51, 40
   split: 2, 31, 2, 27
   pad: 2, 35, 2, 2
@@ -277,7 +277,7 @@ selectbox
   index: -1
 selection
   rotate: false
-  xy: 934, 371
+  xy: 1, 1
   size: 9, 9
   split: 2, 1, 2, 1
   pad: 4, 3, 4, 3
@@ -286,7 +286,7 @@ selection
   index: -1
 slider-horizontal
   rotate: false
-  xy: 1087, 1565
+  xy: 1851, 1627
   size: 20, 10
   split: 4, 4, 4, 4
   pad: 1, 2, 2, 2
@@ -295,14 +295,14 @@ slider-horizontal
   index: -1
 slider-knob
   rotate: false
-  xy: 687, 97
+  xy: 408, 68
   size: 24, 24
   orig: 24, 24
   offset: 0, 0
   index: -1
 slider-vertical
   rotate: false
-  xy: 1008, 434
+  xy: 934, 313
   size: 9, 20
   split: 4, 3, 3, 3
   pad: 3, 3, 2, 2
@@ -311,7 +311,7 @@ slider-vertical
   index: -1
 textfield
   rotate: false
-  xy: 1634, 1643
+  xy: 1973, 1643
   size: 42, 42
   split: 8, 8, 8, 8
   orig: 42, 42
@@ -319,7 +319,7 @@ textfield
   index: -1
 vertical-split-pane
   rotate: false
-  xy: 1813, 1648
+  xy: 342, 1
   size: 11, 5
   split: 2, 2, 1, 1
   pad: 1, 1, 1, 1
@@ -328,14 +328,14 @@ vertical-split-pane
   index: -1
 white
   rotate: false
-  xy: 508, 132
+  xy: 931, 253
   size: 1, 1
   orig: 1, 1
   offset: 0, 0
   index: -1
 window
   rotate: false
-  xy: 614, 96
+  xy: 269, 1
   size: 71, 91
   split: 15, 15, 35, 15
   pad: 9, 10, 37, 5
@@ -368,6 +368,13 @@ Minecraftia-Regular(6)
   xy: 1029, 1577
   size: 505, 77
   orig: 505, 77
+  offset: 0, 0
+  index: -1
+Minecraftia-Regular(7)
+  rotate: false
+  xy: 1, 94
+  size: 504, 28
+  orig: 504, 28
   offset: 0, 0
   index: -1
 Notepen(4)

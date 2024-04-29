@@ -62,11 +62,7 @@ public class PlayScreen implements Screen {
         if (gameState.isGameOver()) {
             heslingtonHustleGame.gameOver(
                     gameState.getActivities(),
-                    new int[]{
-                            gameState.getHoursSlept(),
-                            2,
-                            1
-                    });
+                    gameState.getPlayerStepAchievement());
         }
     }
 
