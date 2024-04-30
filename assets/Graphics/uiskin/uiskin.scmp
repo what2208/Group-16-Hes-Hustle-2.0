@@ -3,66 +3,6 @@ atlasData: {
 	atlasCurrent: true
 	drawables: [
 		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/button_hover.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: button_hover
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/button_pressed.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: button_pressed
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/button_ready.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: button_ready
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
 			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/checkbox.png
 			bgColor: {
 				r: 1
@@ -882,6 +822,106 @@ atlasData: {
 			type: NINE_PATCH
 			hidden: false
 		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/popupwindow.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: popupwindow
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/button_ready.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: button_ready
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/button_pressed.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: button_pressed
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/button_hover.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: button_hover
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/entrybox.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: entrybox
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
 	]
 	fontDrawables: [
 		{
@@ -1499,7 +1539,7 @@ jsonData: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: font
 						optional: false
-						value: button40px
+						value: Minecraftia32px
 					}
 					fontColor: {
 						type: com.badlogic.gdx.graphics.Color
@@ -1619,7 +1659,7 @@ jsonData: {
 						type: float
 						name: pressedOffsetY
 						optional: true
-						value: -7
+						value: -25
 					}
 					unpressedOffsetX: {
 						type: float
@@ -1631,7 +1671,7 @@ jsonData: {
 						type: float
 						name: unpressedOffsetY
 						optional: true
-						value: 0
+						value: -16
 					}
 					checkedOffsetX: {
 						type: float
@@ -1643,7 +1683,7 @@ jsonData: {
 						type: float
 						name: checkedOffsetY
 						optional: true
-						value: 0
+						value: -16
 					}
 				}
 				deletable: false
@@ -2194,6 +2234,39 @@ jsonData: {
 				deletable: true
 				parent: null
 			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: popup
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Window
+				properties: {
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: popupwindow
+					}
+					titleFont: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: titleFont
+						optional: false
+						value: Minecraftia24pxachievement
+					}
+					titleFontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: titleFontColor
+						optional: true
+						value: null
+					}
+					stageBackground: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: stageBackground
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
 		]
 		com.badlogic.gdx.scenes.scene2d.ui.ScrollPane: [
 			{
@@ -2252,19 +2325,19 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: imageUp
 						optional: true
-						value: button_ready
+						value: null
 					}
 					imageDown: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: imageDown
 						optional: true
-						value: button_pressed
+						value: null
 					}
 					imageOver: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: imageOver
 						optional: true
-						value: button_hover
+						value: null
 					}
 					imageDisabled: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -2868,13 +2941,13 @@ jsonData: {
 						type: com.badlogic.gdx.graphics.g2d.BitmapFont
 						name: font
 						optional: false
-						value: font
+						value: Notepen48px
 					}
 					fontColor: {
 						type: com.badlogic.gdx.graphics.Color
 						name: fontColor
 						optional: false
-						value: black
+						value: RGBA_80_48_0_255
 					}
 					focusedFontColor: {
 						type: com.badlogic.gdx.graphics.Color
@@ -2892,7 +2965,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: true
-						value: textfield
+						value: entrybox
 					}
 					focusedBackground: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -4052,6 +4125,33 @@ jsonData: {
 						name: fontColor
 						optional: true
 						value: null
+					}
+					background: {
+						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
+						name: background
+						optional: true
+						value: null
+					}
+				}
+				deletable: true
+				parent: null
+			}
+			{
+				class: com.ray3k.skincomposer.data.StyleData
+				name: smallerror
+				clazz: com.badlogic.gdx.scenes.scene2d.ui.Label
+				properties: {
+					font: {
+						type: com.badlogic.gdx.graphics.g2d.BitmapFont
+						name: font
+						optional: false
+						value: Minecraftia16px
+					}
+					fontColor: {
+						type: com.badlogic.gdx.graphics.Color
+						name: fontColor
+						optional: true
+						value: red
 					}
 					background: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

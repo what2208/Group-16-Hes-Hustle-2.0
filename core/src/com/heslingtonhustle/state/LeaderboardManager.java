@@ -3,14 +3,18 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
+import com.sun.tools.javac.util.StringUtils;
 
 import java.util.LinkedHashMap;
+import java.util.regex.Pattern;
 
 /**
  * A class to manage reading from and writing to the leaderboard
  * Can also handle inserting a new element into the leaderbaord
  */
 public class LeaderboardManager {
+    // Regex to check names against
+    private static final Pattern namePattern = Pattern.compile("[^a-zA-Z0-9 ]");
 
     /**
      * A small class to store information about a name and a score
@@ -22,6 +26,25 @@ public class LeaderboardManager {
             this.name = name;
             this.score = score;
         }
+    }
+
+    /**
+     * Checks whether a name is valid to add to the leaderboard
+     * @param name The name to add
+     * @return True if the name is valid
+     */
+    public static boolean isValidName(String name) {
+        if (name == null) {
+            return false;
+        }
+        name = name.trim();
+        // Check for blank name
+        if (name.replace(" ", "").isEmpty()) {
+            return false;
+        }
+
+        // A name only contains letters and numbers
+        return !namePattern.matcher(name).find();
     }
 
     /**
@@ -124,8 +147,5 @@ public class LeaderboardManager {
         file.writeString(stringToWrite, false);
 
         return scoreWritten;
-
-
-
     }
 }

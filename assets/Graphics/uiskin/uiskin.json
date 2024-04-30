@@ -221,9 +221,6 @@ com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {
 	default: {
-		imageUp: button_ready
-		imageDown: button_pressed
-		imageOver: button_hover
 		font: font
 		down: round-dark-gray
 	}
@@ -277,6 +274,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 	}
 	leaderboardscore: {
 		font: Minecraftia32px
+	}
+	smallerror: {
+		font: Minecraftia16px
+		fontColor: red
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
@@ -334,11 +335,13 @@ com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 	default: {
-		font: button40px
+		font: Minecraftia32px
 		up: button_ready
 		down: button_pressed
 		over: button_hover
-		pressedOffsetY: -7
+		pressedOffsetY: -25
+		unpressedOffsetY: -16
+		checkedOffsetY: -16
 	}
 	toggle: {
 		font: font
@@ -369,9 +372,9 @@ com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.TextField$TextFieldStyle: {
 	default: {
-		font: font
-		fontColor: black
-		background: textfield
+		font: Notepen48px
+		fontColor: RGBA_80_48_0_255
+		background: entrybox
 		cursor: cursor
 		selection: gray
 	}
@@ -397,6 +400,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Window$WindowStyle: {
 	dialog: {
 		background: dialoguebox
 		titleFont: nihonium113regular130px
+	}
+	popup: {
+		background: popupwindow
+		titleFont: Minecraftia24pxachievement
 	}
 }
 }

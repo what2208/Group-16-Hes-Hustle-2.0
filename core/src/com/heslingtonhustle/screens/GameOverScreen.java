@@ -14,6 +14,7 @@ import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.Achievement;
 import com.heslingtonhustle.state.Activity;
+import com.heslingtonhustle.state.LeaderboardManager;
 import sun.awt.image.ImageWatched;
 
 import java.util.HashMap;
@@ -25,16 +26,19 @@ import java.util.LinkedHashMap;
  * or debuffs they encountered.
  */
 public class GameOverScreen implements Screen {
+    private final HeslingtonHustleGame parentClass;
+    // UI Elements
     private final Stage stage;
     private Table optionsTable;
     private final Texture backgroundTexture;
     private Texture pageTexture;
+    private Window queryWindow, nameEntryWindow;
+
+    // Player game data
     private HashMap<String, Activity> activities;
     private boolean stepAchievement;
-
     private HashSet<Achievement> achievements = new HashSet<>();
     private int numAchievements = 0;
-    private final HeslingtonHustleGame parentClass;
 
     // The scores for each category
     private HashMap<String, Integer> categoryScores = new HashMap<String, Integer>();
@@ -69,6 +73,13 @@ public class GameOverScreen implements Screen {
         drawScorePaper();
         // Draw banners for penalties and achievements
         drawBanners();
+
+        // Popup windows
+        queryWindow = leaderBoardQueryScreen();
+        stage.addActor(queryWindow);
+
+        nameEntryWindow = enterNameWindow();
+        stage.addActor(nameEntryWindow);
 
     }
 
@@ -184,8 +195,10 @@ public class GameOverScreen implements Screen {
         continueButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                parentClass.soundController.playSound(Sounds.CONFIRM);
-                parentClass.changeScreen(AvailableScreens.MenuScreen);
+                if (!queryWindow.isVisible() && !nameEntryWindow.isVisible()) {
+                    parentClass.soundController.playSound(Sounds.CONFIRM);
+                    queryWindow.setVisible(true);
+                }
             }
         });
     }
@@ -234,6 +247,122 @@ public class GameOverScreen implements Screen {
         stage.addActor(penaltyTable);
 
 
+    }
+
+    /**
+     * A simple popup window that asks the user if they would like to
+     * submit their score to the leaderboard
+     * @return
+     */
+    private Window leaderBoardQueryScreen() {
+        Window popupWindow = new Window("", parentClass.skin, "popup");
+        popupWindow.setSize(480, 280);
+        popupWindow.setPosition(
+                (parentClass.WIDTH - popupWindow.getWidth()) / 2,
+                (parentClass.HEIGHT - popupWindow.getHeight()) / 2
+        );
+
+        // Table for elements
+        Table popupTable = new Table();
+        popupWindow.add(popupTable).prefSize(popupWindow.getWidth(), popupTable.getHeight());
+
+        // Question
+        Label question = new Label("Submit your score to the leaderboard?", parentClass.skin, "leaderboardscore");
+        question.setWrap(true);
+        question.setAlignment(1);
+        popupTable.add(question).prefWidth(popupWindow.getWidth() * 0.9f).colspan(2).padTop(10);
+        popupTable.row().padTop(20);
+
+        // Two buttons
+        TextButton yesButton = new TextButton("Yes", parentClass.skin);
+        TextButton noButton = new TextButton("No", parentClass.skin);
+
+        popupTable.add(yesButton).prefWidth(120);
+        popupTable.add(noButton).prefWidth(120);
+
+        noButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                parentClass.soundController.playSound(Sounds.CONFIRM);
+                parentClass.changeScreen(AvailableScreens.MenuScreen);
+            }
+        });
+
+        yesButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                parentClass.soundController.playSound(Sounds.CONFIRM);
+                queryWindow.setVisible(false);
+                nameEntryWindow.setVisible(true);
+            }
+        });
+
+        popupWindow.setVisible(false);
+        return popupWindow;
+
+    }
+
+    /**
+     * A window to ask the player for their name
+     * @return
+     */
+    private Window enterNameWindow() {
+        Window popupWindow = new Window("", parentClass.skin, "popup");
+        popupWindow.setSize(480, 280);
+        popupWindow.setPosition(
+                (parentClass.WIDTH - popupWindow.getWidth()) / 2,
+                (parentClass.HEIGHT - popupWindow.getHeight()) / 2
+        );
+
+        // Table for elements
+        Table popupTable = new Table();
+        popupWindow.add(popupTable).prefSize(popupWindow.getWidth(), popupTable.getHeight());
+
+        // Question
+        Label question = new Label("Enter name:", parentClass.skin, "leaderboardscore");
+        question.setWrap(true);
+        question.setAlignment(1);
+        popupTable.add(question).prefWidth(popupWindow.getWidth() * 0.9f).colspan(2).padTop(20);
+        popupTable.row();
+
+        // Text entry field
+        TextField nameField = new TextField("", parentClass.skin);
+        nameField.setMaxLength(15);
+        popupTable.add(nameField).prefWidth(300).padBottom(15);
+        popupTable.row();
+
+        // Submit button
+        TextButton submitButton = new TextButton("Submit", parentClass.skin);
+
+        popupTable.add(submitButton).prefWidth(200).padBottom(20);
+        popupTable.row();
+
+        Label errorText = new Label("Name must be non-blank and alphanumerical!", parentClass.skin, "smallerror");
+
+        submitButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                parentClass.soundController.playSound(Sounds.CONFIRM);
+                // Check input
+                String name = nameField.getText();
+                if (LeaderboardManager.isValidName(name)) {
+                    // If valid, write this score
+                    LeaderboardManager.writeScore(name, calcScore());
+                    parentClass.changeScreen(AvailableScreens.MenuScreen);
+                } else {
+                    // Show an error message
+                    errorText.setVisible(true);
+                }
+            }
+        });
+
+        // Error text
+        popupTable.add(errorText);
+        errorText.setVisible(false);
+
+
+        popupWindow.setVisible(false);
+        return popupWindow;
     }
 
 

@@ -42,7 +42,7 @@ public class HeslingtonHustleGame extends Game {
 
 		soundController = new SoundController();
 
-		changeScreen(AvailableScreens.LeaderboardScreen);
+		changeScreen(AvailableScreens.MenuScreen);
 	}
 
 	/**
