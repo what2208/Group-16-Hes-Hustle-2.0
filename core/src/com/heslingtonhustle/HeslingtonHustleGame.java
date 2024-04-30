@@ -5,10 +5,7 @@ import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.heslingtonhustle.screens.GameOverScreen;
-import com.heslingtonhustle.screens.MenuScreen;
-import com.heslingtonhustle.screens.PlayScreen;
-import com.heslingtonhustle.screens.AvailableScreens;
+import com.heslingtonhustle.screens.*;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.Activity;
@@ -45,7 +42,7 @@ public class HeslingtonHustleGame extends Game {
 
 		soundController = new SoundController();
 
-		changeScreen(AvailableScreens.MenuScreen);
+		changeScreen(AvailableScreens.LeaderboardScreen);
 	}
 
 	/**
@@ -65,6 +62,11 @@ public class HeslingtonHustleGame extends Game {
 				currentScreen = new PlayScreen(this);
 				soundController.setMusic(Sounds.GAME);
 				break;
+			case LeaderboardScreen:
+				currentScreen = new LeaderboardScreen(this);
+				soundController.setMusic(Sounds.MENU);
+				break;
+
 		}
 		setScreen(currentScreen);
     }
@@ -74,8 +76,9 @@ public class HeslingtonHustleGame extends Game {
 	 * passing along information about the player's scoring info
 	 * @param activitiesCompleted A hashmap containing instances of activities
 	 *                            the player completed.
-	 * @param stats A list of ints representing the number of hours slept,
-	 *              achievements found, and penalties respectively.
+	 * @param stepAchievement A boolean value determining if the player
+	 *                        has earned the 'walk at least x steps each day'
+	 *                        achievement
 	 */
 	public void gameOver(HashMap<String, Activity> activitiesCompleted, boolean stepAchievement) {
 		if (currentScreen != null) {

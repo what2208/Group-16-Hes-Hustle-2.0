@@ -23,7 +23,6 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private Table optionsTable;
     private final Texture backgroundTexture;
-    private Image backgroundImage;
 
 
     public MenuScreen(HeslingtonHustleGame parentClass) {
