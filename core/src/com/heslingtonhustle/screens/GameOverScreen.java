@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
+import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.Achievement;
 import com.heslingtonhustle.state.Activity;
@@ -26,7 +27,9 @@ import java.util.LinkedHashMap;
  * or debuffs they encountered.
  */
 public class GameOverScreen implements Screen {
-    private final HeslingtonHustleGame parentClass;
+    private final HeslingtonHustleGame game;
+    private final Skin skin;
+    private final SoundController soundController;
     // UI Elements
     private final Stage stage;
     private Table optionsTable;
@@ -50,13 +53,16 @@ public class GameOverScreen implements Screen {
      * Creates the screen and fills in all the user's score information
      * @param parentClass
      */
-    public GameOverScreen(HeslingtonHustleGame parentClass, HashMap<String, Activity> activities, boolean stepAchievement) {
-        this.parentClass = parentClass;
+    public GameOverScreen(HeslingtonHustleGame game, HashMap<String, Activity> activities, boolean stepAchievement) {
+        this.game = game;
         this.activities = activities;
         this.stepAchievement = stepAchievement;
 
+        this.skin = game.skin;
+        this.soundController = game.soundController;
+
         // UI Stage
-        stage = new Stage(new FitViewport(parentClass.WIDTH, parentClass.HEIGHT));
+        stage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(stage);
 
         // Background table image
@@ -151,13 +157,13 @@ public class GameOverScreen implements Screen {
         pageTexture = new Texture("Graphics/UI/Gameover/page.png");
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
-                (parentClass.WIDTH - pageImage.getWidth()) / 2,
-                (parentClass.HEIGHT - pageImage.getHeight()) / 2);
+                (game.width - pageImage.getWidth()) / 2,
+                (game.height - pageImage.getHeight()) / 2);
         stage.addActor(pageImage);
 
         // Game over text
-        Label gameOver = new Label("Game Over!", parentClass.skin, "handwriting80px");
-        gameOver.setPosition((parentClass.WIDTH - gameOver.getWidth()) / 2 - 20, parentClass.HEIGHT-150);
+        Label gameOver = new Label("Game Over!", game.skin, "handwriting80px");
+        gameOver.setPosition((game.width - gameOver.getWidth()) / 2 - 20, game.height-150);
         stage.addActor(gameOver);
 
 
@@ -174,29 +180,29 @@ public class GameOverScreen implements Screen {
         for (int i = 0; i < scoreLines.size; i++) {
             // After the 4th line add a break
             int j = (i >= 4) ? 1 : 0;
-            Label line = new Label(scoreLines.get(i), parentClass.skin, "handwriting48px");
+            Label line = new Label(scoreLines.get(i), game.skin, "handwriting48px");
 
-            line.setPosition(parentClass.WIDTH / 2 - 183, parentClass.HEIGHT - ((i+j)*48 + 239));
+            line.setPosition(game.width / 2 - 183, game.height - ((i+j)*48 + 239));
             stage.addActor(line);
         }
 
 
         // Final score text
-        Label scoreText = new Label("Score: " + calcScore(), parentClass.skin, "handwriting64px");
-        scoreText.setPosition((parentClass.WIDTH - gameOver.getWidth()) / 2 - 20, 93);
+        Label scoreText = new Label("Score: " + calcScore(), game.skin, "handwriting64px");
+        scoreText.setPosition((game.width - gameOver.getWidth()) / 2 - 20, 93);
         stage.addActor(scoreText);
 
 
         // Continue Button
-        TextButton continueButton = new TextButton("Continue", parentClass.skin);
-        continueButton.setPosition(parentClass.WIDTH - 315, 15);
+        TextButton continueButton = new TextButton("Continue", game.skin);
+        continueButton.setPosition(game.width - 315, 15);
         continueButton.setWidth(300);
         stage.addActor(continueButton);
         continueButton.addListener(new ChangeListener() {
             @Override
-            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+            public void changed(ChangeEvent event, Actor actor) {
                 if (!queryWindow.isVisible() && !nameEntryWindow.isVisible()) {
-                    parentClass.soundController.playSound(Sounds.CONFIRM);
+                    game.soundController.playSound(Sounds.CONFIRM);
                     queryWindow.setVisible(true);
                 }
             }
@@ -212,9 +218,9 @@ public class GameOverScreen implements Screen {
         Table penaltyTable = new Table();
 
         for (Achievement achievement : achievements) {
-            TextButton banner = new TextButton(achievement.getTitle(), parentClass.skin, "banner");
-            Label description = new Label(achievement.getDescription(), parentClass.skin, "achievementlabel");
-            Label score = new Label(Integer.toString(achievement.getScore()), parentClass.skin, "achievementscore");
+            TextButton banner = new TextButton(achievement.getTitle(), skin, "banner");
+            Label description = new Label(achievement.getDescription(), skin, "achievementlabel");
+            Label score = new Label(Integer.toString(achievement.getScore()), skin, "achievementscore");
 
             if (achievement.isPositive()) {
                 // Achievement
@@ -239,11 +245,11 @@ public class GameOverScreen implements Screen {
 
         // Add both tables to the stage
         achievementTable.setWidth(300);
-        achievementTable.setPosition(parentClass.WIDTH-350, (parentClass.HEIGHT - achievementTable.getHeight()) / 2 + 30);
+        achievementTable.setPosition(game.width-350, (game.height - achievementTable.getHeight()) / 2 + 30);
         stage.addActor(achievementTable);
 
         penaltyTable.setWidth(300);
-        penaltyTable.setPosition(30, (parentClass.HEIGHT - achievementTable.getHeight()) / 2 + 30);
+        penaltyTable.setPosition(30, (game.height - achievementTable.getHeight()) / 2 + 30);
         stage.addActor(penaltyTable);
 
 
@@ -255,11 +261,11 @@ public class GameOverScreen implements Screen {
      * @return
      */
     private Window leaderBoardQueryScreen() {
-        Window popupWindow = new Window("", parentClass.skin, "popup");
+        Window popupWindow = new Window("", game.skin, "popup");
         popupWindow.setSize(480, 280);
         popupWindow.setPosition(
-                (parentClass.WIDTH - popupWindow.getWidth()) / 2,
-                (parentClass.HEIGHT - popupWindow.getHeight()) / 2
+                (game.width - popupWindow.getWidth()) / 2,
+                (game.height - popupWindow.getHeight()) / 2
         );
 
         // Table for elements
@@ -267,15 +273,15 @@ public class GameOverScreen implements Screen {
         popupWindow.add(popupTable).prefSize(popupWindow.getWidth(), popupTable.getHeight());
 
         // Question
-        Label question = new Label("Submit your score to the leaderboard?", parentClass.skin, "leaderboardscore");
+        Label question = new Label("Submit your score to the leaderboard?", game.skin, "leaderboardscore");
         question.setWrap(true);
         question.setAlignment(1);
         popupTable.add(question).prefWidth(popupWindow.getWidth() * 0.9f).colspan(2).padTop(10);
         popupTable.row().padTop(20);
 
         // Two buttons
-        TextButton yesButton = new TextButton("Yes", parentClass.skin);
-        TextButton noButton = new TextButton("No", parentClass.skin);
+        TextButton yesButton = new TextButton("Yes", game.skin);
+        TextButton noButton = new TextButton("No", game.skin);
 
         popupTable.add(yesButton).prefWidth(120);
         popupTable.add(noButton).prefWidth(120);
@@ -283,15 +289,15 @@ public class GameOverScreen implements Screen {
         noButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                parentClass.soundController.playSound(Sounds.CONFIRM);
-                parentClass.changeScreen(AvailableScreens.MenuScreen);
+                game.soundController.playSound(Sounds.CONFIRM);
+                game.switchScreen(AvailableScreens.MenuScreen, false);
             }
         });
 
         yesButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                parentClass.soundController.playSound(Sounds.CONFIRM);
+                game.soundController.playSound(Sounds.CONFIRM);
                 queryWindow.setVisible(false);
                 nameEntryWindow.setVisible(true);
             }
@@ -307,11 +313,11 @@ public class GameOverScreen implements Screen {
      * @return
      */
     private Window enterNameWindow() {
-        Window popupWindow = new Window("", parentClass.skin, "popup");
+        Window popupWindow = new Window("", game.skin, "popup");
         popupWindow.setSize(480, 280);
         popupWindow.setPosition(
-                (parentClass.WIDTH - popupWindow.getWidth()) / 2,
-                (parentClass.HEIGHT - popupWindow.getHeight()) / 2
+                (game.width - popupWindow.getWidth()) / 2,
+                (game.height - popupWindow.getHeight()) / 2
         );
 
         // Table for elements
@@ -319,36 +325,36 @@ public class GameOverScreen implements Screen {
         popupWindow.add(popupTable).prefSize(popupWindow.getWidth(), popupTable.getHeight());
 
         // Question
-        Label question = new Label("Enter name:", parentClass.skin, "leaderboardscore");
+        Label question = new Label("Enter name:",skin, "leaderboardscore");
         question.setWrap(true);
         question.setAlignment(1);
         popupTable.add(question).prefWidth(popupWindow.getWidth() * 0.9f).colspan(2).padTop(20);
         popupTable.row();
 
         // Text entry field
-        TextField nameField = new TextField("", parentClass.skin);
+        TextField nameField = new TextField("", skin);
         nameField.setMaxLength(15);
         popupTable.add(nameField).prefWidth(300).padBottom(15);
         popupTable.row();
 
         // Submit button
-        TextButton submitButton = new TextButton("Submit", parentClass.skin);
+        TextButton submitButton = new TextButton("Submit", skin);
 
         popupTable.add(submitButton).prefWidth(200).padBottom(20);
         popupTable.row();
 
-        Label errorText = new Label("Name must be non-blank and alphanumerical!", parentClass.skin, "smallerror");
+        Label errorText = new Label("Name must be non-blank and alphanumerical!", skin, "smallerror");
 
         submitButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                parentClass.soundController.playSound(Sounds.CONFIRM);
+                soundController.playSound(Sounds.CONFIRM);
                 // Check input
                 String name = nameField.getText();
                 if (LeaderboardManager.isValidName(name)) {
                     // If valid, write this score
                     LeaderboardManager.writeScore(name, calcScore());
-                    parentClass.changeScreen(AvailableScreens.MenuScreen);
+                    game.switchScreen(AvailableScreens.MenuScreen, false);
                 } else {
                     // Show an error message
                     errorText.setVisible(true);

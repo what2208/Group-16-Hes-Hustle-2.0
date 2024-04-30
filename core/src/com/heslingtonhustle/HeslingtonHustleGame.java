@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.screens.*;
 import com.heslingtonhustle.sound.SoundController;
@@ -14,21 +15,22 @@ import java.util.HashMap;
 
 public class HeslingtonHustleGame extends Game {
 	private Screen currentScreen;
-	public int WIDTH;
-	public int HEIGHT;
+	private Screen previousScreen;
 
+	public int width;
+	public int height;
 	public Skin skin;
 	public SoundController soundController;
 
 
 	/**
 	 * Constructor, gets the width and height of the game window
-	 * @param WIDTH Width of the game in pixels
-	 * @param HEIGHT Height of the game in pixels
+	 * @param width Width of the game in pixels
+	 * @param height Height of the game in pixels
 	 */
-	public HeslingtonHustleGame (int WIDTH, int HEIGHT) {
-		this.WIDTH = WIDTH;
-		this.HEIGHT = HEIGHT;
+	public HeslingtonHustleGame (int width, int height) {
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
@@ -42,18 +44,29 @@ public class HeslingtonHustleGame extends Game {
 
 		soundController = new SoundController();
 
-		changeScreen(AvailableScreens.MenuScreen);
+		switchScreen(AvailableScreens.MenuScreen, false);
 	}
 
+
 	/**
-	 * Changes the game's current screen to the provided screen
-	 * @param availableScreens The screen to switch to
+	 * Switches the game's screen to a new screen, while optionally storing
+	 * a reference to the previous screen so it can be restored
+	 * later.
+	 * @param screen The new screen to switch to
+	 * @param storePreviousScreen True if a reference to the old screen should
+	 *                            be kept, use switchToPreviousScreen to restore
 	 */
-	public void changeScreen(AvailableScreens availableScreens) {
-		if (currentScreen != null) {
-			currentScreen.dispose();
+	public void switchScreen(AvailableScreens screen, boolean storePreviousScreen) {
+		if (storePreviousScreen) {
+			previousScreen = currentScreen;
+		} else {
+			previousScreen = null;
+			if (currentScreen != null) {
+				currentScreen.dispose();
+			}
 		}
-		switch (availableScreens) {
+
+		switch (screen) {
 			case MenuScreen:
 				currentScreen = new MenuScreen(this);
 				soundController.setMusic(Sounds.MENU);
@@ -66,10 +79,35 @@ public class HeslingtonHustleGame extends Game {
 				currentScreen = new LeaderboardScreen(this);
 				soundController.setMusic(Sounds.MENU);
 				break;
+			case OptionsScreen:
+				currentScreen = new OptionsScreen(this);
+				soundController.setMusic(Sounds.MENU);
+				break;
 
 		}
+
 		setScreen(currentScreen);
-    }
+	}
+
+	/**
+	 * Attempts to switch to a previously already loaded screen.
+	 * If no screen was previously loaded, switches to the provided screen
+	 * instead.
+	 * @param onNone The screen to switch to no previous screen is found
+	 */
+	public void switchToPreviousScreen(AvailableScreens onNone) {
+		if (previousScreen != null) {
+			if (currentScreen != null) {
+				currentScreen.dispose();
+			}
+			currentScreen = previousScreen;
+			setScreen(currentScreen);
+			currentScreen.resume();
+			previousScreen = null;
+		} else {
+			switchScreen(onNone, false);
+		}
+	}
 
 	/**
 	 * Specifically changes the screen to the game over screen,

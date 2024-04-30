@@ -11,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
+import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.LeaderboardManager;
 
@@ -18,8 +19,9 @@ import com.heslingtonhustle.state.LeaderboardManager;
  * A screen to display a leaderboard of player's high scores
  */
 public class LeaderboardScreen implements Screen {
-    private final boolean DEBUG = false;
-    private final HeslingtonHustleGame parentClass;
+    private final HeslingtonHustleGame game;
+    private final Skin skin;
+    private final SoundController soundController;
     private final Stage stage;
     private final Texture backgroundTexture;
 
@@ -27,11 +29,14 @@ public class LeaderboardScreen implements Screen {
     /**
      * A screen to display a leaderboard window containing player scores as
      * well as a back button.
-     * @param parentClass
+     * @param game An instance of the game class
      */
-    public LeaderboardScreen(HeslingtonHustleGame parentClass) {
-        this.parentClass = parentClass;
-        stage = new Stage(new FitViewport(parentClass.WIDTH, parentClass.HEIGHT));
+    public LeaderboardScreen(HeslingtonHustleGame game) {
+        this.game = game;
+        this.skin = game.skin;
+        this.soundController = game.soundController;
+
+        stage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(stage);
 
         backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
@@ -41,15 +46,15 @@ public class LeaderboardScreen implements Screen {
         drawLeaderBoard();
 
         // Back button
-        TextButton backButton = new TextButton("Back", parentClass.skin);
+        TextButton backButton = new TextButton("Back", skin);
         backButton.setPosition(15, 15);
         backButton.setWidth(250);
         stage.addActor(backButton);
         backButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
-                parentClass.soundController.playSound(Sounds.CONFIRM);
-                parentClass.changeScreen(AvailableScreens.MenuScreen);
+                soundController.playSound(Sounds.CONFIRM);
+                game.switchScreen(AvailableScreens.MenuScreen, false);
             }
         });
 
@@ -61,11 +66,11 @@ public class LeaderboardScreen implements Screen {
      */
     public void drawLeaderBoard() {
         // Leaderboard window
-        Window leaderboard = new Window("", parentClass.skin);
+        Window leaderboard = new Window("", skin);
         leaderboard.setSize(500, 630);
         leaderboard.setPosition(
-                (parentClass.WIDTH - leaderboard.getWidth()) / 2,
-                (parentClass.HEIGHT - leaderboard.getHeight()) / 2);
+                (game.width - leaderboard.getWidth()) / 2,
+                (game.height - leaderboard.getHeight()) / 2);
         stage.addActor(leaderboard);
 
         // Table for content
@@ -74,7 +79,7 @@ public class LeaderboardScreen implements Screen {
                 .prefWidth(leaderboard.getWidth()-50);
 
         // Title
-        table.add(new Label("Leaderboard", parentClass.skin, "button")).top()
+        table.add(new Label("Leaderboard", skin, "button")).top()
                 .padBottom(20).padTop(10);
         table.row();
 
@@ -86,7 +91,7 @@ public class LeaderboardScreen implements Screen {
         Array<String> scores = LeaderboardManager.getScores();
 
         for (String score : scores) {
-            scoresTable.add(new Label(score, parentClass.skin, "leaderboardscore"))
+            scoresTable.add(new Label(score, skin, "leaderboardscore"))
                     .padTop(25);
             scoresTable.row();
         }
