@@ -106,7 +106,7 @@ public class OptionsScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 soundController.playSound(Sounds.CONFIRM);
-                game.switchScreen(AvailableScreens.MenuScreen, false);
+                game.switchToPreviousScreen(AvailableScreens.MenuScreen);
             }
         });
     }

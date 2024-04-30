@@ -36,7 +36,7 @@ public class PlayScreen implements Screen {
 
         mapManager = new MapManager();
         gameState = new State(mapManager, game.soundController, playerWidth, playerHeight);
-        pauseMenu = new PauseMenu(this, game.skin, gameState, game.soundController, game.width, game.height);
+        pauseMenu = new PauseMenu(this, game);
         renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
 
         inputHandler = new KeyboardInputHandler();
