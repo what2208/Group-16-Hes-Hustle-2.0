@@ -305,10 +305,10 @@ public class State {
      * Gives the player an intro dialogue
      */
     public void pushWelcomeDialogue() {
+        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza!");
         dialogueManager.addDialogue("You can move around with W,A,S,D and press E to interact with buildings and complete activities.\n"
                 + "You cannot do anything after midnight and must sleep by interacting with a house. Good luck!");
 
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza!");
     }
 
     /**
