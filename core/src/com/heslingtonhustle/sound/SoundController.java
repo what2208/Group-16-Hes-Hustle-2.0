@@ -110,6 +110,7 @@ public class SoundController implements Disposable {
      */
     public void setMusicVolume(float volume) {
         musicVolume = volume;
+        currentMusic.setVolume(musicVolume);
     }
 
     /**
@@ -118,6 +119,20 @@ public class SoundController implements Disposable {
      */
     public void setSfxVolume(float volume) {
         sfxVolume = volume;
+    }
+
+    /**
+     * @return The current music volume
+     */
+    public float getMusicVolume() {
+        return musicVolume;
+    }
+
+    /**
+     * @return The current sound effects volume
+     */
+    public float getSfxVolume() {
+        return sfxVolume;
     }
 
 

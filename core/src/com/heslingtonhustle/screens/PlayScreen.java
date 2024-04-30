@@ -3,6 +3,7 @@ package com.heslingtonhustle.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Vector2;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.input.InputHandler;
 import com.heslingtonhustle.input.KeyboardInputHandler;
@@ -14,7 +15,7 @@ import com.heslingtonhustle.state.State;
 import java.util.HashSet;
 
 public class PlayScreen implements Screen {
-    public HeslingtonHustleGame heslingtonHustleGame;
+    private final HeslingtonHustleGame game;
 
     InputMultiplexer inputMultiplexer;
     private final InputHandler inputHandler;
@@ -24,8 +25,8 @@ public class PlayScreen implements Screen {
     private final PauseMenu pauseMenu;
     private boolean isPaused;
 
-    public PlayScreen(HeslingtonHustleGame parentClass) {
-        this.heslingtonHustleGame = parentClass;
+    public PlayScreen(HeslingtonHustleGame game) {
+        this.game = game;
 
         isPaused = false;
 
@@ -34,9 +35,9 @@ public class PlayScreen implements Screen {
         float playerHeight = 0.9f;
 
         mapManager = new MapManager();
-        gameState = new State(mapManager, parentClass.soundController, playerWidth, playerHeight);
-        pauseMenu = new PauseMenu(this, parentClass.skin, gameState, parentClass.soundController, parentClass.WIDTH, parentClass.HEIGHT);
-        renderer = new Renderer(gameState, mapManager, pauseMenu, parentClass.skin, parentClass.WIDTH, parentClass.HEIGHT);
+        gameState = new State(mapManager, game.soundController, playerWidth, playerHeight);
+        pauseMenu = new PauseMenu(this, game.skin, gameState, game.soundController, game.width, game.height);
+        renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
 
         inputHandler = new KeyboardInputHandler();
         addInputHandlers();
@@ -60,7 +61,7 @@ public class PlayScreen implements Screen {
         inputHandler.resetPressedActions();
 
         if (gameState.isGameOver()) {
-            heslingtonHustleGame.gameOver(
+            game.gameOver(
                     gameState.getActivities(),
                     gameState.getPlayerStepAchievement());
         }

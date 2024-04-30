@@ -14,7 +14,6 @@ import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.State;
 
 public class PauseMenu {
-    private final boolean DEBUG = false;
     private final Screen playScreen;
     private final Stage stage;
     private State gameState;
@@ -39,7 +38,6 @@ public class PauseMenu {
     private void createTable() {
         optionsTable = new Table();
         optionsTable.setFillParent(true);
-        optionsTable.setDebug(DEBUG);
         stage.addActor(optionsTable);
     }
 

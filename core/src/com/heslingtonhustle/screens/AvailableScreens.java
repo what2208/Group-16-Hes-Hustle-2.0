@@ -4,5 +4,6 @@ public enum AvailableScreens {
     MenuScreen,
     PlayScreen,
     GameOverScreen,
-    LeaderboardScreen
+    LeaderboardScreen,
+    OptionsScreen
 }

@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.screens.*;
 import com.heslingtonhustle.sound.SoundController;
@@ -14,21 +15,22 @@ import java.util.HashMap;
 
 public class HeslingtonHustleGame extends Game {
 	private Screen currentScreen;
-	public int WIDTH;
-	public int HEIGHT;
+	private Screen previousScreen;
 
+	public int width;
+	public int height;
 	public Skin skin;
 	public SoundController soundController;
 
 
 	/**
 	 * Constructor, gets the width and height of the game window
-	 * @param WIDTH Width of the game in pixels
-	 * @param HEIGHT Height of the game in pixels
+	 * @param width Width of the game in pixels
+	 * @param height Height of the game in pixels
 	 */
-	public HeslingtonHustleGame (int WIDTH, int HEIGHT) {
-		this.WIDTH = WIDTH;
-		this.HEIGHT = HEIGHT;
+	public HeslingtonHustleGame (int width, int height) {
+		this.width = width;
+		this.height = height;
 	}
 
 	/**
@@ -42,18 +44,46 @@ public class HeslingtonHustleGame extends Game {
 
 		soundController = new SoundController();
 
-		changeScreen(AvailableScreens.MenuScreen);
+		switchScreen(AvailableScreens.MenuScreen, false);
 	}
 
-	/**
-	 * Changes the game's current screen to the provided screen
-	 * @param availableScreens The screen to switch to
-	 */
-	public void changeScreen(AvailableScreens availableScreens) {
-		if (currentScreen != null) {
-			currentScreen.dispose();
+//	/**
+//	 * Changes the game's current screen to the provided screen
+//	 * @param availableScreens The screen to switch to
+//	 */
+//	public void changeScreen(AvailableScreens availableScreens) {
+//		if (currentScreen != null) {
+//			currentScreen.dispose();
+//		}
+//		switch (availableScreens) {
+//			case MenuScreen:
+//				currentScreen = new MenuScreen(this);
+//				soundController.setMusic(Sounds.MENU);
+//				break;
+//			case PlayScreen:
+//				currentScreen = new PlayScreen(this);
+//				soundController.setMusic(Sounds.GAME);
+//				break;
+//			case LeaderboardScreen:
+//				currentScreen = new LeaderboardScreen(this);
+//				soundController.setMusic(Sounds.MENU);
+//				break;
+//
+//		}
+//		setScreen(currentScreen);
+//    }
+
+	public void switchScreen(AvailableScreens screen, boolean storePreviousScreen) {
+		if (storePreviousScreen) {
+			previousScreen = currentScreen;
+		} else {
+			previousScreen = null;
+			if (currentScreen != null) {
+				currentScreen.dispose();
+			}
 		}
-		switch (availableScreens) {
+
+		switch (screen) {
 			case MenuScreen:
 				currentScreen = new MenuScreen(this);
 				soundController.setMusic(Sounds.MENU);
@@ -66,10 +96,25 @@ public class HeslingtonHustleGame extends Game {
 				currentScreen = new LeaderboardScreen(this);
 				soundController.setMusic(Sounds.MENU);
 				break;
+			case OptionsScreen:
+				currentScreen = new OptionsScreen(this);
+				soundController.setMusic(Sounds.MENU);
+				break;
 
 		}
+
 		setScreen(currentScreen);
-    }
+	}
+
+	public void switchToPreviousScreen() {
+		if (previousScreen != null) {
+			if (currentScreen != null) {
+				currentScreen.dispose();
+			}
+			currentScreen = previousScreen;
+		}
+		setScreen(currentScreen);
+	}
 
 	/**
 	 * Specifically changes the screen to the game over screen,
