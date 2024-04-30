@@ -23,7 +23,6 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private Table optionsTable;
     private final Texture backgroundTexture;
-    private Image backgroundImage;
 
 
     public MenuScreen(HeslingtonHustleGame parentClass) {
@@ -48,11 +47,10 @@ public class MenuScreen implements Screen {
 
     private void addOptions(HeslingtonHustleGame parentClass) {
         Label titleText = new Label("Heslington Hustle", parentClass.skin, "title");
-        TextButton playGameButton = new TextButton("Start game", parentClass.skin);
         optionsTable.add(titleText);
         optionsTable.row();
-        optionsTable.add(playGameButton).prefWidth(350).padTop(100);
-        optionsTable.row().pad(15, 0, 15, 0);
+
+        TextButton playGameButton = new TextButton("Start game", parentClass.skin);
         playGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
@@ -61,7 +59,20 @@ public class MenuScreen implements Screen {
             }
         });
 
+        optionsTable.add(playGameButton).prefWidth(350).padTop(100);
+        optionsTable.row().pad(15, 0, 10, 0);
         optionsTable.row();
+
+        TextButton leaderboardButton = new TextButton("Leaderboard", parentClass.skin);
+        optionsTable.add(leaderboardButton).prefWidth(350);
+        optionsTable.row().pad(10, 0, 10, 0);
+        leaderboardButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                parentClass.soundController.playSound(Sounds.CONFIRM);
+                heslingtonHustleGame.changeScreen(AvailableScreens.LeaderboardScreen);
+            }
+        });
 
         TextButton exitButton = new TextButton("Exit", parentClass.skin);
         optionsTable.add(exitButton).prefWidth(350);
