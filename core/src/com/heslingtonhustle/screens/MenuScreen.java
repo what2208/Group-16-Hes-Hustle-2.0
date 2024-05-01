@@ -102,7 +102,7 @@ public class MenuScreen implements Screen {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 soundController.playSound(Sounds.CONFIRM);
-                // game.switchScreen(AvailableScreens.OptionsScreen, false);
+                game.switchScreen(AvailableScreens.CreditScreen, false);
             }
         });
 

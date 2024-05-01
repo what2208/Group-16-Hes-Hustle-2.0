@@ -29,12 +29,12 @@ public class SoundController implements Disposable {
      */
     private void load() {
         // Menu Music
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/music_zapsplat_easy_cheesy.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/menuMusic.mp3"));
         menuMusic.setLooping(true);
         menuMusic.setVolume(musicVolume);
 
         // Game music
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/keyboard-collection-progressive-pop.mp3"));
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/gameMusic.mp3"));
         gameMusic.setLooping(true);
         gameMusic.setVolume(musicVolume);
 

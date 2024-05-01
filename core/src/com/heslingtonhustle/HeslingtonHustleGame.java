@@ -4,6 +4,7 @@ import com.badlogic.gdx.Application;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.heslingtonhustle.screens.*;
@@ -21,6 +22,7 @@ public class HeslingtonHustleGame extends Game {
 	public int height;
 	public Skin skin;
 	public SoundController soundController;
+	public String credits;
 
 
 	/**
@@ -41,6 +43,8 @@ public class HeslingtonHustleGame extends Game {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Logs all messages to the console
 		// Load skin
 		skin = new Skin(Gdx.files.internal("Graphics/uiskin/uiskin.json"));
+
+		credits = readTextFile("Graphics/UI/Text/credits.txt");
 
 		soundController = new SoundController();
 
@@ -83,7 +87,9 @@ public class HeslingtonHustleGame extends Game {
 				currentScreen = new OptionsScreen(this);
 				soundController.setMusic(Sounds.MENU);
 				break;
-
+			case CreditScreen:
+				currentScreen = new CreditScreen(this);
+				soundController.setMusic(Sounds.MENU);
 		}
 
 		setScreen(currentScreen);
@@ -125,6 +131,18 @@ public class HeslingtonHustleGame extends Game {
 		currentScreen = new GameOverScreen(this, activitiesCompleted, stepAchievement);
 		setScreen(currentScreen);
 
+
+	}
+
+	public String readTextFile(String filepath) {
+		FileHandle file = Gdx.files.internal(filepath);
+
+		if (!file.exists()) {
+			System.out.println("WARNING: Couldn't load file " + filepath);
+			return "Couldn't load " + filepath;
+		} else {
+			return file.readString();
+		}
 
 	}
 }
