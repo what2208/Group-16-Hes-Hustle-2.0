@@ -59,7 +59,7 @@ public class LeaderboardManager {
         Array<Score> scores = readValues();
 
         for (Score score : scores) {
-            lines.add(score.name + " - " + score.score);
+            lines.add(score.name + ": " + score.score);
         }
 
         return lines;
