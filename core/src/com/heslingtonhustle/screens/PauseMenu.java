@@ -26,6 +26,11 @@ public class PauseMenu {
     private Table optionsTable;
     private boolean isVisible;
 
+    /**
+     * A class to display the pause menu on screen when it is called from PlayScreen.
+     * @param parentClass The parent screen.
+     * @param game The main game object.
+     */
     public PauseMenu(Screen parentClass, HeslingtonHustleGame game) {
         playScreen = parentClass;
         this.game = game;
@@ -41,12 +46,19 @@ public class PauseMenu {
         addOptions();
     }
 
+    /**
+     * A method to create a table for the pause menu options to be displayed in.
+     */
     private void createTable() {
         optionsTable = new Table();
         optionsTable.setFillParent(true);
         stage.addActor(optionsTable);
     }
 
+    /**
+     * A method to add the options into the pause menu's table and perform the corresponding actions if
+     * they're clicked.
+     */
     private void addOptions() {
         // Resume button
         TextButton resumeButton = new TextButton("Resume", skin);
@@ -86,16 +98,25 @@ public class PauseMenu {
         optionsTable.row();
     }
 
+    /**
+     * A method which makes the pause menu visible when needed.
+     */
     public void showPauseMenu() {
         isVisible = true;
         optionsTable.setVisible(true);
     }
 
+    /**
+     * A method which hides the pause menu when no longer needed.
+     */
     public void hidePauseMenu() {
         isVisible = false;
         optionsTable.setVisible(false);
     }
 
+    /**
+     * A method to render the pause stage, acting on delta.
+     */
     public void render() {
         if (isVisible) {
             stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -103,16 +124,27 @@ public class PauseMenu {
         }
     }
 
+    /**
+     * @return The current stage
+     */
     public Stage GetStage() {
         return stage;
     }
 
+    /**
+     * Correctly resizes the onscreen elements when the window is resized
+     * @param width The width of the game screen.
+     * @param height The height of the game screen.
+     */
     public void resize(int width, int height) {
         stage.getCamera().viewportWidth = Gdx.graphics.getWidth();
         stage.getCamera().viewportHeight = Gdx.graphics.getHeight();
         stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     public void dispose() {
         stage.dispose();
     }

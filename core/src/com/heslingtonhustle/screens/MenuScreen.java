@@ -28,15 +28,21 @@ public class MenuScreen implements Screen {
     private Table optionsTable;
     private final Texture backgroundTexture;
 
-
+    /**
+     * A screen to display the main menu, providing the opportunity to start the game,
+     * check the leaderboards, alter settings, check the credits or exit the game.
+     * @param game The main game object.
+     */
     public MenuScreen(HeslingtonHustleGame game) {
         this.game = game;
         this.skin = game.skin;
         this.soundController = game.soundController;
 
+        // Add menu stage
         stage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(stage);
 
+        // Add a background texture to the menu
         backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
@@ -45,12 +51,19 @@ public class MenuScreen implements Screen {
         addOptions();
     }
 
+    /**
+     * A method to create a table which will contain the options available from the menu.
+     */
     private void createTable() {
         optionsTable = new Table();
         optionsTable.setFillParent(true);
         stage.addActor(optionsTable);
     }
 
+    /**
+     * A method to add the required buttons to the options table and change to the required screen when a
+     * button is clicked.
+     */
     private void addOptions() {
         // Title text
         Label titleText = new Label("Heslington Hustle", skin, "title");
@@ -133,6 +146,10 @@ public class MenuScreen implements Screen {
     @Override
     public void show() { }
 
+    /**
+     * A method to render the menu stage.
+     * @param delta The time in seconds since the last render.
+     */
     @Override
     public void render(float delta) {
         Gdx.gl.glClearColor(0, 0, 0, 1);
@@ -142,6 +159,11 @@ public class MenuScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Method to resize the stage if the viewport changes.
+     * @param width The width of the game screen
+     * @param height The height of the game screen
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
@@ -156,6 +178,9 @@ public class MenuScreen implements Screen {
     @Override
     public void hide() { }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     @Override
     public void dispose() {
         stage.dispose();

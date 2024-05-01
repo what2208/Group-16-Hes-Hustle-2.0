@@ -29,7 +29,11 @@ public class OptionsScreen implements Screen {
     private Slider sfxSlider;
     private final Texture backgroundTexture;
 
-
+    /**
+     * A screen to display a set of changeable options to the player,
+     * these being music volume and sound effects volume.
+     * @param game The main game object
+     */
     public OptionsScreen(HeslingtonHustleGame game) {
         this.game = game;
         this.soundController = game.soundController;
@@ -39,6 +43,7 @@ public class OptionsScreen implements Screen {
         optionStage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(optionStage);
 
+        // Configure orthographic camera and viewport
         camera = new OrthographicCamera();
         viewport = new FitViewport(game.width, game.height, camera);
         camera.setToOrtho(false, game.width, game.height);
@@ -52,7 +57,9 @@ public class OptionsScreen implements Screen {
 
     }
 
-
+    /**
+     * Method to draw the options window and the volume sliders contained within.
+     */
     private void createOptionWindow() {
         // Create the window
         Window optionMenu = new Window("", skin);
@@ -112,7 +119,10 @@ public class OptionsScreen implements Screen {
     }
 
 
-
+    /**
+     * A method to render the options stage.
+     * @param delta The time in seconds since the last render.
+     */
     @Override
     public void render(float delta) {
         ScreenUtils.clear(0, 0, 0, 1);
@@ -133,6 +143,11 @@ public class OptionsScreen implements Screen {
 
     }
 
+    /**
+     * Method to resize the stage if the viewport changes.
+     * @param width The width of the game screen
+     * @param height The height of the game screen
+     */
     @Override
     public void resize(int width, int height){
         optionStage.getViewport().update(width, height);
@@ -154,6 +169,9 @@ public class OptionsScreen implements Screen {
 
     }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     @Override
     public void dispose(){
         optionStage.dispose();

@@ -134,6 +134,11 @@ public class HeslingtonHustleGame extends Game {
 
 	}
 
+	/**
+	 * A method to read strings from a text file to be used/displayed elsewhere.
+	 * @param filepath The directory of the file
+	 * @return The string contained in the file
+	 */
 	public String readTextFile(String filepath) {
 		FileHandle file = Gdx.files.internal(filepath);
 

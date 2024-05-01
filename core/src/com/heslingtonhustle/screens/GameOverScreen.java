@@ -51,7 +51,8 @@ public class GameOverScreen implements Screen {
 
     /**
      * Creates the screen and fills in all the user's score information
-     * @param parentClass
+     * @param game Game class
+     * @param activities Hashmap that maps a String to an Activity object
      */
     public GameOverScreen(HeslingtonHustleGame game, HashMap<String, Activity> activities, boolean stepAchievement) {
         this.game = game;
@@ -258,7 +259,7 @@ public class GameOverScreen implements Screen {
     /**
      * A simple popup window that asks the user if they would like to
      * submit their score to the leaderboard
-     * @return
+     * @return Leaderboard popup window.
      */
     private Window leaderBoardQueryScreen() {
         Window popupWindow = new Window("", game.skin, "popup");
@@ -310,7 +311,7 @@ public class GameOverScreen implements Screen {
 
     /**
      * A window to ask the player for their name
-     * @return
+     * @return Leaderboard popup window.
      */
     private Window enterNameWindow() {
         Window popupWindow = new Window("", game.skin, "popup");
@@ -384,6 +385,11 @@ public class GameOverScreen implements Screen {
         stage.draw();
     }
 
+    /**
+     * Correctly resizes the onscreen elements when the window is resized
+     * @param width The width of the game screen
+     * @param height The height of the game screen
+     */
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(width, height);
@@ -398,6 +404,9 @@ public class GameOverScreen implements Screen {
     @Override
     public void hide() { }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     @Override
     public void dispose() {
         stage.dispose();

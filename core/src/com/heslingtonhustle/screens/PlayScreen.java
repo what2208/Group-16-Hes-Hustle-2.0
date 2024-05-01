@@ -25,6 +25,11 @@ public class PlayScreen implements Screen {
     private final PauseMenu pauseMenu;
     private boolean isPaused;
 
+    /**
+     * A screen to display the main game when the user is playing; importantly showing the map,
+     * player sprite and UI.
+     * @param game The main game object
+     */
     public PlayScreen(HeslingtonHustleGame game) {
         this.game = game;
 
@@ -34,17 +39,24 @@ public class PlayScreen implements Screen {
         float playerWidth = 0.6f;
         float playerHeight = 0.9f;
 
+        // Configure the renderer
         mapManager = new MapManager();
         gameState = new State(mapManager, game.soundController, playerWidth, playerHeight);
         pauseMenu = new PauseMenu(this, game);
         renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
 
+        // Configure the input handler
         inputHandler = new KeyboardInputHandler();
         addInputHandlers();
 
         gameState.pushWelcomeDialogue();
         renderer.snapCamToPlayer();
     }
+
+    /**
+     * A method to render the game.
+     * @param delta The time in seconds since the last render.
+     */
     @Override
     public void render(float delta) {
 
@@ -60,6 +72,7 @@ public class PlayScreen implements Screen {
         renderer.update();
         inputHandler.resetPressedActions();
 
+        // Checks if the game has concluded
         if (gameState.isGameOver()) {
             game.gameOver(
                     gameState.getActivities(),
@@ -86,6 +99,11 @@ public class PlayScreen implements Screen {
 
     }
 
+    /**
+     * Checks if a debug key has been pressed and performs the corresponding actions if one has.
+     * @param action An action related to a key press.
+     * @return Boolean
+     */
     private boolean handleDebugAction(Action action) {
         if (action == null) {
             return false;
@@ -110,6 +128,12 @@ public class PlayScreen implements Screen {
         }
     }
 
+    /**
+     * Checks if a key press corresponds to a pause action. If so and the game is playing,
+     * the game pauses. If so and the game is paused, the game resumes.
+     * @param action An action related to a key press.
+     * @return Boolean
+     */
     private boolean handlePauseAction(Action action) {
         if (action == Action.PAUSE && !isPaused) {
             pause();
@@ -121,6 +145,10 @@ public class PlayScreen implements Screen {
         return false;
     }
 
+    /**
+     * Method to implement multiplexers to ensure multiple inputs can be handled concurrently whilst the
+     * game is paused.
+     */
     private void addInputHandlers() {
         // We use an input multiplexer so that we can handle multiple sources of inputs at once
         // Only used when the game is paused
@@ -137,12 +165,20 @@ public class PlayScreen implements Screen {
 
     }
 
+    /**
+     * Method to resize the stage if the viewport changes.
+     * @param width The width of the game screen.
+     * @param height The height of the game screen.
+     */
     @Override
     public void resize(int width, int height) {
         renderer.windowResized(width, height);
         renderer.snapCamToPlayer();
     }
 
+    /**
+     * Method to pause the game, start the input multiplexer and display the pause menu.
+     */
     @Override
     public void pause() {
         isPaused = true;
@@ -150,6 +186,10 @@ public class PlayScreen implements Screen {
         renderer.showPauseScreen();
     }
 
+    /**
+     * Method to resume the game, revert to the default input handler and hide the pause
+     * menu.
+     */
     @Override
     public void resume() {
         isPaused = false;
@@ -161,6 +201,9 @@ public class PlayScreen implements Screen {
     public void hide() {
     }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     @Override
     public void dispose() {
         mapManager.dispose();

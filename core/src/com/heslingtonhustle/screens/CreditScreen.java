@@ -29,6 +29,11 @@ public class CreditScreen implements Screen{
     private Viewport viewport;
     private Texture backgroundTexture;
 
+    /**
+     * A screen which displays the required credits of the game. This includes assets used and their
+     * respective attributions.
+     * @param game The main game object
+     */
     public CreditScreen (final HeslingtonHustleGame game) {
 
         // Basically all the same code as the settings menu
@@ -118,8 +123,8 @@ public class CreditScreen implements Screen{
 
     /**
      * Correctly resizes the onscreen elements when the window is resized
-     * @param width
-     * @param height
+     * @param width The width of the game screen
+     * @param height The height of the game screen
      */
     @Override
     public void resize(int width, int height) {
@@ -144,6 +149,9 @@ public class CreditScreen implements Screen{
     public void resume() {
     }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     @Override
     public void dispose() {
         creditStage.dispose();
