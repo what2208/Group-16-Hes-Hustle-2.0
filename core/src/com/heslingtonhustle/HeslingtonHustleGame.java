@@ -81,11 +81,11 @@ public class HeslingtonHustleGame extends Game {
 				break;
 			case LeaderboardScreen:
 				currentScreen = new LeaderboardScreen(this);
-				soundController.setMusic(Sounds.MENU);
+//				soundController.setMusic(Sounds.MENU);
 				break;
 			case OptionsScreen:
 				currentScreen = new OptionsScreen(this);
-				soundController.setMusic(Sounds.MENU);
+//				soundController.setMusic(Sounds.MENU);
 				break;
 			case CreditScreen:
 				currentScreen = new CreditScreen(this);
