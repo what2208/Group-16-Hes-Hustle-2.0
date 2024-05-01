@@ -363,46 +363,6 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/slider-knob.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: slider-knob
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/slider-vertical.9.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: slider-vertical
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: NINE_PATCH
-			hidden: false
-		}
-		{
 			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/uiskin/uiskin_data/textfield.9.png
 			bgColor: {
 				r: 1
@@ -603,26 +563,6 @@ atlasData: {
 			hidden: false
 		}
 		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/time_image_background.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: time_image_background
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
 			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/time_background.9.png
 			bgColor: {
 				r: 1
@@ -640,46 +580,6 @@ atlasData: {
 			tenPatchData: null
 			tvgData: null
 			type: NINE_PATCH
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/1peg.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: 1peg
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
-			hidden: false
-		}
-		{
-			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/2peg.png
-			bgColor: {
-				r: 1
-				g: 1
-				b: 1
-				a: 1
-			}
-			tint: null
-			tintName: null
-			name: 2peg
-			tiled: false
-			minWidth: -1
-			minHeight: -1
-			customized: false
-			tenPatchData: null
-			tvgData: null
-			type: TEXTURE
 			hidden: false
 		}
 		{
@@ -940,6 +840,86 @@ atlasData: {
 			tenPatchData: null
 			tvgData: null
 			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/vscrollbar.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: vscrollbar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/hscrollbar.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: hscrollbar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/sliderknob.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: sliderknob
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: TEXTURE
+			hidden: false
+		}
+		{
+			file: C:/Users/samha/Documents/Group-16-Hes-Hustle-2.0/assets/Graphics/UI/elements/9patches/sliderbar.9.png
+			bgColor: {
+				r: 1
+				g: 1
+				b: 1
+				a: 1
+			}
+			tint: null
+			tintName: null
+			name: sliderbar
+			tiled: false
+			minWidth: -1
+			minHeight: -1
+			customized: false
+			tenPatchData: null
+			tvgData: null
+			type: NINE_PATCH
 			hidden: false
 		}
 	]
@@ -2310,25 +2290,25 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: hScroll
 						optional: true
-						value: round-black-small
+						value: null
 					}
 					hScrollKnob: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: hScrollKnob
 						optional: true
-						value: round-gray-small
+						value: hscrollbar
 					}
 					vScroll: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: vScroll
 						optional: true
-						value: round-black-small
+						value: null
 					}
 					vScrollKnob: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: vScrollKnob
 						optional: true
-						value: round-gray-small
+						value: vscrollbar
 					}
 				}
 				deletable: false
@@ -2797,7 +2777,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: false
-						value: slider-horizontal
+						value: sliderbar
 					}
 					disabledBackground: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -2809,7 +2789,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: knob
 						optional: true
-						value: slider-knob
+						value: sliderknob
 					}
 					disabledKnob: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -2902,7 +2882,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: background
 						optional: false
-						value: slider-vertical
+						value: null
 					}
 					disabledBackground: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
@@ -2914,7 +2894,7 @@ jsonData: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable
 						name: knob
 						optional: true
-						value: slider-knob
+						value: null
 					}
 					disabledKnob: {
 						type: com.badlogic.gdx.scenes.scene2d.utils.Drawable

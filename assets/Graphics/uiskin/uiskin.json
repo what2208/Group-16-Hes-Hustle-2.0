@@ -305,10 +305,8 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: {
 		background: scrollpaneback
-		hScroll: round-black-small
-		hScrollKnob: round-gray-small
-		vScroll: round-black-small
-		vScrollKnob: round-gray-small
+		hScrollKnob: hscrollbar
+		vScrollKnob: vscrollbar
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
@@ -321,12 +319,8 @@ com.badlogic.gdx.scenes.scene2d.ui.SelectBox$SelectBoxStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.Slider$SliderStyle: {
 	default-horizontal: {
-		background: slider-horizontal
-		knob: slider-knob
-	}
-	default-vertical: {
-		background: slider-vertical
-		knob: slider-knob
+		background: sliderbar
+		knob: sliderknob
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.SplitPane$SplitPaneStyle: {
