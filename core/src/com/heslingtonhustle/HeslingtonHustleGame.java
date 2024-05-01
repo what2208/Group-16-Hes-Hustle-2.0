@@ -44,7 +44,7 @@ public class HeslingtonHustleGame extends Game {
 		// Load skin
 		skin = new Skin(Gdx.files.internal("Graphics/uiskin/uiskin.json"));
 
-		credits = readTextFile("Graphics/UI/Text/credits.txt");
+		credits = readTextFile("Text/credits.txt");
 
 		soundController = new SoundController();
 

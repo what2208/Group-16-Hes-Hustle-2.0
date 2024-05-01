@@ -73,9 +73,9 @@ public class CreditScreen implements Screen{
 
         // Actual credits
         // Credits are loaded when the game is initialised
-        Label text = new Label(game.credits, game.skin, "interaction");
+        Label text = new Label(game.credits, game.skin, "credits");
         text.setWrap(true);
-        scrollTable.add(text).width(520f).padLeft(15);
+        scrollTable.add(text).width(520f).padLeft(15).padTop(20);
 
         // Exit button
         TextButton exitButton = new TextButton("Exit", game.skin);
@@ -94,7 +94,6 @@ public class CreditScreen implements Screen{
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 game.soundController.playSound(Sounds.CONFIRM);
-                dispose();
                 game.switchToPreviousScreen(AvailableScreens.MenuScreen);
             }
         });

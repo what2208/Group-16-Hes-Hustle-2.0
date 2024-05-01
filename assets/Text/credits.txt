@@ -1,0 +1,21 @@
+Made By:
+ENG1 Group 16
+From Group 19's project
+
+Game Engine:
+LibGDX
+
+Tools:
+LibGDX Skin Composer
+LibGDX Texture Packer
+Tiled Map Editor
+
+UI:
+Buttons - https://cupnooble.itch.io/sprout-lands-ui-pack
+Energy Bar - https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
+Game over background - https://github.com/minetest/minetest_game
+
+Fonts:
+Title/Button font - https://www.1001fonts.com/pixelfj8pt1-font.html
+Buttons and text - https://www.dafont.com/minecraftia.font?text=10%3A00am
+Handwriting font - https://www.dafont.com/notepen.font

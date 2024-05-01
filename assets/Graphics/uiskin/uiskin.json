@@ -279,6 +279,10 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: Minecraftia16px
 		fontColor: red
 	}
+	credits: {
+		font: Minecraftia16px
+		fontColor: RGBA_80_48_0_255
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {
@@ -300,7 +304,7 @@ com.badlogic.gdx.scenes.scene2d.ui.ProgressBar$ProgressBarStyle: {
 }
 com.badlogic.gdx.scenes.scene2d.ui.ScrollPane$ScrollPaneStyle: {
 	default: {
-		background: list
+		background: scrollpaneback
 		hScroll: round-black-small
 		hScrollKnob: round-gray-small
 		vScroll: round-black-small

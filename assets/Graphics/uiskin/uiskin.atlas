@@ -138,6 +138,13 @@ entrybox
   orig: 20, 20
   offset: 0, 0
   index: -1
+scrollpaneback
+  rotate: false
+  xy: 54, 6
+  size: 10, 10
+  orig: 10, 10
+  offset: 0, 0
+  index: -1
 time_image_background
   rotate: false
   xy: 653, 189
