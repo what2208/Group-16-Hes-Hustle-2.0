@@ -156,6 +156,13 @@ public class State {
             return;
         }
 
+        if (currentTrigger.containsKey("sign")) {
+            // Show dialogue
+            dialogueManager.addDialogue((String) currentTrigger.get("sign"));
+            return;
+
+        }
+
         if (currentTrigger.canSleep()) {
             // If player has not slept yet
             if (!activities.containsKey("sleep")) {

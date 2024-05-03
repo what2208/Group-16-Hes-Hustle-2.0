@@ -10,6 +10,7 @@ import com.heslingtonhustle.input.KeyboardInputHandler;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.renderer.Renderer;
 import com.heslingtonhustle.state.Action;
+import com.heslingtonhustle.state.Player;
 import com.heslingtonhustle.state.State;
 
 import java.util.HashSet;
@@ -24,6 +25,8 @@ public class PlayScreen implements Screen {
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
     private boolean isPaused;
+    private float playerWidth, playerHeight;
+    private Player player;
 
     /**
      * A screen to display the main game when the user is playing; importantly showing the map,
@@ -36,8 +39,11 @@ public class PlayScreen implements Screen {
         isPaused = false;
 
         // The player size is in world units
-        float playerWidth = 0.6f;
-        float playerHeight = 0.9f;
+        playerWidth = 0.6f;
+        playerHeight = 0.9f;
+
+        // The player
+        player = new Player();
 
         // Configure the renderer
         mapManager = new MapManager();
@@ -60,24 +66,63 @@ public class PlayScreen implements Screen {
     @Override
     public void render(float delta) {
 
-        // Get the actions just called in this frame and the actions currently held down
+//        // Get the actions just called in this frame and the actions currently held down
+//        HashSet<Action> heldActions = inputHandler.getHeldActions();
+//        HashSet<Action> pressedActions = inputHandler.getPressedActions();
+//        // Game screen doesn't deal with any held actions
+//        handleActions(pressedActions);
+
+        // Structure
+        // Get actions
+        // Move player
+        // Map returns list of objects player is inside, move player back
+        // Map also finds if the player is near a trigger, and which is the nearest
+        // If E pressed, pass the MapProperties to gamestate
+        // Also pass to dialoguemanager
+
+        // Draw everything
+        // Check for gameover
+
+
+
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
-        // Game screen doesn't deal with any held actions
-        handleActions(pressedActions);
 
-        if (!isPaused) {
-            gameState.update(heldActions, pressedActions, delta);
+        player.move(heldActions);
+        // The player reacts to any objects it is inside
+        player.collide(mapManager.getObjectsInside(player.getHitbox()));
+
+        MapProperties nearestTrigger = mapManager.getNearestTrigger(player.triggerHitbox());
+
+        if (nearestTrigger != null) {
+            if (dialogueManager.dialogue()) {
+                dialogueManager.react(nearestTrigger);
+            } else {
+                gameState.react(nearestTrigger);
+            }
         }
-        renderer.update();
-        inputHandler.resetPressedActions();
 
-        // Checks if the game has concluded
+        mapManager.render();
+        // Draw player
+        hudRenderer.render();
+
+        // Check for gameover
         if (gameState.isGameOver()) {
-            game.gameOver(
-                    gameState.getActivities(),
-                    gameState.getPlayerStepAchievement());
+            {}
         }
+
+//        if (!isPaused) {
+//            gameState.update(heldActions, pressedActions, delta);
+//        }
+//        renderer.update(playerWidth, playerHeight);
+//        inputHandler.resetPressedActions();
+//
+//        // Checks if the game has concluded
+//        if (gameState.isGameOver()) {
+//            game.gameOver(
+//                    gameState.getActivities(),
+//                    gameState.getPlayerStepAchievement());
+//        }
     }
 
     /**

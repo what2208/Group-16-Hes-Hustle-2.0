@@ -13,6 +13,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.map.MapManager;
+import com.heslingtonhustle.state.Player;
 import com.heslingtonhustle.state.State;
 import com.heslingtonhustle.screens.PauseMenu;
 
@@ -22,7 +23,7 @@ import static java.lang.Math.round;
  * Queries the State to draw the current state to the screen; does not make any changes to State.
  */
 public class Renderer implements Disposable {
-    private final boolean DEBUG_COLLISIONS = false;
+    private final boolean DEBUG_COLLISIONS = true;
 
     private int screenWidth;
     public int screenHeight;
@@ -69,7 +70,7 @@ public class Renderer implements Disposable {
     }
 
     // Moves the camera and renders the map
-    public void update() {
+    public void update(float playerWidth, float playerHeight) {
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(gameState.getPlayerPosition());
         // Don't round, looks ugly
         Vector2 clampedPlayerPosition = clampCoordsToScreen(playerPixelPosition);
@@ -93,6 +94,11 @@ public class Renderer implements Disposable {
         if (DEBUG_COLLISIONS) {
             ShapeRenderer collisionRenderer = mapManager.getCollisionRenderer();
             collisionRenderer.setProjectionMatrix(camera.combined);
+
+            collisionRenderer.begin(ShapeRenderer.ShapeType.Line);
+            //Draw the player's hitboxes
+            collisionRenderer.rect(playerPixelPosition.x, playerPixelPosition.y, mapManager.worldToPixelValue(playerWidth), mapManager.worldToPixelValue(playerHeight));
+            collisionRenderer.end();
         }
 
         batch.begin();

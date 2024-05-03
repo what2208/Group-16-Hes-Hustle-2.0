@@ -94,6 +94,7 @@ public class Trigger {
         return false;
     }
 
+
     /**
      * @return The message to display upon successful completion of the activity
      */
