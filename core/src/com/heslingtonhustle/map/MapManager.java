@@ -4,6 +4,7 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
+import com.badlogic.gdx.maps.MapObject;
 import com.badlogic.gdx.maps.MapObjects;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.maps.objects.RectangleMapObject;
@@ -18,6 +19,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.heslingtonhustle.state.Trigger;
 
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  * Facilitates communication about maps between the State and the Renderer.
@@ -34,6 +36,8 @@ public class MapManager implements Disposable {
     private MapObjects triggerObjects;
     private final HashMap<TiledMap, Array<RectangleMapObject>> collisionRectangles;
     private final HashMap<TiledMap, Array<RectangleMapObject>> triggerRectangles;
+
+    private HashSet<MapProperties> collidableObjects;
 
     public MapManager() {
         mapLoader = new TmxMapLoader();
@@ -75,7 +79,7 @@ public class MapManager implements Disposable {
         return loadedMapRenderers.get(currentMap);
     }
 
-    public ShapeRenderer getCollisionRenderer() {
+    public void drawObjectHitboxes() {
         // This method gets the renderer that is used to show the collision rectangles and trigger rectangles
         // for debugging purposes
         if (collisionRenderer == null) {
@@ -97,6 +101,15 @@ public class MapManager implements Disposable {
             }
         }
         collisionRenderer.end();
+    }
+
+    /**
+     * @return The shape renderer the map uses for debugging purposes
+     */
+    public ShapeRenderer getCollisionRenderer() {
+        if (collisionRenderer == null) {
+            collisionRenderer = new ShapeRenderer();
+        }
         return collisionRenderer;
     }
 
@@ -123,12 +136,57 @@ public class MapManager implements Disposable {
         }
         playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
         Array<RectangleMapObject> mapTriggerRectangles = getRectangles(triggerRectangles, triggerObjects);
-        RectangleMapObject overlappingRectangle = getOverlappingMapRectangle(playerRectangle, mapTriggerRectangles);
+        RectangleMapObject overlappingRectangle = null;
         if (overlappingRectangle == null) {
             return null;
         }
         MapProperties mapProperties = overlappingRectangle.getProperties();
         return new Trigger(mapProperties);
+    }
+
+    /**
+     * Finds the nearest trigger the player is overlapping
+     * @param playerHitbox The player's trigger hitbox
+     * @return The MapProperties of the nearest trigger
+     */
+    public MapProperties getNearestTrigger(Rectangle playerHitbox) {
+        if (triggerObjects == null) {
+            return null;
+        }
+        // The distance of the nearest trigger
+        float closestDistance = -1f;
+        MapProperties closestObject = null;
+
+        for (MapObject object : triggerObjects) {
+            if (object instanceof RectangleMapObject) {
+                // Only calc if the trigger box overlaps the player
+                Rectangle objRect = ((RectangleMapObject) object).getRectangle();
+                if (playerHitbox.overlaps(objRect)) {
+                    float distance = distanceBetween(objRect, playerHitbox);
+                    if (closestObject == null|| distance < closestDistance) {
+                        closestObject = object.getProperties();
+                        closestDistance = distance;
+                    }
+                }
+            }
+        }
+
+        return closestObject;
+
+
+    }
+
+    /**
+     * Calculates the distance between the centre of two rectangles
+     * @param rect1 The first rectangle
+     * @param rect2 The second rectangle
+     * @return The distance between the centre of the two rectangles
+     */
+    private float distanceBetween(Rectangle rect1, Rectangle rect2) {
+        Vector2 centres1 = new Vector2(rect1.width / 2, rect1.height / 2);
+        Vector2 centres2 = new Vector2(rect2.width / 2, rect2.height / 2);
+
+        return (float) Math.sqrt((Math.pow((centres1.x - centres2.x), 2) + Math.pow((centres1.y - centres2.y), 2)));
     }
 
 
@@ -191,22 +249,34 @@ public class MapManager implements Disposable {
         return new Rectangle(x, y, width, height);
     }
 
+    public Rectangle pixelToWorldRectangle(Rectangle rectangle) {
+        float x = rectangle.x / getCurrentMapTileDimensions().x;
+        float y = rectangle.y / getCurrentMapTileDimensions().y;
+        float width = rectangle.width / getCurrentMapTileDimensions().x;
+        float height = rectangle.height / getCurrentMapTileDimensions().y;
+        return new Rectangle(x, y, width, height);
+    }
+
     /**
-     * Returns the first RectangleMapObject the player is overlapping
-     * @param playerRectangle The player's hitbox
-     * @param mapRectangles The rectangles the player would overlap
-     * @return The first rectangle the player is overlapping
+     * Returns a set of rectangles the player is overlapping
+     * @param playerRectangle The player's collision rectangles
+     * @return A set of rectangles, may be empty
      */
-    private RectangleMapObject getOverlappingMapRectangle(Rectangle playerRectangle, Array<RectangleMapObject> mapRectangles) {
+    public HashSet<Rectangle> getRectanglesInside(Rectangle playerRectangle) {
         // For each rectangle in the collisions layer, check whether the player rectangle intercepts
-        for (RectangleMapObject rectangleObject : mapRectangles) {
-            Rectangle collisionRectangle = rectangleObject.getRectangle();
-            if (Intersector.overlaps(collisionRectangle, playerRectangle)) {
-                //Gdx.app.debug("DEBUG", "Collision!");
-                return rectangleObject;
+        HashSet<Rectangle> overlaps = new HashSet<>();
+        playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
+        for (MapObject object : collisionObjects) {
+            // If rectangle
+            if (object instanceof RectangleMapObject) {
+                Rectangle rectangle = ((RectangleMapObject) object).getRectangle();
+                if (playerRectangle.overlaps(rectangle)) {
+                    // Translate to screen coordinates for player's collision
+                    overlaps.add(pixelToWorldRectangle(rectangle));
+                }
             }
         }
-        return null;
+        return overlaps;
     }
 
     /**

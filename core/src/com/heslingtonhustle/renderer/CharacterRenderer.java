@@ -35,8 +35,8 @@ public class CharacterRenderer {
         characterSprite.setScale(1.2f);
     }
 
-    public void render(SpriteBatch batch, float x, float y, Facing direction, Action action) {
-        String textureKey = getTextureKey(direction, action);
+    public void render(SpriteBatch batch, float x, float y, Facing direction, Boolean moving) {
+        String textureKey = getTextureKey(direction, moving);
         characterSprite.setRegion(characterTextures.retrieveTexture(textureKey));
         characterSprite.setPosition(x, y);
         characterSprite.draw(batch);
@@ -70,23 +70,24 @@ public class CharacterRenderer {
         characterTextures.addAnimation("walking-down", walkingDown, speed);
     }
 
-    private String getTextureKey(Facing direction, Action action) {
+    private String getTextureKey(Facing direction, Boolean moving) {
         String textureKey = "idle-down";
-        switch (action) {
-            case MOVE_LEFT:
-                textureKey = "walking-left";
-                break;
-            case MOVE_RIGHT:
-                textureKey = "walking-right";
-                break;
-            case MOVE_UP:
-                textureKey = "walking-up";
-                break;
-            case MOVE_DOWN:
-                textureKey = "walking-down";
-                break;
-            default:
-                // We are not trying to move, so we must be idle
+        if (moving) {
+            switch (direction) {
+                case LEFT:
+                    textureKey = "walking-left";
+                    break;
+                case RIGHT:
+                    textureKey = "walking-right";
+                    break;
+                case UP:
+                    textureKey = "walking-up";
+                    break;
+                case DOWN:
+                    textureKey = "walking-down";
+                    break;
+            }
+        } else {
                 switch (direction) {
                     case LEFT:
                         textureKey = "idle-left";
@@ -101,7 +102,7 @@ public class CharacterRenderer {
                         break;
                     default:
                         break;
-                }
+            }
         }
         return textureKey;
     }

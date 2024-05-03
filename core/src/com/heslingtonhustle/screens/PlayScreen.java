@@ -3,13 +3,27 @@ package com.heslingtonhustle.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
+import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.badlogic.gdx.maps.MapProperties;
+import com.badlogic.gdx.maps.MapRenderer;
+import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.utils.ScreenUtils;
+import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.input.InputHandler;
 import com.heslingtonhustle.input.KeyboardInputHandler;
 import com.heslingtonhustle.map.MapManager;
+import com.heslingtonhustle.renderer.CharacterRenderer;
+import com.heslingtonhustle.renderer.HudRenderer;
 import com.heslingtonhustle.renderer.Renderer;
 import com.heslingtonhustle.state.Action;
+import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.Player;
 import com.heslingtonhustle.state.State;
 
@@ -21,12 +35,18 @@ public class PlayScreen implements Screen {
     InputMultiplexer inputMultiplexer;
     private final InputHandler inputHandler;
     private final State gameState;
-    private final Renderer renderer;
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
     private boolean isPaused;
     private float playerWidth, playerHeight;
     private Player player;
+    private DialogueManager dialogueManager;
+    private final FitViewport viewport;
+    private final OrthographicCamera camera;
+    private final SpriteBatch batch;
+    private final HudRenderer hudRenderer;
+    private final CharacterRenderer playerRenderer;
+
 
     /**
      * A screen to display the main game when the user is playing; importantly showing the map,
@@ -35,6 +55,12 @@ public class PlayScreen implements Screen {
      */
     public PlayScreen(HeslingtonHustleGame game) {
         this.game = game;
+        float zoom = 4.5f;
+
+        camera = new OrthographicCamera();
+        batch = new SpriteBatch();
+        viewport = new FitViewport(game.width/zoom, game.height/zoom, camera);
+        camera.setToOrtho(false, game.width, game.height);
 
         isPaused = false;
 
@@ -43,20 +69,33 @@ public class PlayScreen implements Screen {
         playerHeight = 0.9f;
 
         // The player
-        player = new Player();
+        player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
+
+        // Dialogue
+        dialogueManager = new DialogueManager(game.soundController);
+
 
         // Configure the renderer
         mapManager = new MapManager();
-        gameState = new State(mapManager, game.soundController, playerWidth, playerHeight);
+        mapManager.loadMap("Maps/campusEast.tmx");
+        gameState = new State(mapManager, game.soundController, dialogueManager);
         pauseMenu = new PauseMenu(this, game);
-        renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
+//        renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
+        hudRenderer = new HudRenderer(gameState, game.skin, game.width, game.height);
+
 
         // Configure the input handler
         inputHandler = new KeyboardInputHandler();
         addInputHandlers();
 
         gameState.pushWelcomeDialogue();
-        renderer.snapCamToPlayer();
+        camera.position.set(mapManager.worldToPixelCoords(player.getPosition()), 0);
+
+        float playerWidthInPixels = mapManager.worldToPixelValue(player.getPlayerWidth());
+        float playerHeightInPixels = mapManager.worldToPixelValue(player.getPlayerHeight());
+
+        TextureAtlas textureAtlas = new TextureAtlas("mainAtlas.atlas");
+        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "character00");
     }
 
     /**
@@ -65,10 +104,10 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void render(float delta) {
+        ScreenUtils.clear(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        viewport.apply();
 
-//        // Get the actions just called in this frame and the actions currently held down
-//        HashSet<Action> heldActions = inputHandler.getHeldActions();
-//        HashSet<Action> pressedActions = inputHandler.getPressedActions();
 //        // Game screen doesn't deal with any held actions
 //        handleActions(pressedActions);
 
@@ -83,33 +122,59 @@ public class PlayScreen implements Screen {
         // Draw everything
         // Check for gameover
 
-
-
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
 
-        player.move(heldActions);
+        if (dialogueManager.isEmpty()) {
+            player.move(heldActions, delta);
+        }
+
         // The player reacts to any objects it is inside
-        player.collide(mapManager.getObjectsInside(player.getHitbox()));
+        player.collide(mapManager.getRectanglesInside(player.getCollisionBox()));
 
-        MapProperties nearestTrigger = mapManager.getNearestTrigger(player.triggerHitbox());
+        MapProperties nearestTrigger = mapManager.getNearestTrigger(player.getTriggerBox());
 
-        if (nearestTrigger != null) {
-            if (dialogueManager.dialogue()) {
-                dialogueManager.react(nearestTrigger);
-            } else {
-                gameState.react(nearestTrigger);
+        // Player's can either interact with a trigger or with on-screen dialogue
+        // but no both at once
+        if (!dialogueManager.isEmpty()) {
+            dialogueManager.handleAction(pressedActions);
+        } else {
+            if (pressedActions.contains(Action.INTERACT)) {
+                gameState.handleInteraction(nearestTrigger);
             }
         }
 
-        mapManager.render();
+        gameState.update(heldActions, pressedActions, delta);
+
+        MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
+        mapRenderer.setView(camera);
+        mapRenderer.render();
         // Draw player
-        hudRenderer.render();
 
         // Check for gameover
         if (gameState.isGameOver()) {
             {}
         }
+
+        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        camera.position.slerp(
+                new Vector3(
+                        playerPixelPosition.x,
+                        playerPixelPosition.y,
+                        0
+                ),
+                delta*5);
+
+        batch.setProjectionMatrix(camera.combined);
+        batch.begin();
+        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
+        batch.end();
+
+
+        hudRenderer.render();
+
+//        renderer.update(playerWidth, playerHeight);
+
 
 //        if (!isPaused) {
 //            gameState.update(heldActions, pressedActions, delta);
@@ -123,6 +188,27 @@ public class PlayScreen implements Screen {
 //                    gameState.getActivities(),
 //                    gameState.getPlayerStepAchievement());
 //        }
+
+        drawPlayerDebug();
+
+        inputHandler.resetPressedActions();
+        camera.update();
+    }
+
+    private void drawPlayerDebug() {
+        ShapeRenderer collisionRenderer = mapManager.getCollisionRenderer();
+        collisionRenderer.setProjectionMatrix(camera.combined);
+
+        collisionRenderer.begin(ShapeRenderer.ShapeType.Line);
+        // Collision hitbox
+        collisionRenderer.setColor(0, 0, 1, 1);
+        Rectangle collision = mapManager.worldRectangleToPixelRectangle(player.getCollisionBox());
+        collisionRenderer.rect(collision.x, collision.y, collision.width, collision.height);
+        // Trigger hitbox
+        collisionRenderer.setColor(0, 1, 0, 1);
+        Rectangle trigger = mapManager.worldRectangleToPixelRectangle(player.getTriggerBox());
+        collisionRenderer.rect(trigger.x, trigger.y, trigger.width, trigger.height);
+        collisionRenderer.end();
     }
 
     /**
@@ -217,8 +303,8 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void resize(int width, int height) {
-        renderer.windowResized(width, height);
-        renderer.snapCamToPlayer();
+        viewport.update(width, height);
+        hudRenderer.resize(width, height);
     }
 
     /**
@@ -228,7 +314,7 @@ public class PlayScreen implements Screen {
     public void pause() {
         isPaused = true;
         Gdx.input.setInputProcessor(inputMultiplexer);
-        renderer.showPauseScreen();
+//        renderer.showPauseScreen();
     }
 
     /**
@@ -239,7 +325,7 @@ public class PlayScreen implements Screen {
     public void resume() {
         isPaused = false;
         Gdx.input.setInputProcessor(inputHandler);
-        renderer.hidePauseScreen();
+//        renderer.hidePauseScreen();
     }
 
     @Override
@@ -252,7 +338,7 @@ public class PlayScreen implements Screen {
     @Override
     public void dispose() {
         mapManager.dispose();
-        renderer.dispose();
+//        renderer.dispose();
         pauseMenu.dispose();
     }
 }

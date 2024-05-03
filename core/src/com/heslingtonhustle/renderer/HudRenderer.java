@@ -43,12 +43,11 @@ public class HudRenderer implements Disposable {
      * dialogueManager
      *
      * @param gameState
-     * @param textureAtlas
      * @param skin The loaded UI skin
      * @param width Width of the game window
      * @param height Height of the game window
      */
-    public HudRenderer(State gameState, TextureAtlas textureAtlas, Skin skin, int width, int height){
+    public HudRenderer(State gameState, Skin skin, int width, int height){
         this.gameState = gameState;
         this.skin = skin;
 

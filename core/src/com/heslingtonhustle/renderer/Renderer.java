@@ -23,7 +23,7 @@ import static java.lang.Math.round;
  * Queries the State to draw the current state to the screen; does not make any changes to State.
  */
 public class Renderer implements Disposable {
-    private final boolean DEBUG_COLLISIONS = true;
+    private final boolean DEBUG_COLLISIONS = false;
 
     private int screenWidth;
     public int screenHeight;
@@ -32,7 +32,7 @@ public class Renderer implements Disposable {
     private final OrthographicCamera camera;
     private MapRenderer mapRenderer;
     private final State gameState;
-    private final CharacterRenderer playerRenderer;
+//    private final CharacterRenderer playerRenderer;
     private final SpriteBatch batch;
 
     private final TextureAtlas textureAtlas;
@@ -62,25 +62,25 @@ public class Renderer implements Disposable {
 
         textureAtlas = new TextureAtlas("mainAtlas.atlas");
 
-        hudRenderer = new HudRenderer(gameState, textureAtlas, skin, screenWidth, screenHeight);
+        hudRenderer = new HudRenderer(gameState, skin, screenWidth, screenHeight);
 
-        float playerWidthInPixels = mapManager.worldToPixelValue(state.getPlayerWidth());
-        float playerHeightInPixels = mapManager.worldToPixelValue(state.getPlayerHeight());
-        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "character00");
+//        float playerWidthInPixels = mapManager.worldToPixelValue(state.getPlayerWidth());
+//        float playerHeightInPixels = mapManager.worldToPixelValue(state.getPlayerHeight());
+//        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "character00");
     }
 
     // Moves the camera and renders the map
     public void update(float playerWidth, float playerHeight) {
-        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(gameState.getPlayerPosition());
+//        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(gameState.getPlayerPosition());
         // Don't round, looks ugly
-        Vector2 clampedPlayerPosition = clampCoordsToScreen(playerPixelPosition);
-        camera.position.slerp(
-                new Vector3(
-                        playerPixelPosition.x,
-                        playerPixelPosition.y,
-                        0
-                ),
-                0.016667f*5);
+//        Vector2 clampedPlayerPosition = clampCoordsToScreen(playerPixelPosition);
+//        camera.position.slerp(
+//                new Vector3(
+//                        playerPixelPosition.x,
+//                        playerPixelPosition.y,
+//                        0
+//                ),
+//                0.016667f*5);
 
         viewport.update(screenWidth, screenHeight);
         batch.setProjectionMatrix(camera.combined);
@@ -91,19 +91,9 @@ public class Renderer implements Disposable {
         mapRenderer.setView(camera);
         mapRenderer.render();
 
-        if (DEBUG_COLLISIONS) {
-            ShapeRenderer collisionRenderer = mapManager.getCollisionRenderer();
-            collisionRenderer.setProjectionMatrix(camera.combined);
-
-            collisionRenderer.begin(ShapeRenderer.ShapeType.Line);
-            //Draw the player's hitboxes
-            collisionRenderer.rect(playerPixelPosition.x, playerPixelPosition.y, mapManager.worldToPixelValue(playerWidth), mapManager.worldToPixelValue(playerHeight));
-            collisionRenderer.end();
-        }
-
-        batch.begin();
-        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, gameState.getPlayerFacing(), gameState.getPlayerMovement());
-        batch.end();
+//        batch.begin();
+//        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, gameState.getPlayerFacing(), gameState.getPlayerMovement());
+//        batch.end();
 
         hudRenderer.render();
 
@@ -149,10 +139,10 @@ public class Renderer implements Disposable {
         pauseMenu.resize(width, height);
     }
 
-    /**
-     * Immediately teleports the camera to the player's position, instead of 'slerping' it
-     */
-    public void snapCamToPlayer() {
-        camera.position.set(mapManager.worldToPixelCoords(gameState.getPlayerPosition()), 0);
-    }
+//    /**
+//     * Immediately teleports the camera to the player's position, instead of 'slerping' it
+//     */
+//    public void snapCamToPlayer() {
+//        camera.position.set(mapManager.worldToPixelCoords(gameState.getPlayerPosition()), 0);
+//    }
 }

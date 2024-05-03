@@ -1,5 +1,6 @@
 package com.heslingtonhustle.state;
 
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
@@ -20,11 +21,9 @@ import java.util.Arrays;
 public class State {
     private static final int MAX_DAYS = 7;
     private boolean gameOver;
-    private final Player player;
     private final Clock clock;
-    private final MapManager mapManager;
-    private final DialogueManager dialogueManager;
     private final SoundController soundController;
+    private final DialogueManager dialogueManager;
     private final HashMap<String, Activity> activities = new HashMap<>();
     private Trigger currentTrigger;
     private int score;
@@ -32,14 +31,12 @@ public class State {
     private int hoursSlept;
 
 
-    public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
+    public State(MapManager mapManager, SoundController soundController, DialogueManager dialogueManager) {
         gameOver = false;
 
-        player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
         clock = new Clock();
-        this.mapManager = mapManager;
-        dialogueManager = new DialogueManager(soundController);
         this.soundController = soundController;
+        this.dialogueManager = dialogueManager;
 
         score = 0;
         replenishEnergy();
@@ -56,114 +53,51 @@ public class State {
      * @param timeDelta Time passed since the last update
      */
     public void update(HashSet<Action> heldActions, HashSet<Action> pressedActions, float timeDelta) {
-        currentTrigger = mapManager.getTrigger(player.getCollisionBox());
+//        currentTrigger = mapManager.getTrigger(player.getCollisionBox());
 
         // Checks for an interaction or dialogue skip
-        for (Action action : pressedActions) {
-            handleAction(action);
-        }
+//        for (Action action : pressedActions) {
+//            handleAction(action);
+//        }
 
         // The player only deals with actions that are held down, for its movement
-        if (dialogueManager.isEmpty()) {
-            player.move(heldActions);
-        } else {
-            // Specifically tell the player not to move anywhere this frame
-            player.freeze();
-        }
+//        if (dialogueManager.isEmpty()) {
+//            player.move(heldActions);
+//        } else {
+//            // Specifically tell the player not to move anywhere this frame
+//            player.freeze();
+//        }
 
         // Store old pos in case player is colliding with something
-        Vector2 previousPlayerPos = player.getPosition();
-        // Move player
-        player.update();
+//        Vector2 previousPlayerPos = player.getPosition();
+//
+//        // If collisions with anything, revert back to old position
+//        handlePlayerCollisions(previousPlayerPos, player.getCollisionBox());
 
-        // If collisions with anything, revert back to old position
-        handlePlayerCollisions(previousPlayerPos, player.getCollisionBox());
-
-        player.setInBounds(mapManager.getCurrentMapWorldDimensions());
+//        player.setInBounds(mapManager.getCurrentMapWorldDimensions());
         clock.increaseTime(timeDelta);
     }
 
-    /**
-     * Checks if the player is colliding with any objects, and restores them to their original position if they are
-     * Note: Assumes the player was not colliding with anything in the position oldPos
-     * @param oldPos The position of the player on the previous frame
-     */
-    public void handlePlayerCollisions(Vector2 oldPos, Rectangle playerBox) {
-        // Get an array of objects the player is colliding with
-        Array<Rectangle> colliders = mapManager.getCollisionRectangles(player.getCollisionBox());
-        // Translate player's coordinates to world coordinates
-        playerBox = mapManager.worldRectangleToPixelRectangle(playerBox);
-        // We need a copy of the player's location not in world coordinates
-        Vector2 oldPosWorld = mapManager.worldToPixelCoords(oldPos);
 
-
-        // For each object
-        for (Rectangle collider : colliders) {
-            // If null then the player is not colliding with anything, so do nothing
-            if (collider != null) {
-                // Find which previous dimension was not overlapping, and then only reset that one to allow
-                // sliding to happen
-
-                // If previously not overlapping in x direction, revert them back
-                if (!(oldPosWorld.x < collider.x + collider.width &&
-                        oldPosWorld.x + playerBox.width > collider.x)) {
-                    player.setX(oldPos.x);
-                }
-                // Same with y dimension
-                if (!(oldPosWorld.y < collider.y + collider.height &&
-                        oldPosWorld.y + playerBox.height > collider.y)) {
-                    player.setY(oldPos.y);
-                }
-            }
-        }
-
-    }
-
-    /**
-     * Passes the given action to dialogue box or interacting with a building
-     * @param action The action to pass
-     */
-    private void handleAction(Action action) {
-        if (!dialogueManager.isEmpty()) {
-            // A dialogue box is currently being displayed
-            handleDialogueAction(action);
-        } else if (action == Action.INTERACT) {
-            handleInteraction();
-        }
-    }
-
-    private void handleDialogueAction(Action action) {
-        switch (action) {
-            case MOVE_UP:
-                dialogueManager.decreaseSelection();
-                break;
-            case MOVE_DOWN:
-                dialogueManager.increaseSelection();
-                break;
-            case INTERACT:
-                dialogueManager.submit();
-        }
-    }
-
-    private void handleInteraction() {
+    public void handleInteraction(MapProperties trigger) {
         if (currentTrigger == null) {
             return;
         }
 
-        if (currentTrigger.getNewMap() != null) {
-            mapManager.loadMap("Maps/" + currentTrigger.getNewMap());
-            player.setPosition(currentTrigger.getNewMapCoords());
-            return;
-        }
+//        if (trigger.containsKey("new_map")) {
+//            mapManager.loadMap("Maps/" + trigger.get("new_map"));
+//            player.setPosition(new Vector2((float) trigger.get("new_map_x"), (float) trigger.get("new_map_y")));
+//            return;
+//        }
 
-        if (currentTrigger.containsKey("sign")) {
+        if (trigger.containsKey("sign")) {
             // Show dialogue
-            dialogueManager.addDialogue((String) currentTrigger.get("sign"));
+            dialogueManager.addDialogue((String) trigger.get("sign"));
             return;
 
         }
 
-        if (currentTrigger.canSleep()) {
+        if (trigger.containsKey("sleep")) {
             // If player has not slept yet
             if (!activities.containsKey("sleep")) {
                 activities.put("sleep", new Activity(
@@ -187,8 +121,9 @@ public class State {
         }
 
         // Call an activity that is not sleeping
-        String activityName = currentTrigger.getActivityName();
-        if (activityName != null) {
+        if (trigger.containsKey("activity")) {
+            String activityName = currentTrigger.getActivityName();
+
             // On the first encounter with an activity, create a new Activity class
             // to store how many times this activity has been completed
             if (!activities.containsKey(activityName)) {
@@ -200,7 +135,7 @@ public class State {
             // Call a dialogue box to prompt the player if they want to do
             // the listed activity
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
-            dialogueManager.addDialogue(currentTrigger.getPromptMessage(), options, selectedOption -> {
+            dialogueManager.addDialogue((String) trigger.get("prompt_message"), options, selectedOption -> {
                     if (selectedOption == 0) {
                         // If 'yes', do activity
                         doActivity(activity);
@@ -271,10 +206,6 @@ public class State {
         dialogueManager.addDialogue(result);
     }
 
-    public Vector2 getPlayerPosition() {
-        return player.getPosition();
-    }
-
     public String getTime() {
         return clock.getTime();
     }
@@ -284,26 +215,9 @@ public class State {
     public String getDebugTime() {
         return clock.getDebugString();
     }
-    public Facing getPlayerFacing() {
-        return player.getFacing();
-    }
-
-    public float getPlayerWidth() {
-        return player.getPlayerWidth();
-    }
-
-    public float getPlayerHeight() {
-        return player.getPlayerHeight();
-    }
-
-    public Action getPlayerMovement() {
-        return player.getMovement().iterator().next();
-    }
-
     public DialogueManager getDialogueManager() {
         return dialogueManager;
     }
-
     public boolean noDialogueOnScreen() {
         return dialogueManager.queueEmpty();
     }
@@ -423,12 +337,5 @@ public class State {
      */
     public HashMap<String, Activity> getActivities() {
         return activities;
-    }
-
-    /**
-     * @return True if the player walked at least x steps on each day
-     */
-    public boolean getPlayerStepAchievement() {
-        return player.getStepAchievement();
     }
 }

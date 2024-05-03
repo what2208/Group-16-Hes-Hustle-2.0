@@ -1,5 +1,6 @@
 package com.heslingtonhustle.state;
 
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
@@ -13,19 +14,28 @@ import java.util.Iterator;
  * Represents the player character. Is responsible for the movement of the player.
  * */
 public class Player {
-    public static final float SPEED = 0.1f;
-
+    // Positional and hitbox variables
     private Vector2 position;
+    private Vector2 previousPosition;
     private Rectangle collisionBox;
-    private HashSet<Action> movement = new HashSet<>();
-    private Facing facing = Facing.DOWN;
+    private Rectangle triggerBox;
     private final float width;
     private final float height;
+    private final Vector2 triggerBoxScale;
+
+    // Movement variables
+    private boolean moving = false;
+    public static final float SPEED = 6f;
+    private Facing facing = Facing.DOWN;
     private final float scale = 2f;
+
+    // Achievement
     private float distanceTravelled = 0;
     private int daysWalkedOver200Steps = 0;
 
     /**
+     * A new player instance
+     *
      * @param startingX Spawn location
      * @param startingY Spawn location
      * @param width Width in game units
@@ -34,49 +44,19 @@ public class Player {
     public Player(float startingX, float startingY, float width, float height) {
         this.width = width;
         this.height = height;
+
+        position = new Vector2(0, 0);
+
+        // Hitbox used to collide with objects
+        collisionBox = new Rectangle(0, 0, width, height*0.4f);
+        // Hitbox used to trigger events, it's larger than the player
+        triggerBoxScale = new Vector2(4, 3f);
+        triggerBox = new Rectangle(
+                -(width*triggerBoxScale.x)/2,
+                -(height*triggerBoxScale.y)/2,
+                width*triggerBoxScale.x, height*triggerBoxScale.y);
+
         setPosition(startingX,startingY);
-    }
-
-    /**
-     * The behaviour of the player character in a single frame. Call move() first.
-     */
-    public void update() {
-        // Respond to the actions of all pressed keys
-        float speed = SPEED;
-        if (movement.size() >= 2) {
-            // Correct for boost in distance travelled when moving diagonally
-            speed *= 0.75f;
-        }
-
-        for (Action action : movement) {
-            switch (action) {
-                case STOP:
-                    break;
-                case MOVE_LEFT:
-                    facing = Facing.LEFT;
-                    setPosition(position.x-speed, position.y);
-                    distanceTravelled += speed;
-                    break;
-                case MOVE_RIGHT:
-                    facing = Facing.RIGHT;
-                    setPosition(position.x+speed, position.y);
-                    distanceTravelled += speed;
-                    break;
-                case MOVE_UP:
-                    facing = Facing.UP;
-                    setPosition(position.x, position.y+speed);
-                    distanceTravelled += speed;
-                    break;
-                case MOVE_DOWN:
-                    facing = Facing.DOWN;
-                    setPosition(position.x, position.y-speed);
-                    distanceTravelled += speed;
-                    break;
-                default:
-                    break;
-            }
-        }
-
     }
 
     /**
@@ -86,23 +66,29 @@ public class Player {
         return new Vector2(position);
     }
 
+    /**
+     * Sets the player's position, updates all of their relevant hit boxes
+     * @param x X coordinate of the new position
+     * @param y Y coordinate of the new position
+     */
     public void setPosition(float x, float y) {
-        if (position == null) {
-            position = new Vector2();
-        }
-        position.x = x;
-        position.y = y;
-
-        if (collisionBox == null) {
-            collisionBox = new Rectangle();
-            collisionBox.setWidth(width);
-            collisionBox.setHeight(height*0.4f);
-        }
-        collisionBox.setPosition(position.x, position.y);
+        position = new Vector2(x, y);
+        collisionBox.setPosition(x, y);
+        triggerBox.setPosition(
+                x-(width*triggerBoxScale.x-width)/2,
+                y-(height*triggerBoxScale.y-height)/2);
     }
+
+    /**
+     * Sets the player's position, updating all of their relevant hit boxes
+     * @param newPosition Vector of the new position
+     */
     public void setPosition(Vector2 newPosition) {
         position = newPosition;
         collisionBox.setPosition(position);
+        triggerBox.setPosition(
+                position.x-(width*triggerBoxScale.x-width)/2,
+                position.y-(height*triggerBoxScale.y-height)/2);
     }
 
     /**
@@ -115,11 +101,12 @@ public class Player {
         }
         position.x = x;
         collisionBox.setX(x);
+        triggerBox.setX(position.x-(width*triggerBoxScale.x-width)/2);
     }
 
     /**
      * Sets just the player's y coordinate
-     * @param y
+     * @param y The y coordinate to set to
      */
     public void setY(float y) {
         if (position == null) {
@@ -127,42 +114,90 @@ public class Player {
         }
         position.y = y;
         collisionBox.setY(y);
+        triggerBox.setY(position.y-(height*triggerBoxScale.y-height)/2);
     }
 
     // Player can only move in one direction at a time because of this
     // But what if we wanted MORE!?
-    public void move(HashSet<Action> actions) {
-        // Pick out only movement actions from all pressed actions
-        movement.clear();
-        if (actions.contains(Action.MOVE_UP)) movement.add(Action.MOVE_UP);
-        if (actions.contains(Action.MOVE_DOWN)) movement.add(Action.MOVE_DOWN);
-        if (actions.contains(Action.MOVE_LEFT)) movement.add(Action.MOVE_LEFT);
-        if (actions.contains(Action.MOVE_RIGHT)) movement.add(Action.MOVE_RIGHT);
+    public void move(HashSet<Action> actions, float delta) {
+        // Stores the previous position for collision
+        previousPosition = getPosition();
 
-        // Check for opposite directions
-        if (movement.contains(Action.MOVE_UP) && movement.contains(Action.MOVE_DOWN)) {
-            movement.remove(Action.MOVE_UP);
-            movement.remove(Action.MOVE_DOWN);
+        //
+        Vector2 movementVector = new Vector2(0, 0);
+        moving = false;
+
+        // Find the directions the player needs to move in, accounting
+        // for opposite key presses
+
+        // Move left
+        if (actions.contains(Action.MOVE_LEFT) && !actions.contains(Action.MOVE_RIGHT)) {
+            facing = Facing.LEFT;
+            movementVector.add(-SPEED*delta, 0);
+            moving = true;
         }
 
-        if (movement.contains(Action.MOVE_LEFT) && movement.contains(Action.MOVE_RIGHT)) {
-            movement.remove(Action.MOVE_LEFT);
-            movement.remove(Action.MOVE_RIGHT);
+        // Move right
+        if (actions.contains(Action.MOVE_RIGHT) && !actions.contains(Action.MOVE_LEFT)) {
+            facing = Facing.RIGHT;
+            movementVector.add(SPEED*delta, 0);
+            moving = true;
         }
 
-        // If no actions are pressed, just stop
-        if (movement.isEmpty()) {
-            movement.add(Action.STOP);
+        // Move up
+        if (actions.contains(Action.MOVE_UP) && !actions.contains(Action.MOVE_DOWN)) {
+            facing = Facing.UP;
+            movementVector.add(0, SPEED*delta);
+            moving = true;
         }
+
+        // Move down
+        if (actions.contains(Action.MOVE_DOWN) && !actions.contains(Action.MOVE_UP)) {
+            facing = Facing.DOWN;
+            movementVector.add(0, -SPEED*delta);
+            moving = true;
+        }
+
+        // If move in more than 1 direction at a time, scale the movement vector
+        // so you move less far, otherwise you move sqrt(2) units, which is > 1
+        if (movementVector.x != 0 && movementVector.y != 0) {
+            movementVector.scl(0.7f);
+        }
+
+        // Set new position
+        setPosition(position.add(movementVector));
+        distanceTravelled += movementVector.len2();
     }
 
     /**
-     * Ensures the player does not move this frame
+     * The player will move itself to the edge of any objects it is
+     * overlapping
+     * @param rectangles The set of rectangles the player is overlapping
      */
-    public void freeze() {
-        movement.clear();
-        movement.add(Action.STOP);
+    public void collide(HashSet<Rectangle> rectangles) {
+
+        // For each object
+        for (Rectangle collider : rectangles) {
+            // If null then the player is not colliding with anything, so do nothing
+            if (collider != null) {
+                // Find which previous dimension was not overlapping, and then only reset that one to allow
+                // sliding to happen
+
+                // If previously not overlapping in x direction, revert them back
+                if (!(previousPosition.x < collider.x + collider.width &&
+                        previousPosition.x + collisionBox.width > collider.x)) {
+                    setX(previousPosition.x);
+                }
+                // Same with y dimension
+                if (!(previousPosition.y < collider.y + collider.height &&
+                        previousPosition.y + collisionBox.height > collider.y)) {
+                    setY(previousPosition.y);
+                }
+            }
+        }
     }
+
+
 
     /**
      * @return The direction the player is facing from Facing
@@ -172,10 +207,24 @@ public class Player {
     }
 
     /**
+     * @return True if the player moved the last frame
+     */
+    public boolean getMoving(){
+        return moving;
+    }
+
+    /**
      * @return The player's collision hitbox
      */
     public Rectangle getCollisionBox() {
         return collisionBox;
+    }
+
+    /**
+     * @return The player's trigger hitbox
+     */
+    public Rectangle getTriggerBox() {
+        return triggerBox;
     }
 
     /**
@@ -200,18 +249,11 @@ public class Player {
     }
 
     /**
-     * @return Sets the player's position to be inside the map, assumes it is drawn from (0, 0)
+     * Sets the player's position to be inside the map, assumes it is drawn from (0, 0)
      */
     public void setInBounds(Vector2 mapSize) {
         position.x = MathUtils.clamp(position.x, 0, mapSize.x);
         position.y = MathUtils.clamp(position.y, 0, mapSize.y);
-    }
-
-    /**
-     * @return The directions the player needs to move in each frame
-     */
-    public HashSet<Action> getMovement() {
-        return movement;
     }
 
     /**
