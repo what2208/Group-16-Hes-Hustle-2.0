@@ -37,7 +37,6 @@ public class PlayScreen implements Screen {
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
     private boolean isPaused;
-    private float playerWidth, playerHeight;
     private Player player;
     private DialogueManager dialogueManager;
     private final FitViewport viewport;
@@ -64,8 +63,8 @@ public class PlayScreen implements Screen {
         isPaused = false;
 
         // The player size is in world units
-        playerWidth = 0.6f;
-        playerHeight = 0.9f;
+        float playerWidth = 0.6f;
+        float playerHeight = 0.9f;
 
         // Classes needed for the game
         player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
@@ -124,9 +123,29 @@ public class PlayScreen implements Screen {
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
 
-        // Let the player move if there is no dialogue on screen
-        if (dialogueManager.isEmpty()) {
-            player.move(heldActions, delta);
+        // Check if the player has paused the game
+        handleActions(pressedActions);
+
+        // Check for pause
+        if (!isPaused) {
+            // Let the player move if there is no dialogue on screen
+            if (dialogueManager.isEmpty()) {
+                player.move(heldActions, delta);
+            } else {
+                player.dontMove();
+            }
+
+            // Player's can either interact with a trigger or with on-screen dialogue
+            // but no both at once
+            if (!dialogueManager.isEmpty()) {
+                dialogueManager.handleAction(pressedActions);
+            } else {
+                if (pressedActions.contains(Action.INTERACT)) {
+                    gameState.handleInteraction();
+                }
+            }
+            gameState.passTime(delta);
+
         } else {
             player.dontMove();
         }
@@ -140,17 +159,6 @@ public class PlayScreen implements Screen {
         MapProperties nearestTrigger = mapManager.getNearestTrigger(player.getTriggerBox());
         gameState.setNearestTrigger(nearestTrigger);
 
-        // Player's can either interact with a trigger or with on-screen dialogue
-        // but no both at once
-        if (!dialogueManager.isEmpty()) {
-            dialogueManager.handleAction(pressedActions);
-        } else {
-            if (pressedActions.contains(Action.INTERACT)) {
-                gameState.handleInteraction();
-            }
-        }
-
-        gameState.passTime(delta);
         hudRenderer.updateValues(gameState.getTime(), gameState.getDay(), gameState.getEnergy());
 
         // <--- RENDERING ---> //
@@ -162,10 +170,11 @@ public class PlayScreen implements Screen {
 
         // Draw player
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        // Centre camera on the player
         camera.position.slerp(
                 new Vector3(
-                        playerPixelPosition.x,
-                        playerPixelPosition.y,
+                        playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                        playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
                         0
                 ),
                 delta*5);
@@ -177,8 +186,13 @@ public class PlayScreen implements Screen {
         batch.end();
 
         // Draw HUD
-        // Draws the interaction popup if near a trigger
-        hudRenderer.render(nearestTrigger != null);
+        // Pass the nearest trigger for interaction label#
+        if (isPaused) {
+            hudRenderer.render(null);
+        } else {
+            hudRenderer.render(nearestTrigger);
+        }
+        pauseMenu.render();
 
 //        drawPlayerDebug();
 
@@ -216,15 +230,10 @@ public class PlayScreen implements Screen {
      * @param pressedActions All actions related to key presses this frame
      */
     private void handleActions(HashSet<Action> pressedActions) {
-
-        if (pressedActions.contains(Action.PAUSE)) {
-            // If pause or unpause, ignore everything else
-            handlePauseAction(Action.PAUSE);
-            return;
-        }
-
-        // For all other actions
+        // For each action...
         for (Action action : pressedActions) {
+            // Check whether anything needs to be done
+            handlePauseAction(action);
             handleDebugAction(action);
         }
 
@@ -233,11 +242,10 @@ public class PlayScreen implements Screen {
     /**
      * Checks if a debug key has been pressed and performs the corresponding actions if one has.
      * @param action An action related to a key press.
-     * @return Boolean
      */
-    private boolean handleDebugAction(Action action) {
+    private void handleDebugAction(Action action) {
         if (action == null) {
-            return false;
+            return;
         }
         // One of the debugging keys have been pressed. By default, these are ',' '.' '/' keys
         switch (action) {
@@ -245,17 +253,14 @@ public class PlayScreen implements Screen {
                 if (gameState.noDialogueOnScreen()) {
                     gameState.printActivities();
                 }
-                return true;
+                return;
             case DEBUGGING_ACTION2:
                 Gdx.app.debug("DEBUG", "Time: "+gameState.getDebugTime());
-                return true;
+                return;
             case DEBUGGING_ACTION3:
                 if (gameState.noDialogueOnScreen()) {
                     gameState.pushTestDialogue();
                 }
-                return true;
-            default:
-                return false;
         }
     }
 
@@ -265,15 +270,12 @@ public class PlayScreen implements Screen {
      * @param action An action related to a key press.
      * @return Boolean
      */
-    private boolean handlePauseAction(Action action) {
+    private void handlePauseAction(Action action) {
         if (action == Action.PAUSE && !isPaused) {
             pause();
-            return true;
         } else if (action == Action.PAUSE) {
-            resume();
-            return true;
+            unPause();
         }
-        return false;
     }
 
     /**
@@ -314,7 +316,16 @@ public class PlayScreen implements Screen {
     public void pause() {
         isPaused = true;
         Gdx.input.setInputProcessor(inputMultiplexer);
-//        renderer.showPauseScreen();
+        pauseMenu.showPauseMenu();
+    }
+
+    /**
+     * Specifically unpauses the game
+     */
+    public void unPause() {
+        isPaused = false;
+        Gdx.input.setInputProcessor(inputHandler);
+        pauseMenu.hidePauseMenu();
     }
 
     /**
@@ -323,9 +334,12 @@ public class PlayScreen implements Screen {
      */
     @Override
     public void resume() {
-        isPaused = false;
-        Gdx.input.setInputProcessor(inputHandler);
-//        renderer.hidePauseScreen();
+        // Ensures all variables are set correctly
+        if (pauseMenu.isVisible()) {
+            pause();
+        } else {
+            unPause();
+        }
     }
 
     @Override

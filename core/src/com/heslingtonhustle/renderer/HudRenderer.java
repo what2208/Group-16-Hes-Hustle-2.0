@@ -2,6 +2,7 @@ package com.heslingtonhustle.renderer;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
@@ -21,6 +22,7 @@ public class HudRenderer implements Disposable {
     private final OrthographicCamera hudCamera;
     private final FitViewport viewport;
     private final DialogueManager dialogueManager;
+    private final float width;
 
 
     private final Skin skin;
@@ -47,6 +49,7 @@ public class HudRenderer implements Disposable {
     public HudRenderer(Skin skin, DialogueManager dialogueManager, int width, int height){
         this.skin = skin;
         this.dialogueManager = dialogueManager;
+        this.width = width;
 
         // Camera and viewport
         hudCamera = new OrthographicCamera();
@@ -68,9 +71,11 @@ public class HudRenderer implements Disposable {
         hudStage.addActor(dayButton);
 
         // Label to tell the user they can interact with something
+        Table interactionTable = new Table();
+        hudStage.addActor(interactionTable);
+        interactionTable.setFillParent(true);
         interactLabel = new Label("E - Interact", skin, "interaction");
-        interactLabel.setPosition((width - interactLabel.getWidth()) / 2 + 15, 200);
-        hudStage.addActor(interactLabel);
+        interactionTable.add(interactLabel).expand().padTop(250);
 
         // Energy bar
         energyBar = new Image(skin, "energy_bar");
@@ -112,12 +117,20 @@ public class HudRenderer implements Disposable {
      * a building.
      * Displays a dialogue window if dialogueQueue is not empty
      */
-    public void render(Boolean interactionPossible){
+    public void render(MapProperties nearestTrigger){
         hudStage.setViewport(viewport);
         hudCamera.update();
 
         // Show an interaction label if player is near an interactable object
-        interactLabel.setVisible(interactionPossible);
+        if (nearestTrigger == null) {
+            interactLabel.setVisible(false);
+        } else if (nearestTrigger.containsKey("sign")) {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Read");
+        } else {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Interact");
+        }
 
         showDialogue();
 

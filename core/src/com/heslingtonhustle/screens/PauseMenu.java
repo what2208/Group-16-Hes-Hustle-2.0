@@ -63,6 +63,7 @@ public class PauseMenu {
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                isVisible = false;
                 soundController.playSound(Sounds.CONFIRM);
                 playScreen.resume();
             }
@@ -145,5 +146,12 @@ public class PauseMenu {
      */
     public void dispose() {
         stage.dispose();
+    }
+
+    /**
+     * @return True if the pause menu is visible
+     */
+    public boolean isVisible() {
+        return isVisible;
     }
 }
