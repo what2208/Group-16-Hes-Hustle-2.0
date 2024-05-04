@@ -1,14 +1,10 @@
 package com.heslingtonhustle.state;
 
-import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
-import java.util.Iterator;
 
 /**
  * Represents the player character. Is responsible for the movement of the player.
@@ -50,7 +46,7 @@ public class Player {
         // Hitbox used to collide with objects
         collisionBox = new Rectangle(0, 0, width, height*0.4f);
         // Hitbox used to trigger events, it's larger than the player
-        triggerBoxScale = new Vector2(4, 3f);
+        triggerBoxScale = new Vector2(3, 2.5f);
         triggerBox = new Rectangle(
                 -(width*triggerBoxScale.x)/2,
                 -(height*triggerBoxScale.y)/2,
@@ -195,6 +191,13 @@ public class Player {
                 }
             }
         }
+    }
+
+    /**
+     * Stops the player's walking animation
+     */
+    public void dontMove() {
+        moving = false;
     }
 
 

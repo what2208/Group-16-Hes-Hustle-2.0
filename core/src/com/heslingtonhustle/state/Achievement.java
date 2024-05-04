@@ -7,9 +7,9 @@ package com.heslingtonhustle.state;
  * Achievements can be negative as 'penalties'
  */
 public class Achievement {
-    private String title;
-    private String description;
-    private int score;
+    private final String title;
+    private final String description;
+    private final int score;
 
     /**
      * Defines an achievement with a title, description and score

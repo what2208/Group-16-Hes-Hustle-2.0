@@ -610,7 +610,7 @@ You lost 20 energy!</property>
   </object>
   <object id="477" x="1328" y="432" width="32" height="32">
    <properties>
-    <property name="sign" value="Langwith College - East Campus"/>
+    <property name="sign" value="Constantine College - East Campus"/>
    </properties>
   </object>
   <object id="478" x="1296" y="1040" width="16" height="16">

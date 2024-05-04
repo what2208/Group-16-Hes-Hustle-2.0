@@ -1,13 +1,8 @@
 package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.sound.SoundController;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -25,61 +20,44 @@ public class State {
     private final SoundController soundController;
     private final DialogueManager dialogueManager;
     private final HashMap<String, Activity> activities = new HashMap<>();
-    private Trigger currentTrigger;
-    private int score;
+    // A reference to the current closest trigger the player can interact with
+    private MapProperties currentTrigger;
     private int energy;
     private int hoursSlept;
 
 
-    public State(MapManager mapManager, SoundController soundController, DialogueManager dialogueManager) {
+    public State(SoundController soundController, DialogueManager dialogueManager) {
         gameOver = false;
 
         clock = new Clock();
         this.soundController = soundController;
         this.dialogueManager = dialogueManager;
 
-        score = 0;
         replenishEnergy();
         currentTrigger = null; // This stores the Tiled trigger box that we are currently stood inside of
     }
 
 
     /**
-     * Updates the game's state based on the pressed and held actions
-     * Handles player movement and collision, time as well as interactions
-     *
-     * @param heldActions A set of all held down actions
-     * @param pressedActions A set of all actions called only on this frame
-     * @param timeDelta Time passed since the last update
+     * Adds the amount of time passed to the in game clock
+     * @param delta The time to add in seconds
      */
-    public void update(HashSet<Action> heldActions, HashSet<Action> pressedActions, float timeDelta) {
-//        currentTrigger = mapManager.getTrigger(player.getCollisionBox());
-
-        // Checks for an interaction or dialogue skip
-//        for (Action action : pressedActions) {
-//            handleAction(action);
-//        }
-
-        // The player only deals with actions that are held down, for its movement
-//        if (dialogueManager.isEmpty()) {
-//            player.move(heldActions);
-//        } else {
-//            // Specifically tell the player not to move anywhere this frame
-//            player.freeze();
-//        }
-
-        // Store old pos in case player is colliding with something
-//        Vector2 previousPlayerPos = player.getPosition();
-//
-//        // If collisions with anything, revert back to old position
-//        handlePlayerCollisions(previousPlayerPos, player.getCollisionBox());
-
-//        player.setInBounds(mapManager.getCurrentMapWorldDimensions());
-        clock.increaseTime(timeDelta);
+    public void passTime(float delta) {
+        clock.increaseTime(delta);
     }
 
 
-    public void handleInteraction(MapProperties trigger) {
+    /**
+     * Tells the game which trigger the player is nearest in
+     * case they want to interact with it.
+     * @param trigger The closest trigger object
+     */
+    public void setNearestTrigger(MapProperties trigger) {
+        currentTrigger = trigger;
+    }
+
+
+    public void handleInteraction() {
         if (currentTrigger == null) {
             return;
         }
@@ -90,14 +68,14 @@ public class State {
 //            return;
 //        }
 
-        if (trigger.containsKey("sign")) {
+        if (currentTrigger.containsKey("sign")) {
             // Show dialogue
-            dialogueManager.addDialogue((String) trigger.get("sign"));
+            dialogueManager.addDialogue((String) currentTrigger.get("sign"));
             return;
 
         }
 
-        if (trigger.containsKey("sleep")) {
+        if (currentTrigger.containsKey("sleep")) {
             // If player has not slept yet
             if (!activities.containsKey("sleep")) {
                 activities.put("sleep", new Activity(
@@ -121,13 +99,15 @@ public class State {
         }
 
         // Call an activity that is not sleeping
-        if (trigger.containsKey("activity")) {
-            String activityName = currentTrigger.getActivityName();
+        if (currentTrigger.containsKey("activity")) {
+            String activityName = (String) currentTrigger.get("activity");
 
             // On the first encounter with an activity, create a new Activity class
             // to store how many times this activity has been completed
             if (!activities.containsKey(activityName)) {
-                activities.put(activityName, currentTrigger.toActivity());
+                // Creates an activity class from MapProperties and stores it
+                // with the activity name
+                activities.put(activityName, Activity.toActivity(currentTrigger));
             }
 
             Activity activity = activities.get(activityName);
@@ -135,7 +115,7 @@ public class State {
             // Call a dialogue box to prompt the player if they want to do
             // the listed activity
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
-            dialogueManager.addDialogue((String) trigger.get("prompt_message"), options, selectedOption -> {
+            dialogueManager.addDialogue((String) currentTrigger.get("prompt_message"), options, selectedOption -> {
                     if (selectedOption == 0) {
                         // If 'yes', do activity
                         doActivity(activity);
@@ -166,7 +146,8 @@ public class State {
             activity.completeActivity();
             exertEnergy(activity.getEnergyUse());
             clock.passHours(activity.getHours());
-            dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
+            // Gets the success message from the most recent trigger
+            dialogueManager.addDialogue((String) currentTrigger.get("success_message"));
         }
     }
 
@@ -300,7 +281,7 @@ public class State {
      * @return True if the player is near a trigger that can be interacted with
      */
     public boolean isInteractionPossible() {
-        return  currentTrigger != null;
+        return currentTrigger != null;
     }
 
     /**

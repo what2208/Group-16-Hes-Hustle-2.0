@@ -21,7 +21,6 @@ import com.heslingtonhustle.input.KeyboardInputHandler;
 import com.heslingtonhustle.map.MapManager;
 import com.heslingtonhustle.renderer.CharacterRenderer;
 import com.heslingtonhustle.renderer.HudRenderer;
-import com.heslingtonhustle.renderer.Renderer;
 import com.heslingtonhustle.state.Action;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.Player;
@@ -78,9 +77,8 @@ public class PlayScreen implements Screen {
         // Configure the renderer
         mapManager = new MapManager();
         mapManager.loadMap("Maps/campusEast.tmx");
-        gameState = new State(mapManager, game.soundController, dialogueManager);
+        gameState = new State(game.soundController, dialogueManager);
         pauseMenu = new PauseMenu(this, game);
-//        renderer = new Renderer(gameState, mapManager, pauseMenu, game.skin, game.width, game.height);
         hudRenderer = new HudRenderer(gameState, game.skin, game.width, game.height);
 
 
@@ -108,8 +106,7 @@ public class PlayScreen implements Screen {
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
         viewport.apply();
 
-//        // Game screen doesn't deal with any held actions
-//        handleActions(pressedActions);
+        delta = 0.01667f;
 
         // Structure
         // Get actions
@@ -122,17 +119,28 @@ public class PlayScreen implements Screen {
         // Draw everything
         // Check for gameover
 
+
+        // <--- LOGIC ---> //
+
+        // Get inputs
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
 
+        // Let the player move if there is no dialogue on screen
         if (dialogueManager.isEmpty()) {
             player.move(heldActions, delta);
+        } else {
+            player.dontMove();
         }
 
-        // The player reacts to any objects it is inside
+        // The player needs to move out of any objects it is inside
         player.collide(mapManager.getRectanglesInside(player.getCollisionBox()));
+        // Also stay inside map
+        player.setInBounds(mapManager.getCurrentMapWorldDimensions());
 
+        // Find the nearest interactable object
         MapProperties nearestTrigger = mapManager.getNearestTrigger(player.getTriggerBox());
+        gameState.setNearestTrigger(nearestTrigger);
 
         // Player's can either interact with a trigger or with on-screen dialogue
         // but no both at once
@@ -140,22 +148,20 @@ public class PlayScreen implements Screen {
             dialogueManager.handleAction(pressedActions);
         } else {
             if (pressedActions.contains(Action.INTERACT)) {
-                gameState.handleInteraction(nearestTrigger);
+                gameState.handleInteraction();
             }
         }
 
-        gameState.update(heldActions, pressedActions, delta);
+        gameState.passTime(delta);
 
+        // <--- RENDERING ---> //
+
+        // Draw map
         MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
         mapRenderer.setView(camera);
         mapRenderer.render();
+
         // Draw player
-
-        // Check for gameover
-        if (gameState.isGameOver()) {
-            {}
-        }
-
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
         camera.position.slerp(
                 new Vector3(
@@ -165,34 +171,28 @@ public class PlayScreen implements Screen {
                 ),
                 delta*5);
 
+        // Draw player
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
         batch.end();
 
-
+        // Draw HUD
         hudRenderer.render();
 
-//        renderer.update(playerWidth, playerHeight);
+//        drawPlayerDebug();
 
-
-//        if (!isPaused) {
-//            gameState.update(heldActions, pressedActions, delta);
-//        }
-//        renderer.update(playerWidth, playerHeight);
-//        inputHandler.resetPressedActions();
-//
-//        // Checks if the game has concluded
-//        if (gameState.isGameOver()) {
-//            game.gameOver(
-//                    gameState.getActivities(),
-//                    gameState.getPlayerStepAchievement());
-//        }
-
-        drawPlayerDebug();
+        // <--- FINAL CHECKS AND RESETS ---> //
 
         inputHandler.resetPressedActions();
         camera.update();
+
+        if (gameState.isGameOver()) {
+            game.gameOver(
+                    gameState.getActivities(),
+                    player.getStepAchievement());
+
+        }
     }
 
     private void drawPlayerDebug() {

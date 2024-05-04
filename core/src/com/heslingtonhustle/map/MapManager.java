@@ -16,7 +16,6 @@ import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.Disposable;
-import com.heslingtonhustle.state.Trigger;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -130,20 +129,6 @@ public class MapManager implements Disposable {
         return getAllRectangleOverlaps(playerRectangle, mapCollisionRectangles);
     }
 
-    public Trigger getTrigger(Rectangle playerRectangle) {
-        if (triggerObjects == null) {
-            return null;
-        }
-        playerRectangle = worldRectangleToPixelRectangle(playerRectangle);
-        Array<RectangleMapObject> mapTriggerRectangles = getRectangles(triggerRectangles, triggerObjects);
-        RectangleMapObject overlappingRectangle = null;
-        if (overlappingRectangle == null) {
-            return null;
-        }
-        MapProperties mapProperties = overlappingRectangle.getProperties();
-        return new Trigger(mapProperties);
-    }
-
     /**
      * Finds the nearest trigger the player is overlapping
      * @param playerHitbox The player's trigger hitbox
@@ -153,6 +138,7 @@ public class MapManager implements Disposable {
         if (triggerObjects == null) {
             return null;
         }
+        playerHitbox = worldRectangleToPixelRectangle(playerHitbox);
         // The distance of the nearest trigger
         float closestDistance = -1f;
         MapProperties closestObject = null;

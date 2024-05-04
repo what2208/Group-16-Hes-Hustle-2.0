@@ -1,5 +1,7 @@
 package com.heslingtonhustle.state;
 
+import com.badlogic.gdx.maps.MapProperties;
+
 /**
  * Stores information about a type of activity completed.
  * Each activity should have a name, score and a class of score it contributes to.
@@ -130,5 +132,23 @@ public class Activity {
      */
     public void setMaxPerDay(int times) {
         maxPerDay = times;
+    }
+
+
+    /**
+     * Static method which converts a map properties class loaded from a Tiled map
+     * into an activity
+     * @param mapObject The mapProperties to convert
+     * @return The created activity
+     */
+    public static Activity toActivity(MapProperties mapObject) {
+        return new Activity(
+                (String) mapObject.get("activity"),
+                (String) mapObject.get("type"),
+                (int) mapObject.get("score"),
+                (int) mapObject.get("energy_cost"),
+                (int) mapObject.get("hours"),
+                (int) mapObject.get("limit")
+        );
     }
 }

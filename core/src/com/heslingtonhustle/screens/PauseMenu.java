@@ -2,7 +2,6 @@ package com.heslingtonhustle.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -13,7 +12,6 @@ import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
-import com.heslingtonhustle.state.State;
 
 public class PauseMenu {
     private final Screen playScreen;
