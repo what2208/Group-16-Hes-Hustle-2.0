@@ -67,19 +67,17 @@ public class PlayScreen implements Screen {
         playerWidth = 0.6f;
         playerHeight = 0.9f;
 
-        // The player
+        // Classes needed for the game
         player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
 
-        // Dialogue
         dialogueManager = new DialogueManager(game.soundController);
 
-
-        // Configure the renderer
         mapManager = new MapManager();
         mapManager.loadMap("Maps/campusEast.tmx");
+
         gameState = new State(game.soundController, dialogueManager);
+        hudRenderer = new HudRenderer(game.skin, dialogueManager, game.width, game.height);
         pauseMenu = new PauseMenu(this, game);
-        hudRenderer = new HudRenderer(gameState, game.skin, game.width, game.height);
 
 
         // Configure the input handler
@@ -134,7 +132,7 @@ public class PlayScreen implements Screen {
         }
 
         // The player needs to move out of any objects it is inside
-        player.collide(mapManager.getRectanglesInside(player.getCollisionBox()));
+        player.collide(mapManager.getOverlappingRectangles(player.getCollisionBox()));
         // Also stay inside map
         player.setInBounds(mapManager.getCurrentMapWorldDimensions());
 
@@ -153,6 +151,7 @@ public class PlayScreen implements Screen {
         }
 
         gameState.passTime(delta);
+        hudRenderer.updateValues(gameState.getTime(), gameState.getDay(), gameState.getEnergy());
 
         // <--- RENDERING ---> //
 
@@ -178,7 +177,8 @@ public class PlayScreen implements Screen {
         batch.end();
 
         // Draw HUD
-        hudRenderer.render();
+        // Draws the interaction popup if near a trigger
+        hudRenderer.render(nearestTrigger != null);
 
 //        drawPlayerDebug();
 

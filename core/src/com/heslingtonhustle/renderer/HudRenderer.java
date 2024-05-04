@@ -8,6 +8,7 @@ import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.State;
+import com.sun.org.apache.xpath.internal.operations.Bool;
 
 import java.util.List;
 
@@ -17,7 +18,6 @@ import java.util.List;
  * Also displays a label when the player can interact with an event
  */
 public class HudRenderer implements Disposable {
-    private final State gameState;
     private final OrthographicCamera hudCamera;
     private final FitViewport viewport;
     private final DialogueManager dialogueManager;
@@ -39,14 +39,14 @@ public class HudRenderer implements Disposable {
      * Also initalises the dialogue window to display dialogue from
      * dialogueManager
      *
-     * @param gameState
+     * @param dialogueManager The current dialogue manager
      * @param skin The loaded UI skin
      * @param width Width of the game window
      * @param height Height of the game window
      */
-    public HudRenderer(State gameState, Skin skin, int width, int height){
-        this.gameState = gameState;
+    public HudRenderer(Skin skin, DialogueManager dialogueManager, int width, int height){
         this.skin = skin;
+        this.dialogueManager = dialogueManager;
 
         // Camera and viewport
         hudCamera = new OrthographicCamera();
@@ -54,9 +54,6 @@ public class HudRenderer implements Disposable {
 
         // Stage for UI elements
         hudStage = new Stage(new FitViewport(width, height));
-
-        // Store a reference to the dialogueManager to fetch dialogue
-        dialogueManager = gameState.getDialogueManager();
 
         // Display time
         timeButton = new TextButton("10:00am", skin, "informational");
@@ -115,20 +112,12 @@ public class HudRenderer implements Disposable {
      * a building.
      * Displays a dialogue window if dialogueQueue is not empty
      */
-    public void render(){
+    public void render(Boolean interactionPossible){
         hudStage.setViewport(viewport);
         hudCamera.update();
-        // Update day and time labels
-        updateLabels();
-
-        updateEnergy();
 
         // Show an interaction label if player is near an interactable object
-        if (gameState.isInteractionPossible()) {
-            interactLabel.setVisible(true);
-        } else {
-            interactLabel.setVisible(false);
-        }
+        interactLabel.setVisible(interactionPossible);
 
         showDialogue();
 
@@ -136,22 +125,20 @@ public class HudRenderer implements Disposable {
         hudStage.draw();
     }
 
-    /**
-     * Fetches the correct values for time and date from gameState
-     * and updates the labels.
-     */
-    private void updateLabels() {
-        dayButton.setText("Day " + gameState.getDay());
-        timeButton.setText(gameState.getTime());
-
-    }
 
     /**
-     * Scales the energy bar to the correct level
+     * Updates hud's time, date and energy labels
+     * @param time The time represented as a string
+     * @param day The day number to display
+     * @param energy The amount of energy the player has left, between 0 and 100
      */
-    private void updateEnergy() {
-        energyBar.setScaleY(gameState.getEnergy() / 100f);
+    public void updateValues(String time, int day, int energy) {
+        timeButton.setText(time);
+        dayButton.setText("Day " + day);
+
+        energyBar.setScaleY(energy / 100f);
     }
+
 
     /**
      * Shows/hides the dialoueBox if there is dialogue in the queue
@@ -188,7 +175,7 @@ public class HudRenderer implements Disposable {
         optionTable.clearChildren();
 
         // Only draw if the player has options to choose from
-        if (dialogueManager.getOptions() != null) {
+        if (options != null) {
             // Add player's options to the options table
             for (int i = 0; i < options.size(); i++) {
                 Label pointer = new Label(">>", skin, "dialoguesmall");
