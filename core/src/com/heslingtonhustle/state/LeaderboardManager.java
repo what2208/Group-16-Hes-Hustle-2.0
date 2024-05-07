@@ -3,9 +3,7 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
-import com.sun.tools.javac.util.StringUtils;
 
-import java.util.LinkedHashMap;
 import java.util.regex.Pattern;
 
 /**

@@ -3,9 +3,7 @@ package com.heslingtonhustle.state;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
 
-import java.util.List;
-import java.util.Queue;
-import java.util.LinkedList;
+import java.util.*;
 
 /**
  * A class to store different screens of dialogue to display to the player
@@ -87,6 +85,24 @@ public class DialogueManager {
     public DialogueManager(SoundController soundController) {
         this.soundController = soundController;
         dialogueQueue = new LinkedList<DialogueBox>();
+    }
+
+    /**
+     * Reacts to a set of actions
+     * @param pressedActions A set of pressed actions this frame
+     */
+    public void handleAction(HashSet<Action> pressedActions) {
+        for (Action action : pressedActions)
+            switch (action) {
+                case MOVE_UP:
+                    decreaseSelection();
+                    break;
+                case MOVE_DOWN:
+                    increaseSelection();
+                    break;
+                case INTERACT:
+                    submit();
+            }
     }
 
     /**
