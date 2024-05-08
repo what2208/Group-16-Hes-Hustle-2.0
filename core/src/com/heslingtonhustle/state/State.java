@@ -57,6 +57,11 @@ public class State {
     }
 
 
+    public MapProperties getNearestTrigger() {
+        return currentTrigger;
+    }
+
+
     public void handleInteraction() {
         if (currentTrigger == null) {
             return;
@@ -73,6 +78,10 @@ public class State {
             dialogueManager.addDialogue((String) currentTrigger.get("sign"));
             return;
 
+        }
+
+        if (currentTrigger.containsKey("new_map")) {
+            return;
         }
 
         if (currentTrigger.containsKey("sleep")) {

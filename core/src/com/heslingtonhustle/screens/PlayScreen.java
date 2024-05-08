@@ -142,6 +142,12 @@ public class PlayScreen implements Screen {
             } else {
                 if (pressedActions.contains(Action.INTERACT)) {
                     gameState.handleInteraction();
+                    // Check for map change
+                    MapProperties currentTrigger = gameState.getNearestTrigger();
+                    if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
+                        changeMap(currentTrigger);
+                        return;
+                    }
                 }
             }
             gameState.passTime(delta);
@@ -237,6 +243,12 @@ public class PlayScreen implements Screen {
             handleDebugAction(action);
         }
 
+    }
+
+    public void changeMap(MapProperties currentTrigger) {
+        mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
+        player.setPosition(new Vector2((float) currentTrigger.get("new_map_x"), (float) currentTrigger.get("new_map_y")));
+        return;
     }
 
     /**

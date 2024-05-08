@@ -30,8 +30,8 @@
   <object id="1" x="212" y="44" width="24" height="24">
    <properties>
     <property name="new_map" value="campusEast.tmx"/>
-    <property name="new_map_x" type="int" value="5"/>
-    <property name="new_map_y" type="int" value="3"/>
+    <property name="new_map_x" type="float" value="5"/>
+    <property name="new_map_y" type="float" value="3"/>
    </properties>
   </object>
  </objectgroup>
