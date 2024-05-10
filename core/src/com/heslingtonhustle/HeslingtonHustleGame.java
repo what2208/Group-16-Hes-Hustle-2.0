@@ -90,6 +90,10 @@ public class HeslingtonHustleGame extends Game {
 			case CreditScreen:
 				currentScreen = new CreditScreen(this);
 				soundController.setMusic(Sounds.MENU);
+				break;
+			case TutorialScreen:
+				currentScreen = new TutorialScreen(this);
+				break;
 		}
 
 		setScreen(currentScreen);

@@ -303,7 +303,7 @@
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 </data>
  </layer>
- <objectgroup id="4" name="Collisions" visible="0">
+ <objectgroup id="4" name="Collisions">
   <object id="208" x="208" y="192" width="112" height="160"/>
   <object id="209" x="192" y="284" width="112" height="164"/>
   <object id="210" x="184" y="420" width="104" height="124"/>
@@ -575,8 +575,8 @@ You lost 20 energy</property>
   <object id="472" x="64" y="1432" width="60" height="48">
    <properties>
     <property name="new_map" value="caveMap.tmx"/>
-    <property name="new_map_x" type="int" value="17"/>
-    <property name="new_map_y" type="int" value="15"/>
+    <property name="new_map_x" type="float" value="17"/>
+    <property name="new_map_y" type="float" value="15"/>
    </properties>
   </object>
   <object id="473" x="224" y="1008" width="32" height="16">

@@ -127,6 +127,9 @@ public class HudRenderer implements Disposable {
         } else if (nearestTrigger.containsKey("sign")) {
             interactLabel.setVisible(true);
             interactLabel.setText("E - Read");
+        } else if (nearestTrigger.containsKey("sleep")) {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Sleep");
         } else {
             interactLabel.setVisible(true);
             interactLabel.setText("E - Interact");

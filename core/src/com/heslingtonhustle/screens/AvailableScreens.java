@@ -9,5 +9,6 @@ public enum AvailableScreens {
     GameOverScreen,
     LeaderboardScreen,
     OptionsScreen,
-    CreditScreen
+    CreditScreen,
+    TutorialScreen
 }

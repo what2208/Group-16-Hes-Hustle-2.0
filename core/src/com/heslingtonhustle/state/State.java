@@ -57,6 +57,11 @@ public class State {
     }
 
 
+    public MapProperties getNearestTrigger() {
+        return currentTrigger;
+    }
+
+
     public void handleInteraction() {
         if (currentTrigger == null) {
             return;
@@ -73,6 +78,10 @@ public class State {
             dialogueManager.addDialogue((String) currentTrigger.get("sign"));
             return;
 
+        }
+
+        if (currentTrigger.containsKey("new_map")) {
+            return;
         }
 
         if (currentTrigger.containsKey("sleep")) {
@@ -206,10 +215,14 @@ public class State {
     /**
      * Gives the player an intro dialogue
      */
-    public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza!");
-        dialogueManager.addDialogue("You can move around with W,A,S,D and press E to interact with buildings and complete activities.\n"
-                + "You cannot do anything after midnight and must sleep by interacting with a house. Good luck!");
+    public void pushStartDayDialogue() {
+        int day = clock.getDay();
+        if (day != MAX_DAYS) {
+            dialogueManager.addDialogue(
+                    String.format("You have %s days left until your exam!\nMake sure you study, eat and have fun!", MAX_DAYS-day+1));
+        } else {
+            dialogueManager.addDialogue("Your exam is tomorrow\nI hope you've been ");
+        }
 
     }
 
