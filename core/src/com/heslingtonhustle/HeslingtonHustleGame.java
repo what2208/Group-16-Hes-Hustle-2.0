@@ -93,7 +93,6 @@ public class HeslingtonHustleGame extends Game {
 				break;
 			case TutorialScreen:
 				currentScreen = new TutorialScreen(this);
-				soundController.setMusic(Sounds.MENU);
 				break;
 		}
 

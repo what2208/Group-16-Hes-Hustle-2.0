@@ -283,6 +283,9 @@ com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
 		font: Minecraftia16px
 		fontColor: RGBA_80_48_0_255
 	}
+	minecraftia24px: {
+		font: info24px
+	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.List$ListStyle: {
 	default: {

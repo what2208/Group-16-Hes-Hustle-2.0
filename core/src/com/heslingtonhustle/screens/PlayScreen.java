@@ -83,7 +83,7 @@ public class PlayScreen implements Screen {
         inputHandler = new KeyboardInputHandler();
         addInputHandlers();
 
-        gameState.pushWelcomeDialogue();
+        gameState.pushStartDayDialogue();
         camera.position.set(mapManager.worldToPixelCoords(player.getPosition()), 0);
 
         float playerWidthInPixels = mapManager.worldToPixelValue(player.getPlayerWidth());
