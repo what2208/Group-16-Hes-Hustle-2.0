@@ -88,7 +88,11 @@ public class AvatarSelectScreen implements Screen {
             @Override
             public void changed(ChangeEvent event, Actor actor) {
                 soundController.playSound(Sounds.CONFIRM);
-                game.switchScreen(AvailableScreens.PlayScreen, false);
+                if (avatar0.isChecked()) {
+                    game.startGame("player-0");
+                } else {
+                    game.startGame("player-1");
+                }
             }
         });
 

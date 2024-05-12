@@ -51,7 +51,7 @@ public class PlayScreen implements Screen {
      * player sprite and UI.
      * @param game The main game object
      */
-    public PlayScreen(HeslingtonHustleGame game) {
+    public PlayScreen(HeslingtonHustleGame game, String playerString) {
         this.game = game;
         float zoom = 4.5f;
 
@@ -90,7 +90,7 @@ public class PlayScreen implements Screen {
         float playerHeightInPixels = mapManager.worldToPixelValue(player.getPlayerHeight());
 
         TextureAtlas textureAtlas = new TextureAtlas("Players/players.atlas");
-        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "player-0");
+        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, playerString);
     }
 
     /**
