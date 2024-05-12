@@ -63,7 +63,7 @@ public class PlayScreen implements Screen {
         isPaused = false;
 
         // The player size is in world units
-        float playerWidth = 0.6f;
+        float playerWidth = 0.9f;
         float playerHeight = 0.9f;
 
         // Classes needed for the game
@@ -89,8 +89,8 @@ public class PlayScreen implements Screen {
         float playerWidthInPixels = mapManager.worldToPixelValue(player.getPlayerWidth());
         float playerHeightInPixels = mapManager.worldToPixelValue(player.getPlayerHeight());
 
-        TextureAtlas textureAtlas = new TextureAtlas("mainAtlas.atlas");
-        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "character00");
+        TextureAtlas textureAtlas = new TextureAtlas("Players/players.atlas");
+        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, "player-0");
     }
 
     /**
