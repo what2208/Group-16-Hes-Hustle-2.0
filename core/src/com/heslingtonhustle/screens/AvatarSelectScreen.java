@@ -65,12 +65,13 @@ public class AvatarSelectScreen implements Screen {
 
         // Title
         Label title = new Label("Choose Your Avatar", skin, "leaderboardscore");
-        mainTable.add(title).top().padTop(30).colspan(3);
+        mainTable.add(title).top().padTop(30).colspan(3).padBottom(10);
         mainTable.row();
 
         // Left button
         ImageButton avatar0 = new ImageButton(skin, "avatar0");
         mainTable.add(avatar0).left().padRight(60);
+        avatar0.setChecked(true);
 
         // Right button
         ImageButton avatar1 = new ImageButton(skin, "avatar1");
@@ -96,7 +97,7 @@ public class AvatarSelectScreen implements Screen {
             }
         });
 
-        mainTable.add(playGameButton).colspan(3).prefWidth(320);
+        mainTable.add(playGameButton).colspan(3).prefWidth(320).padTop(15);
     }
 
 
