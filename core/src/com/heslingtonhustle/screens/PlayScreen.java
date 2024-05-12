@@ -172,7 +172,8 @@ public class PlayScreen implements Screen {
         // Draw map
         MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
         mapRenderer.setView(camera);
-        mapRenderer.render();
+        // Draw background layers
+        mapRenderer.render(mapManager.getBackgroundLayers());
 
         // Draw player
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
@@ -190,6 +191,9 @@ public class PlayScreen implements Screen {
         batch.begin();
         playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
         batch.end();
+
+        // Draw foreground layers
+        mapRenderer.render(mapManager.getForegroundLayers());
 
         // Draw HUD
         // Pass the nearest trigger for interaction label#

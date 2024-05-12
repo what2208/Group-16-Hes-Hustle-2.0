@@ -13,6 +13,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
 
 import java.util.HashMap;
@@ -31,6 +32,8 @@ public class MapManager implements Disposable {
     private ShapeRenderer collisionRenderer;
     private MapObjects collisionObjects;
     private MapObjects triggerObjects;
+    private int[] backgroundLayers;
+    private int[] foregroundLayers;
 
     public MapManager() {
         mapLoader = new TmxMapLoader();
@@ -58,6 +61,45 @@ public class MapManager implements Disposable {
             Gdx.app.debug("DEBUG", "NO TRIGGER LAYER FOUND!");
         }
 
+        // Get which layers are foreground and which are background
+
+        IntArray foreground = new IntArray(true, currentMap.getLayers().getCount());
+        IntArray background = new IntArray(true, currentMap.getLayers().getCount());
+
+        // Foreground and background
+        for (int i=0; i < currentMap.getLayers().getCount(); i++) {
+            MapProperties properties = currentMap.getLayers().get(i).getProperties();
+            if (properties.containsKey("foreground")) {
+                // If foreground property is true
+                if ((boolean) properties.get("foreground")) {
+                    foreground.add(i);
+                } else {
+                    background.add(i);
+                }
+            } else {
+                background.add(i);
+            }
+        }
+
+        backgroundLayers = background.toArray();
+        foregroundLayers = foreground.toArray();
+
+    }
+
+    /**
+     * Gets the layers that should be rendered behind the player
+     * @return An int list of layer indices
+     */
+    public int[] getBackgroundLayers() {
+        return backgroundLayers;
+    }
+
+    /**
+     * Gets the layers that should be rendered in front of the player
+     * @return An int list of layer indices
+     */
+    public int[] getForegroundLayers() {
+        return foregroundLayers;
     }
 
     public OrthogonalTiledMapRenderer getCurrentMapRenderer(SpriteBatch spriteBatch) {
