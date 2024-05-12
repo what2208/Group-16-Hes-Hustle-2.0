@@ -94,6 +94,9 @@ public class HeslingtonHustleGame extends Game {
 			case TutorialScreen:
 				currentScreen = new TutorialScreen(this);
 				break;
+			case AvatarSelectScreen:
+				currentScreen = new AvatarSelectScreen(this);
+				break;
 		}
 
 		setScreen(currentScreen);
