@@ -10,5 +10,6 @@ public enum AvailableScreens {
     LeaderboardScreen,
     OptionsScreen,
     CreditScreen,
-    TutorialScreen
+    TutorialScreen,
+    AvatarSelectScreen
 }
