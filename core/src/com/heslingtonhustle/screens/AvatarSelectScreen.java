@@ -60,7 +60,6 @@ public class AvatarSelectScreen implements Screen {
         // Create the window
         Table mainTable = new Table();
         mainTable.setFillParent(true);
-//        mainTable.setDebug(true);
         tutStage.addActor(mainTable);
 
         // Title
