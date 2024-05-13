@@ -67,23 +67,24 @@ public class State {
             return;
         }
 
-//        if (trigger.containsKey("new_map")) {
-//            mapManager.loadMap("Maps/" + trigger.get("new_map"));
-//            player.setPosition(new Vector2((float) trigger.get("new_map_x"), (float) trigger.get("new_map_y")));
-//            return;
-//        }
-
+        // Read sign
         if (currentTrigger.containsKey("sign")) {
-            // Show dialogue
             dialogueManager.addDialogue((String) currentTrigger.get("sign"));
             return;
+        }
 
+        // Talk to NPC
+        if (currentTrigger.containsKey("dialogue")) {
+            // Show dialogue
+            dialogueManager.addDialogue((String) currentTrigger.get("dialogue"));
+            return;
         }
 
         if (currentTrigger.containsKey("new_map")) {
             return;
         }
 
+        // Sleep at a house
         if (currentTrigger.containsKey("sleep")) {
             // If player has not slept yet
             if (!activities.containsKey("sleep")) {

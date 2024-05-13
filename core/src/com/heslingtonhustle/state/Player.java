@@ -3,7 +3,6 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 import java.util.HashSet;
 
@@ -14,8 +13,8 @@ public class Player {
     // Positional and hitbox variables
     private Vector2 position;
     private Vector2 previousPosition;
-    private Rectangle collisionBox;
-    private Rectangle triggerBox;
+    private final Rectangle collisionBox;
+    private final Rectangle triggerBox;
     private final float width;
     private final float height;
     private final Vector2 triggerBoxScale;
@@ -33,16 +32,15 @@ public class Player {
     /**
      * A new player instance
      *
-     * @param startingX Spawn location
-     * @param startingY Spawn location
      * @param width Width in game units
      * @param height Height in game units
      */
-    public Player(float startingX, float startingY, float width, float height) {
+    public Player(float width, float height) {
         this.width = width;
         this.height = height;
 
         position = new Vector2(0, 0);
+        previousPosition = new Vector2(0, 0);
 
         // Hitbox used to collide with objects
         collisionBox = new Rectangle(0, 0, width, height*0.4f);
@@ -52,8 +50,6 @@ public class Player {
                 -(width*triggerBoxScale.x)/2,
                 -(height*triggerBoxScale.y)/2,
                 width*triggerBoxScale.x, height*triggerBoxScale.y);
-
-        setPosition(startingX,startingY);
     }
 
     /**
@@ -63,27 +59,15 @@ public class Player {
         return new Vector2(position);
     }
 
-
-    /**
-     * Sets the player's position, updates all of their relevant hit boxes
-     * @param x X coordinate of the new position
-     * @param y Y coordinate of the new position
-     */
-    public void setPosition(float x, float y) {
-        position = new Vector2(x, y);
-        collisionBox.setPosition(x, y);
-        triggerBox.setPosition(
-                x-(width*triggerBoxScale.x-width)/2,
-                y-(height*triggerBoxScale.y-height)/2);
-    }
-
     /**
      * Sets the player's position, updating all of their relevant hit boxes
      * @param newPosition Vector of the new position
      */
     public void setPosition(Vector2 newPosition) {
         position = newPosition;
-        collisionBox.setPosition(position);
+
+        collisionBox.setPosition(position.x,position.y);
+
         triggerBox.setPosition(
                 position.x-(width*triggerBoxScale.x-width)/2,
                 position.y-(height*triggerBoxScale.y-height)/2);
@@ -91,7 +75,7 @@ public class Player {
 
     /**
      * Sets just the player's x coordinate
-     * @param x
+     * @param x The x coordinate to set
      */
     public void setX(float x) {
         if (position == null) {
@@ -203,6 +187,15 @@ public class Player {
     }
 
 
+    /**
+     * @return The centre of the player as a vector
+     */
+    public Vector2 getCentre() {
+        return new Vector2(
+                position.x - width/2,
+                position.y - height/2
+        );
+    }
 
     /**
      * @return The direction the player is facing from Facing

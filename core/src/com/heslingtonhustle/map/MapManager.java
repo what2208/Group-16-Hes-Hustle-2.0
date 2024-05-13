@@ -2,6 +2,7 @@ package com.heslingtonhustle.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -13,8 +14,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
+import com.heslingtonhustle.renderer.CharacterRenderer;
+import com.heslingtonhustle.state.Facing;
+import com.heslingtonhustle.state.NPC;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,13 +37,16 @@ public class MapManager implements Disposable {
     private ShapeRenderer collisionRenderer;
     private MapObjects collisionObjects;
     private MapObjects triggerObjects;
+    private HashMap<MapProperties, NPC> NPCs;
     private int[] backgroundLayers;
     private int[] foregroundLayers;
+    private final TextureAtlas npcAtlas;
 
     public MapManager() {
         mapLoader = new TmxMapLoader();
         loadedMaps = new HashMap<>();
         loadedMapRenderers = new HashMap<>();
+        npcAtlas = new TextureAtlas("Players/npcs.atlas");
     }
 
     public void loadMap(String path) {
@@ -47,6 +55,7 @@ public class MapManager implements Disposable {
         }
         currentMap = loadedMaps.get(path);
 
+        // Get collidable objects
         try {
             MapLayer collisionLayer = currentMap.getLayers().get("Collisions");
             collisionObjects = collisionLayer.getObjects();
@@ -54,11 +63,20 @@ public class MapManager implements Disposable {
             Gdx.app.debug("DEBUG", "NO COLLISION LAYER FOUND!");
         }
 
+        // Get triggerable objects
         try {
             MapLayer triggerLayer = currentMap.getLayers().get("Triggers");
             triggerObjects = triggerLayer.getObjects();
         } catch (NullPointerException e) {
             Gdx.app.debug("DEBUG", "NO TRIGGER LAYER FOUND!");
+        }
+
+        // Get NPCs
+        try {
+            MapLayer triggerLayer = currentMap.getLayers().get("NPCs");
+            createNPCs(triggerLayer.getObjects());
+        } catch (NullPointerException e) {
+            Gdx.app.debug("DEBUG", "NO NPC LAYER FOUND!");
         }
 
         // Get which layers are foreground and which are background
@@ -84,6 +102,60 @@ public class MapManager implements Disposable {
         backgroundLayers = background.toArray();
         foregroundLayers = foreground.toArray();
 
+    }
+
+    /**
+     * Creates NPC classes from loaded NPC objects from Tiled
+     * @param NPCObjects The loaded NPCs from the NPC layer
+     */
+    private void createNPCs(MapObjects NPCObjects) {
+        NPCs = new HashMap<>();
+        for (MapObject npcObject : NPCObjects) {
+            // Load info
+            Facing[] directions = new Facing[]{Facing.UP, Facing.RIGHT, Facing.DOWN, Facing.LEFT};
+            MapProperties props = npcObject.getProperties();
+
+            try {
+                // Create a new NPC
+                NPC character = new NPC(
+                        new Vector2((float) props.get("x"), (float) props.get("y")),
+                        (String) props.get("type"),
+                        directions[(int) props.get("direction")]
+                );
+
+                // Give it a renderer
+                character.setRenderer(
+                        new CharacterRenderer(
+                                worldToPixelValue(0.9f),
+                                worldToPixelValue(0.9f),
+                                npcAtlas,
+                                character.getType(),
+                                true
+                        ));
+
+                NPCs.put(npcObject.getProperties(), character);
+                // Also add a trigger
+                triggerObjects.add(npcObject);
+                collisionObjects.add(npcObject);
+
+            } catch (NullPointerException e) {
+                Gdx.app.debug("DEBUG", "ERROR LOADING NPC!");
+            }
+        }
+    }
+
+    /**
+     * Renders all the NPCs
+     * @param batch The sprite batch to render to
+     */
+    public void renderNPCs(SpriteBatch batch) {
+        for (MapProperties object : NPCs.keySet()) {
+            NPCs.get(object).render(batch);
+        }
+    }
+
+    public void rotateNPC(MapProperties npc, Vector2 playerCentre) {
+        NPCs.get(npc).reposition(playerCentre);
     }
 
     /**
@@ -171,7 +243,7 @@ public class MapManager implements Disposable {
                 Rectangle objRect = ((RectangleMapObject) object).getRectangle();
                 if (playerHitbox.overlaps(objRect)) {
                     float distance = distanceBetween(objRect, playerHitbox);
-                    if (closestObject == null|| distance < closestDistance) {
+                    if (closestObject == null || distance < closestDistance) {
                         closestObject = object.getProperties();
                         closestDistance = distance;
                     }
@@ -183,14 +255,38 @@ public class MapManager implements Disposable {
     }
 
     /**
+     * Finds the coordinates of the spawn rectangle on the spawn layer
+     * @return The spawn position to give to the player
+     */
+    public Vector2 getSpawnPoint() {
+        MapLayer spawnLayer = currentMap.getLayers().get("Spawn");
+        if (spawnLayer == null) {
+            return new Vector2(0, 0);
+        }
+
+        for (MapObject object : spawnLayer.getObjects()) {
+            // Return the coordinates of the first object
+            MapProperties properties = object.getProperties();
+            if (properties == null) return new Vector2(0, 0);
+
+            return new Vector2(
+                    pixelToWorldValue((float) properties.get("x")),
+                    pixelToWorldValue((float) properties.get("y"))
+            );
+        }
+
+        return new Vector2(0, 0);
+    }
+
+    /**
      * Calculates the distance between the centre of two rectangles
      * @param rect1 The first rectangle
      * @param rect2 The second rectangle
      * @return The distance between the centre of the two rectangles
      */
     private float distanceBetween(Rectangle rect1, Rectangle rect2) {
-        Vector2 centres1 = new Vector2(rect1.width / 2, rect1.height / 2);
-        Vector2 centres2 = new Vector2(rect2.width / 2, rect2.height / 2);
+        Vector2 centres1 = new Vector2(rect1.width / 2 + rect1.x, rect1.height / 2 + rect1.y);
+        Vector2 centres2 = new Vector2(rect2.width / 2 +  rect2.x, rect2.height / 2 + rect2.y);
 
         return (float) Math.sqrt((Math.pow((centres1.x - centres2.x), 2) + Math.pow((centres1.y - centres2.y), 2)));
     }
@@ -235,6 +331,15 @@ public class MapManager implements Disposable {
 
     public float worldToPixelValue(float worldValue) {
         return worldValue * getCurrentMapTileDimensions().x;
+    }
+
+    /**
+     * Translates a world variable to the player's coordinate system
+     * @param pixelValue The value to convert
+     * @return The converted value
+     */
+    public float pixelToWorldValue(float pixelValue) {
+        return pixelValue / getCurrentMapTileDimensions().x;
     }
 
     public Rectangle worldRectangleToPixelRectangle(Rectangle rectangle) {

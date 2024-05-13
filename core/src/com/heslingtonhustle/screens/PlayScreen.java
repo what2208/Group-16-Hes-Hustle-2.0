@@ -67,7 +67,7 @@ public class PlayScreen implements Screen {
         float playerHeight = 0.9f;
 
         // Classes needed for the game
-        player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
+        player = new Player(playerWidth, playerHeight);
 
         dialogueManager = new DialogueManager(game.soundController);
 
@@ -90,7 +90,15 @@ public class PlayScreen implements Screen {
         float playerHeightInPixels = mapManager.worldToPixelValue(player.getPlayerHeight());
 
         TextureAtlas textureAtlas = new TextureAtlas("Players/players.atlas");
-        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, playerString);
+        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, playerString, false);
+
+        player.setPosition(mapManager.getSpawnPoint());
+        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        camera.position.set(new Vector3(
+                playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                0
+        ));
     }
 
     /**
@@ -104,18 +112,6 @@ public class PlayScreen implements Screen {
         viewport.apply();
 
         delta = 0.01667f;
-
-        // Structure
-        // Get actions
-        // Move player
-        // Map returns list of objects player is inside, move player back
-        // Map also finds if the player is near a trigger, and which is the nearest
-        // If E pressed, pass the MapProperties to gamestate
-        // Also pass to dialoguemanager
-
-        // Draw everything
-        // Check for gameover
-
 
         // <--- LOGIC ---> //
 
@@ -147,6 +143,11 @@ public class PlayScreen implements Screen {
                     if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
                         changeMap(currentTrigger);
                         return;
+                    }
+
+                    // Check for NPC to rotate
+                    if (currentTrigger != null && currentTrigger.containsKey("dialogue")) {
+                        mapManager.rotateNPC(currentTrigger, mapManager.worldToPixelCoords(player.getCentre()));
                     }
                 }
             }
@@ -186,10 +187,12 @@ public class PlayScreen implements Screen {
                 ),
                 delta*5);
 
-        // Draw player
+        // Draw player and NPCs
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
-        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
+        mapManager.renderNPCs(batch);
+        // Add 1 to stop player's feet clipping into things
+        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y+1, player.getFacing(), player.getMoving());
         batch.end();
 
         // Draw foreground layers
