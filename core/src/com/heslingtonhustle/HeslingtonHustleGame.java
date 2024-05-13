@@ -52,6 +52,14 @@ public class HeslingtonHustleGame extends Game {
 	}
 
 
+	public void startGame(String player) {
+		currentScreen = new PlayScreen(this, player);
+		soundController.setMusic(Sounds.GAME);
+
+		setScreen(currentScreen);
+	}
+
+
 	/**
 	 * Switches the game's screen to a new screen, while optionally storing
 	 * a reference to the previous screen so it can be restored
@@ -75,10 +83,6 @@ public class HeslingtonHustleGame extends Game {
 				currentScreen = new MenuScreen(this);
 				soundController.setMusic(Sounds.MENU);
 				break;
-			case PlayScreen:
-				currentScreen = new PlayScreen(this);
-				soundController.setMusic(Sounds.GAME);
-				break;
 			case LeaderboardScreen:
 				currentScreen = new LeaderboardScreen(this);
 //				soundController.setMusic(Sounds.MENU);
@@ -93,6 +97,9 @@ public class HeslingtonHustleGame extends Game {
 				break;
 			case TutorialScreen:
 				currentScreen = new TutorialScreen(this);
+				break;
+			case AvatarSelectScreen:
+				currentScreen = new AvatarSelectScreen(this);
 				break;
 		}
 

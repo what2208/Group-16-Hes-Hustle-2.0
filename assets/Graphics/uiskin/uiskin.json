@@ -211,12 +211,19 @@ com.badlogic.gdx.scenes.scene2d.ui.CheckBox$CheckBoxStyle: {
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
-	default: {
-		down: round-dark-gray
-	}
 	toggle: {
 		down: round-dark-gray
 		checked: round-dark-gray
+	}
+	avatar0: {
+		imageUp: avatar0
+		over: avatarborder_hover
+		checked: avatarborder
+	}
+	avatar1: {
+		imageUp: avatar1
+		over: avatarborder_hover
+		checked: avatarborder
 	}
 }
 com.badlogic.gdx.scenes.scene2d.ui.ImageTextButton$ImageTextButtonStyle: {

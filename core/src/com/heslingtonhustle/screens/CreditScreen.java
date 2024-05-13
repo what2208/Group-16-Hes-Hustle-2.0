@@ -22,7 +22,6 @@ import com.heslingtonhustle.sound.Sounds;
  * Used to display the assets used in the game
  */
 public class CreditScreen implements Screen{
-
     private HeslingtonHustleGame game;
     private Stage creditStage;
     private OrthographicCamera camera;

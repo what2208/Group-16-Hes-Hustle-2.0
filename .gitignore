@@ -1,3 +1,7 @@
+## Game specific
+/assets/Players/raw/
+
+
 ## Java
 
 *.class
@@ -115,3 +119,4 @@ Thumbs.db
 /ios/IOSLauncher.app.dSYM
 assets/leaderboard.txt
 assets/leaderboard.txt
+assets/Players/npcguide.png
