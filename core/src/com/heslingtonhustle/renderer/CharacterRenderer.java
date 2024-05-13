@@ -4,27 +4,40 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.heslingtonhustle.state.Facing;
 
+import java.util.Vector;
+
 /**
- * This class can be used to render the main character and any other NPC.
+ * A class used to store and render the animations for the player
+ * and other NPC characters
  */
 public class CharacterRenderer {
     private final TextureManager characterTextures;
     private final Sprite characterSprite;
     private final TextureAtlas textureAtlas;
     private final String textureRegionPrefix;
+    private Vector2 size;
 
 
-    //
+    /**
+     * Instantiates a new renderer for a specific character
+     * Because the idea is that this can be used for multiple characters, we use textureRegionPrefix
+     * For example, in the texture atlas, if you have regions such as 'main-player-idle-down', 'main-player-idle-right',
+     * the prefix is 'main-player'
+     * @param width Width of the character in real world pixels
+     * @param height Height of the character
+     * @param textureAtlas The atlas containing the character textures
+     * @param textureRegionPrefix The prefix to identify the character 'player-x'
+     */
     public CharacterRenderer(float width, float height, TextureAtlas textureAtlas, String textureRegionPrefix) {
-        // Because the idea is that this can be used for multiple characters, we use textureRegionPrefix
-        // For example, in the texture atlas, if you have regions such as 'main-player-idle-down', 'main-player-idle-right',
-        // the prefix is 'main-player'
 
         this.textureAtlas = textureAtlas;
         this.textureRegionPrefix = textureRegionPrefix;
+
+        size = new Vector2(width, height);
 
         characterTextures = new TextureManager();
         addCharacterTextures();
@@ -34,6 +47,14 @@ public class CharacterRenderer {
         characterSprite.setScale(1.2f);
     }
 
+    /**
+     * Renders a character at a certain position
+     * @param batch The spritebatch to render to
+     * @param x x position of the character
+     * @param y y position of the character
+     * @param direction The direction the character should be facing
+     * @param moving
+     */
     public void render(SpriteBatch batch, float x, float y, Facing direction, Boolean moving) {
         String textureKey = getTextureKey(direction, moving);
         characterSprite.setRegion(characterTextures.retrieveTexture(textureKey));
@@ -104,5 +125,13 @@ public class CharacterRenderer {
             }
         }
         return textureKey;
+    }
+
+    /**
+     * Returns the world width and height of the rendered sprite
+     * @return A vector of the width and height
+     */
+    public Vector2 getSize() {
+        return size;
     }
 }

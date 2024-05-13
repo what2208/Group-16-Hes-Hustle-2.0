@@ -105,18 +105,6 @@ public class PlayScreen implements Screen {
 
         delta = 0.01667f;
 
-        // Structure
-        // Get actions
-        // Move player
-        // Map returns list of objects player is inside, move player back
-        // Map also finds if the player is near a trigger, and which is the nearest
-        // If E pressed, pass the MapProperties to gamestate
-        // Also pass to dialoguemanager
-
-        // Draw everything
-        // Check for gameover
-
-
         // <--- LOGIC ---> //
 
         // Get inputs
@@ -147,6 +135,11 @@ public class PlayScreen implements Screen {
                     if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
                         changeMap(currentTrigger);
                         return;
+                    }
+
+                    // Check for NPC to rotate
+                    if (currentTrigger != null && currentTrigger.containsKey("dialogue")) {
+                        mapManager.rotateNPC(currentTrigger, mapManager.worldToPixelCoords(player.getCentre()));
                     }
                 }
             }
@@ -186,9 +179,10 @@ public class PlayScreen implements Screen {
                 ),
                 delta*5);
 
-        // Draw player
+        // Draw player and NPCs
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
+        mapManager.renderNPCs(batch);
         playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
         batch.end();
 

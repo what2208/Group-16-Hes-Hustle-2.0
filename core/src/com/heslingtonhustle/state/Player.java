@@ -3,7 +3,6 @@ package com.heslingtonhustle.state;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.math.Vector3;
 
 import java.util.HashSet;
 
@@ -203,6 +202,15 @@ public class Player {
     }
 
 
+    /**
+     * @return The centre of the player as a vector
+     */
+    public Vector2 getCentre() {
+        return new Vector2(
+                position.x - width/2,
+                position.y - height/2
+        );
+    }
 
     /**
      * @return The direction the player is facing from Facing

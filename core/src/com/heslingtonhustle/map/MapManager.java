@@ -2,6 +2,7 @@ package com.heslingtonhustle.map;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.maps.MapLayer;
 import com.badlogic.gdx.maps.MapObject;
@@ -13,8 +14,12 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
+import com.heslingtonhustle.renderer.CharacterRenderer;
+import com.heslingtonhustle.state.Facing;
+import com.heslingtonhustle.state.NPC;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -32,13 +37,16 @@ public class MapManager implements Disposable {
     private ShapeRenderer collisionRenderer;
     private MapObjects collisionObjects;
     private MapObjects triggerObjects;
+    private HashMap<MapProperties, NPC> NPCs;
     private int[] backgroundLayers;
     private int[] foregroundLayers;
+    private final TextureAtlas characterAtlas;
 
     public MapManager() {
         mapLoader = new TmxMapLoader();
         loadedMaps = new HashMap<>();
         loadedMapRenderers = new HashMap<>();
+        characterAtlas = new TextureAtlas("Players/players.atlas");
     }
 
     public void loadMap(String path) {
@@ -47,6 +55,7 @@ public class MapManager implements Disposable {
         }
         currentMap = loadedMaps.get(path);
 
+        // Get collidable objects
         try {
             MapLayer collisionLayer = currentMap.getLayers().get("Collisions");
             collisionObjects = collisionLayer.getObjects();
@@ -54,11 +63,20 @@ public class MapManager implements Disposable {
             Gdx.app.debug("DEBUG", "NO COLLISION LAYER FOUND!");
         }
 
+        // Get triggerable objects
         try {
             MapLayer triggerLayer = currentMap.getLayers().get("Triggers");
             triggerObjects = triggerLayer.getObjects();
         } catch (NullPointerException e) {
             Gdx.app.debug("DEBUG", "NO TRIGGER LAYER FOUND!");
+        }
+
+        // Get NPCs
+        try {
+            MapLayer triggerLayer = currentMap.getLayers().get("NPCs");
+            createNPCs(triggerLayer.getObjects());
+        } catch (NullPointerException e) {
+            Gdx.app.debug("DEBUG", "NO NPC LAYER FOUND!");
         }
 
         // Get which layers are foreground and which are background
@@ -84,6 +102,58 @@ public class MapManager implements Disposable {
         backgroundLayers = background.toArray();
         foregroundLayers = foreground.toArray();
 
+    }
+
+    /**
+     * Creates NPC classes from loaded NPC objects from Tiled
+     * @param NPCObjects The loaded NPCs from the NPC layer
+     */
+    private void createNPCs(MapObjects NPCObjects) {
+        NPCs = new HashMap<>();
+        for (MapObject npcObject : NPCObjects) {
+            // Load info
+            Facing[] directions = new Facing[]{Facing.UP, Facing.RIGHT, Facing.DOWN, Facing.LEFT};
+            MapProperties props = npcObject.getProperties();
+
+            try {
+                // Create a new NPC
+                NPC character = new NPC(
+                        new Vector2((float) props.get("x"), (float) props.get("y")),
+                        (String) props.get("type"),
+                        directions[(int) props.get("direction")]
+                );
+
+                // Give it a renderer
+                character.setRenderer(
+                        new CharacterRenderer(
+                                worldToPixelValue(0.9f),
+                                worldToPixelValue(0.9f),
+                                characterAtlas,
+                                character.getType()
+                        ));
+
+                NPCs.put(npcObject.getProperties(), character);
+                // Also add a trigger
+                triggerObjects.add(npcObject);
+
+            } catch (NullPointerException e) {
+                Gdx.app.debug("DEBUG", "ERROR LOADING NPC!");
+            }
+        }
+    }
+
+    /**
+     * Renders all the NPCs
+     * @param batch The sprite batch to render to
+     */
+    public void renderNPCs(SpriteBatch batch) {
+        for (MapProperties object : NPCs.keySet()) {
+            NPCs.get(object).render(batch);
+        }
+    }
+
+    public void rotateNPC(MapProperties npc, Vector2 playerCentre) {
+        NPCs.get(npc).reposition(playerCentre);
     }
 
     /**
