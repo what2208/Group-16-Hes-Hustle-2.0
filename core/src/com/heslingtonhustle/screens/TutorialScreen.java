@@ -111,7 +111,7 @@ public class TutorialScreen implements Screen {
 
 
         // Start game button
-        TextButton playGameButton = new TextButton("Start game", skin);
+        TextButton playGameButton = new TextButton("Continue", skin);
         playGameButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
