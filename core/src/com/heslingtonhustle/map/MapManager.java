@@ -40,13 +40,13 @@ public class MapManager implements Disposable {
     private HashMap<MapProperties, NPC> NPCs;
     private int[] backgroundLayers;
     private int[] foregroundLayers;
-    private final TextureAtlas characterAtlas;
+    private final TextureAtlas npcAtlas;
 
     public MapManager() {
         mapLoader = new TmxMapLoader();
         loadedMaps = new HashMap<>();
         loadedMapRenderers = new HashMap<>();
-        characterAtlas = new TextureAtlas("Players/players.atlas");
+        npcAtlas = new TextureAtlas("Players/npcs.atlas");
     }
 
     public void loadMap(String path) {
@@ -128,13 +128,15 @@ public class MapManager implements Disposable {
                         new CharacterRenderer(
                                 worldToPixelValue(0.9f),
                                 worldToPixelValue(0.9f),
-                                characterAtlas,
-                                character.getType()
+                                npcAtlas,
+                                character.getType(),
+                                true
                         ));
 
                 NPCs.put(npcObject.getProperties(), character);
                 // Also add a trigger
                 triggerObjects.add(npcObject);
+                collisionObjects.add(npcObject);
 
             } catch (NullPointerException e) {
                 Gdx.app.debug("DEBUG", "ERROR LOADING NPC!");
@@ -241,7 +243,7 @@ public class MapManager implements Disposable {
                 Rectangle objRect = ((RectangleMapObject) object).getRectangle();
                 if (playerHitbox.overlaps(objRect)) {
                     float distance = distanceBetween(objRect, playerHitbox);
-                    if (closestObject == null|| distance < closestDistance) {
+                    if (closestObject == null || distance < closestDistance) {
                         closestObject = object.getProperties();
                         closestDistance = distance;
                     }
@@ -253,14 +255,38 @@ public class MapManager implements Disposable {
     }
 
     /**
+     * Finds the coordinates of the spawn rectangle on the spawn layer
+     * @return The spawn position to give to the player
+     */
+    public Vector2 getSpawnPoint() {
+        MapLayer spawnLayer = currentMap.getLayers().get("Spawn");
+        if (spawnLayer == null) {
+            return new Vector2(0, 0);
+        }
+
+        for (MapObject object : spawnLayer.getObjects()) {
+            // Return the coordinates of the first object
+            MapProperties properties = object.getProperties();
+            if (properties == null) return new Vector2(0, 0);
+
+            return new Vector2(
+                    pixelToWorldValue((float) properties.get("x")),
+                    pixelToWorldValue((float) properties.get("y"))
+            );
+        }
+
+        return new Vector2(0, 0);
+    }
+
+    /**
      * Calculates the distance between the centre of two rectangles
      * @param rect1 The first rectangle
      * @param rect2 The second rectangle
      * @return The distance between the centre of the two rectangles
      */
     private float distanceBetween(Rectangle rect1, Rectangle rect2) {
-        Vector2 centres1 = new Vector2(rect1.width / 2, rect1.height / 2);
-        Vector2 centres2 = new Vector2(rect2.width / 2, rect2.height / 2);
+        Vector2 centres1 = new Vector2(rect1.width / 2 + rect1.x, rect1.height / 2 + rect1.y);
+        Vector2 centres2 = new Vector2(rect2.width / 2 +  rect2.x, rect2.height / 2 + rect2.y);
 
         return (float) Math.sqrt((Math.pow((centres1.x - centres2.x), 2) + Math.pow((centres1.y - centres2.y), 2)));
     }
@@ -305,6 +331,15 @@ public class MapManager implements Disposable {
 
     public float worldToPixelValue(float worldValue) {
         return worldValue * getCurrentMapTileDimensions().x;
+    }
+
+    /**
+     * Translates a world variable to the player's coordinate system
+     * @param pixelValue The value to convert
+     * @return The converted value
+     */
+    public float pixelToWorldValue(float pixelValue) {
+        return pixelValue / getCurrentMapTileDimensions().x;
     }
 
     public Rectangle worldRectangleToPixelRectangle(Rectangle rectangle) {

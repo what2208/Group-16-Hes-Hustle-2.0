@@ -8,8 +8,6 @@ import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
 import com.heslingtonhustle.state.Facing;
 
-import java.util.Vector;
-
 /**
  * A class used to store and render the animations for the player
  * and other NPC characters
@@ -32,7 +30,7 @@ public class CharacterRenderer {
      * @param textureAtlas The atlas containing the character textures
      * @param textureRegionPrefix The prefix to identify the character 'player-x'
      */
-    public CharacterRenderer(float width, float height, TextureAtlas textureAtlas, String textureRegionPrefix) {
+    public CharacterRenderer(float width, float height, TextureAtlas textureAtlas, String textureRegionPrefix, boolean npc) {
 
         this.textureAtlas = textureAtlas;
         this.textureRegionPrefix = textureRegionPrefix;
@@ -40,7 +38,10 @@ public class CharacterRenderer {
         size = new Vector2(width, height);
 
         characterTextures = new TextureManager();
-        addCharacterTextures();
+
+        addStaticTextures();
+        if (!npc) addMovingTextures();
+
         characterSprite = new Sprite(characterTextures.retrieveTexture("idle-down"));
         characterSprite.setSize(width, height);
         characterSprite.setOriginCenter();
@@ -62,7 +63,11 @@ public class CharacterRenderer {
         characterSprite.draw(batch);
     }
 
-    private void addCharacterTextures() {
+    /**
+     * Specifically only loads the static characters for a texture.
+     * Useful since NPCs don't have any moving textures
+     */
+    private void addStaticTextures() {
         // First by adding the static textures (when the character is idle)
         TextureRegion idleLeft = textureAtlas.findRegion(textureRegionPrefix+"-idle-left");
         characterTextures.addTexture("idle-left", idleLeft);
@@ -72,7 +77,13 @@ public class CharacterRenderer {
         characterTextures.addTexture("idle-up", idleUp);
         TextureRegion idleDown = textureAtlas.findRegion(textureRegionPrefix+"-idle-down");
         characterTextures.addTexture("idle-down", idleDown);
+    }
 
+    /**
+     * Specifically loads the frames for walking animations
+     * Only used for players
+     */
+    public void addMovingTextures() {
         // Now we need to add the textures that are used in animation.
         // the findRegions() function will find all areas of the atlas that have the same name and a number suffix
         // For example findRegions("walking_left") will find "walking_left_00", "walking_left_01", "walking_left_02 etc.
@@ -89,6 +100,8 @@ public class CharacterRenderer {
         Array<TextureAtlas.AtlasRegion> walkingDown = textureAtlas.findRegions(textureRegionPrefix+"-walking-down");
         characterTextures.addAnimation("walking-down", walkingDown, speed);
     }
+
+
 
     private String getTextureKey(Facing direction, Boolean moving) {
         String textureKey = "idle-down";

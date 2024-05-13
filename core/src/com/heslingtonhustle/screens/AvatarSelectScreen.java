@@ -1,6 +1,7 @@
 package com.heslingtonhustle.screens;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
@@ -10,12 +11,18 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.badlogic.gdx.utils.viewport.Viewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
+import com.heslingtonhustle.input.InputHandler;
+import com.heslingtonhustle.input.KeyboardInputHandler;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
+import com.heslingtonhustle.state.Action;
+
+import java.util.HashSet;
 
 public class AvatarSelectScreen implements Screen {
     private final HeslingtonHustleGame game;
@@ -25,6 +32,8 @@ public class AvatarSelectScreen implements Screen {
     private final OrthographicCamera camera;
     private final Viewport viewport;
     private final Texture backgroundTexture;
+    private final InputHandler inputHandler;
+    private ImageButton avatar0, avatar1;
 
     /**
      * A screen to allow the player to select their avatar
@@ -49,6 +58,13 @@ public class AvatarSelectScreen implements Screen {
         Image backgroundImage = new Image(backgroundTexture);
         tutStage.addActor(backgroundImage);
 
+        // Inputs
+        inputHandler = new KeyboardInputHandler();
+        InputMultiplexer inputMultiplexer = new InputMultiplexer();
+        inputMultiplexer.addProcessor(inputHandler);
+        inputMultiplexer.addProcessor(tutStage);
+        Gdx.input.setInputProcessor(inputMultiplexer);
+
         createAvatarSelect();
 
     }
@@ -68,18 +84,29 @@ public class AvatarSelectScreen implements Screen {
         mainTable.row();
 
         // Left button
-        ImageButton avatar0 = new ImageButton(skin, "avatar0");
+        avatar0 = new ImageButton(skin, "avatar0");
         mainTable.add(avatar0).left().padRight(60);
         avatar0.setChecked(true);
 
         // Right button
-        ImageButton avatar1 = new ImageButton(skin, "avatar1");
+        avatar1 = new ImageButton(skin, "avatar1");
         mainTable.add(avatar1).right().padLeft(60);
         mainTable.row();
 
         // Button group
         ButtonGroup<Button> buttonGroup = new ButtonGroup<Button>(avatar0, avatar1);
         buttonGroup.setMaxCheckCount(1);
+
+        ChangeListener press = new ChangeListener() {
+            @Override
+            public void changed(ChangeEvent event, Actor actor) {
+                soundController.playSound(Sounds.OPTIONSWITCH);
+            }
+        };
+
+        avatar0.addListener(press);
+        avatar1.addListener(press);
+
 
 
         // Start game button
@@ -100,8 +127,6 @@ public class AvatarSelectScreen implements Screen {
     }
 
 
-//    private void
-
     /**
      * A method to render the options stage.
      * @param delta The time in seconds since the last render.
@@ -111,10 +136,37 @@ public class AvatarSelectScreen implements Screen {
         ScreenUtils.clear(0, 0, 0, 1);
         Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 
+        handleActions();
+        inputHandler.resetPressedActions();
+
         tutStage.act(delta);
         tutStage.draw();
 
         camera.update();
+    }
+
+
+    private void handleActions() {
+        // Get pressed actions
+        HashSet<Action> actions = inputHandler.getPressedActions();
+
+        if (actions.contains(Action.INTERACT)) {
+            // Start
+            soundController.playSound(Sounds.CONFIRM);
+            if (avatar0.isChecked()) {
+                game.startGame("player-0");
+            } else {
+                game.startGame("player-1");
+            }
+        } else if (actions.contains(Action.MOVE_LEFT)) {
+            avatar0.setChecked(true);
+            avatar1.setChecked(false);
+            soundController.playSound(Sounds.OPTIONSWITCH);
+        } else if (actions.contains(Action.MOVE_RIGHT)) {
+            avatar0.setChecked(false);
+            avatar1.setChecked(true);
+            soundController.playSound(Sounds.OPTIONSWITCH);
+        }
     }
 
     @Override

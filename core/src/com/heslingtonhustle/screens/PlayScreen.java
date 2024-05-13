@@ -67,7 +67,7 @@ public class PlayScreen implements Screen {
         float playerHeight = 0.9f;
 
         // Classes needed for the game
-        player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
+        player = new Player(playerWidth, playerHeight);
 
         dialogueManager = new DialogueManager(game.soundController);
 
@@ -90,7 +90,15 @@ public class PlayScreen implements Screen {
         float playerHeightInPixels = mapManager.worldToPixelValue(player.getPlayerHeight());
 
         TextureAtlas textureAtlas = new TextureAtlas("Players/players.atlas");
-        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, playerString);
+        playerRenderer = new CharacterRenderer(playerWidthInPixels, playerHeightInPixels, textureAtlas, playerString, false);
+
+        player.setPosition(mapManager.getSpawnPoint());
+        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        camera.position.set(new Vector3(
+                playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                0
+        ));
     }
 
     /**
@@ -183,7 +191,8 @@ public class PlayScreen implements Screen {
         batch.setProjectionMatrix(camera.combined);
         batch.begin();
         mapManager.renderNPCs(batch);
-        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y, player.getFacing(), player.getMoving());
+        // Add 1 to stop player's feet clipping into things
+        playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y+1, player.getFacing(), player.getMoving());
         batch.end();
 
         // Draw foreground layers
