@@ -25,8 +25,10 @@ import com.heslingtonhustle.state.Action;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.Player;
 import com.heslingtonhustle.state.State;
+import com.badlogic.gdx.math.Interpolation;
 
 import java.util.HashSet;
+
 
 public class PlayScreen implements Screen {
     private final HeslingtonHustleGame game;
@@ -44,6 +46,9 @@ public class PlayScreen implements Screen {
     private final SpriteBatch batch;
     private final HudRenderer hudRenderer;
     private final CharacterRenderer playerRenderer;
+    private float zoomLevel = 5f;
+    private float zoomTarget = 1f;
+    private float zoomProgress = 1f;
 
 
     /**
@@ -122,10 +127,12 @@ public class PlayScreen implements Screen {
         // Check if the player has paused the game
         handleActions(pressedActions);
 
+        System.out.println(camera.zoom);
+
         // Check for pause
         if (!isPaused) {
             // Let the player move if there is no dialogue on screen
-            if (dialogueManager.isEmpty()) {
+            if (dialogueManager.isEmpty() && camera.zoom == 1f) {
                 player.move(heldActions, delta);
             } else {
                 player.dontMove();
@@ -135,7 +142,7 @@ public class PlayScreen implements Screen {
             // but no both at once
             if (!dialogueManager.isEmpty()) {
                 dialogueManager.handleAction(pressedActions);
-            } else {
+            } else if (camera.zoom == 1f) {
                 if (pressedActions.contains(Action.INTERACT)) {
                     gameState.handleInteraction();
                     // Check for map change
@@ -151,10 +158,30 @@ public class PlayScreen implements Screen {
                     }
                 }
             }
+
+            if (dialogueManager.isEmpty()) {
+                // Allow a zoom
+                if (pressedActions.contains(Action.MAP) && zoomProgress == 1) {
+                    float temp = zoomLevel;
+                    zoomLevel = zoomTarget;
+                    zoomTarget = temp;
+                    zoomProgress = 0f;
+                }
+            }
             gameState.passTime(delta);
 
         } else {
             player.dontMove();
+        }
+
+        // Zoom camera
+        if (zoomProgress < 0.98) {
+            camera.zoom = Interpolation.exp10Out.apply(zoomLevel, zoomTarget, zoomProgress);
+            zoomProgress += delta;
+
+        } else {
+            zoomProgress = 1;
+            camera.zoom = zoomTarget;
         }
 
         // The player needs to move out of any objects it is inside
@@ -172,7 +199,7 @@ public class PlayScreen implements Screen {
 
         // Draw map
         MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
-        mapRenderer.setView(camera);
+        if (!(zoomTarget == 1 && zoomLevel == 5f && zoomProgress < 1)) mapRenderer.setView(camera);
         // Draw background layers
         mapRenderer.render(mapManager.getBackgroundLayers());
 
