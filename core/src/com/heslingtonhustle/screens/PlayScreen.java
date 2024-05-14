@@ -50,6 +50,7 @@ public class PlayScreen implements Screen {
     private float zoomTarget = 1f;
     private float zoomProgress = 1f;
     private Vector2 zoomCoordinates = null;
+    MapProperties changeMapTrigger = null;
 
 
     /**
@@ -120,6 +121,7 @@ public class PlayScreen implements Screen {
         delta = 0.01667f;
 
         // <--- LOGIC ---> //
+        changeMapTrigger = null;
 
         // Get inputs
         HashSet<Action> heldActions = inputHandler.getHeldActions();
@@ -147,8 +149,7 @@ public class PlayScreen implements Screen {
                     // Check for map change
                     MapProperties currentTrigger = gameState.getNearestTrigger();
                     if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
-                        changeMap(currentTrigger);
-                        return;
+                        changeMapTrigger = currentTrigger;
                     }
 
                     // Check for NPC to rotate
@@ -158,6 +159,7 @@ public class PlayScreen implements Screen {
                 }
             }
 
+            // Check for a zoom in
             if (dialogueManager.isEmpty()) {
                 // Allow a zoom
                 if (pressedActions.contains(Action.MAP) && zoomProgress == 1) {
@@ -200,6 +202,9 @@ public class PlayScreen implements Screen {
         hudRenderer.updateValues(gameState.getTime(), gameState.getDay(), gameState.getEnergy());
 
         // <--- RENDERING ---> //
+        MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
+        // Set this before slerping the camera to remove odd black bar errors
+        if (!(zoomTarget == 1 && zoomProgress < 0.6)) mapRenderer.setView(camera);
 
         // Centre and zoom camera
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
@@ -222,9 +227,8 @@ public class PlayScreen implements Screen {
                 delta*5);
         }
 
+
         // Draw map
-        MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
-        if (!(zoomTarget == 1 && zoomProgress < 0.6)) mapRenderer.setView(camera);
         mapRenderer.render(mapManager.getBackgroundLayers());
 
         // Draw player and NPCs
@@ -235,23 +239,34 @@ public class PlayScreen implements Screen {
         playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y+1, player.getFacing(), player.getMoving());
         batch.end();
 
+        // Render layers in front of player
         mapRenderer.render(mapManager.getForegroundLayers());
 
-//        // Draw foreground layers
-//        mapRenderer.render(mapManager.getForegroundLayers());
+        // Render map labels if zoomed out or zooming in
+        if (zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f)) {
+            batch.begin();
+            mapManager.renderLabels(batch);
+            batch.end();
+        }
 
-        // Draw HUD
-        // Pass the nearest trigger for interaction label#
-        if (isPaused) {
-            hudRenderer.render(null);
-        } else {
-            hudRenderer.render(nearestTrigger);
+        // Draw HUD if not zoomed out
+        if (!(zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f))) {
+            if (isPaused) {
+                hudRenderer.render(null);
+            } else {
+                // Pass the nearest trigger for the interaction label
+                hudRenderer.render(nearestTrigger);
+            }
         }
         pauseMenu.render();
 
 //        drawPlayerDebug();
 
         // <--- FINAL CHECKS AND RESETS ---> //
+
+        if (changeMapTrigger != null) {
+            changeMap(changeMapTrigger);
+        }
 
         inputHandler.resetPressedActions();
         camera.update();
@@ -297,7 +312,16 @@ public class PlayScreen implements Screen {
     public void changeMap(MapProperties currentTrigger) {
         mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
         player.setPosition(new Vector2((float) currentTrigger.get("new_map_x"), (float) currentTrigger.get("new_map_y")));
-        return;
+        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        camera.position.set(
+            camera.position.set(
+                new Vector3(
+                        playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                        playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                        0
+                )
+            )
+        );
     }
 
     /**

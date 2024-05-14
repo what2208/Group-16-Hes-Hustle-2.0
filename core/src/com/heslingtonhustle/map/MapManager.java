@@ -1,6 +1,7 @@
 package com.heslingtonhustle.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,13 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
 import com.heslingtonhustle.renderer.CharacterRenderer;
 import com.heslingtonhustle.state.Facing;
 import com.heslingtonhustle.state.NPC;
 
+import java.awt.geom.Arc2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -37,10 +38,12 @@ public class MapManager implements Disposable {
     private ShapeRenderer collisionRenderer;
     private MapObjects collisionObjects;
     private MapObjects triggerObjects;
+    private MapObjects labelObjects;
     private HashMap<MapProperties, NPC> NPCs;
     private int[] backgroundLayers;
     private int[] foregroundLayers;
     private final TextureAtlas npcAtlas;
+    private final BitmapFont labelFont;
 
     /**
      * Instantiates a new map manager to to manage loading and switching
@@ -51,6 +54,7 @@ public class MapManager implements Disposable {
         loadedMaps = new HashMap<>();
         loadedMapRenderers = new HashMap<>();
         npcAtlas = new TextureAtlas("Players/npcs.atlas");
+        labelFont = new BitmapFont(Gdx.files.internal("Fonts/labelfont.fnt"),false);
     }
 
     /**
@@ -87,6 +91,14 @@ public class MapManager implements Disposable {
             createNPCs(triggerLayer.getObjects());
         } catch (NullPointerException e) {
             Gdx.app.debug("DEBUG", "NO NPC LAYER FOUND!");
+        }
+
+        // Get labels
+        try {
+            MapLayer labelLayer = currentMap.getLayers().get("Labels");
+            labelObjects = labelLayer.getObjects();
+        } catch (NullPointerException e) {
+            labelObjects = null;
         }
 
         // Get which layers are foreground and which are background
@@ -164,6 +176,11 @@ public class MapManager implements Disposable {
         }
     }
 
+    /**
+     * Rotates an NPC based on the player's centre point
+     * @param npc The properties of the NPC to rotate
+     * @param playerCentre The current centre position of the player
+     */
     public void rotateNPC(MapProperties npc, Vector2 playerCentre) {
         NPCs.get(npc).reposition(playerCentre);
     }
@@ -262,6 +279,21 @@ public class MapManager implements Disposable {
         }
 
         return closestObject;
+    }
+
+    /**
+     * Renders any layers the map may have to the screen
+     * @param batch The sprite batch to render to
+     */
+    public void renderLabels(SpriteBatch batch) {
+        if (labelObjects == null) return;
+        for (MapObject object : labelObjects) {
+            MapProperties props = object.getProperties();
+            float x = props.get("x", Float.class);
+            float y = props.get("y", Float.class);
+
+            labelFont.draw(batch, props.get("text", String.class), x, y);
+        }
     }
 
     /**
