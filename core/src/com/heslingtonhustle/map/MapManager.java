@@ -14,7 +14,7 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.utils.FloatArray;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
 import com.heslingtonhustle.renderer.CharacterRenderer;
@@ -42,6 +42,10 @@ public class MapManager implements Disposable {
     private int[] foregroundLayers;
     private final TextureAtlas npcAtlas;
 
+    /**
+     * Instantiates a new map manager to to manage loading and switching
+     * between maps loaded from Tiled
+     */
     public MapManager() {
         mapLoader = new TmxMapLoader();
         loadedMaps = new HashMap<>();
@@ -49,6 +53,12 @@ public class MapManager implements Disposable {
         npcAtlas = new TextureAtlas("Players/npcs.atlas");
     }
 
+    /**
+     * Loads in the given map and the layers for collisions, NPCs
+     * and triggers.
+     * Also differentiates between foreground and background layers
+     * @param path The filepath of the map to load
+     */
     public void loadMap(String path) {
         if (!loadedMaps.containsKey(path)) {
             loadedMaps.put(path, mapLoader.load(path));
@@ -279,6 +289,22 @@ public class MapManager implements Disposable {
     }
 
     /**
+     * Returns the centre of the map in player's relative pixels
+     * @return A 2D vector representing the centre of the map
+     */
+    public Vector2 getCentre() {
+        if (currentMap == null) return null;
+
+        MapProperties props = currentMap.getProperties();
+
+        return new Vector2(
+                worldToPixelValue(props.get("width", Integer.class) / 2f),
+                worldToPixelValue(props.get("height", Integer.class) / 2f)
+        );
+
+    }
+
+    /**
      * Calculates the distance between the centre of two rectangles
      * @param rect1 The first rectangle
      * @param rect2 The second rectangle
@@ -292,6 +318,9 @@ public class MapManager implements Disposable {
     }
 
 
+    /**
+     * @return Returns the tile width and height of the current loaded map
+     */
     public Vector2 getCurrentMapTileDimensions() {
         if (currentMap == null) {
             throw new NullPointerException("There is no currently loaded map!");
@@ -302,6 +331,9 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * @return The dimensions of the current loaded map
+     */
     public Vector2 getCurrentMapWorldDimensions() {
         if (currentMap == null) {
             throw new NullPointerException("There is no currently loaded map!");
@@ -322,6 +354,11 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * Takes a player's coordinates and translates it to map coordinates
+     * @param worldCoords The player's coordinates
+     * @return The equivalent of these coordinates in the maps coordinate system
+     */
     public Vector2 worldToPixelCoords(Vector2 worldCoords) {
         return new Vector2(
                 worldCoords.x * getCurrentMapTileDimensions().x,
@@ -329,6 +366,11 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * Converts a player's single coordinate to the map's coordinate
+     * @param worldValue The value to translate
+     * @return The translated value
+     */
     public float worldToPixelValue(float worldValue) {
         return worldValue * getCurrentMapTileDimensions().x;
     }
