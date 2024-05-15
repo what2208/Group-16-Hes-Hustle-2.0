@@ -5,7 +5,6 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,8 +13,6 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
@@ -33,6 +30,9 @@ import com.badlogic.gdx.math.Interpolation;
 import java.util.HashSet;
 
 
+/**
+ * The main screen controlling most of the game logic and loop
+ */
 public class PlayScreen implements Screen {
     private final HeslingtonHustleGame game;
     InputMultiplexer inputMultiplexer;
@@ -55,8 +55,9 @@ public class PlayScreen implements Screen {
     MapProperties changeMapTrigger = null;
 
     /**
-     * A screen to display the main game when the user is playing; importantly showing the map,
+     * A screen to display the main game when the user is playing; importantly rendering the map,
      * player sprite and UI.
+     * Also calls the actions necessary for the game logic to complete
      * @param game The main game object
      */
     public PlayScreen(HeslingtonHustleGame game, String playerString) {
@@ -166,15 +167,7 @@ public class PlayScreen implements Screen {
             if (dialogueManager.isEmpty()) {
                 // Allow a zoom
                 if (pressedActions.contains(Action.MAP) && zoomProgress == 1) {
-                    float temp = zoomLevel;
-                    zoomLevel = zoomTarget;
-                    zoomTarget = temp;
-                    zoomProgress = 0f;
-                    if (zoomCoordinates == null) {
-                        zoomCoordinates = mapManager.getCentre();
-                    } else {
-                        zoomCoordinates = null;
-                    }
+                    zoom();
                 }
             }
             gameState.passTime(delta);
@@ -246,14 +239,14 @@ public class PlayScreen implements Screen {
         mapRenderer.render(mapManager.getForegroundLayers());
 
         // Render map labels if zoomed out or zooming in
-        if (zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f)) {
+        if (zoomTarget != 1f || zoomProgress < 0.2f) {
             batch.begin();
             mapManager.renderLabels(batch);
             batch.end();
         }
 
         // Draw HUD if not zoomed out
-        if (!(zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f))) {
+        if (!(zoomTarget != 1f || zoomProgress < 0.2f)) {
             if (isPaused) {
                 hudRenderer.render(null);
             } else {
@@ -262,8 +255,6 @@ public class PlayScreen implements Screen {
             }
         }
         pauseMenu.render();
-
-//        drawPlayerDebug();
 
         // <--- FINAL CHECKS AND RESETS ---> //
 
@@ -284,6 +275,10 @@ public class PlayScreen implements Screen {
         }
     }
 
+    /**
+     * DEBUG
+     * Draws the player's two hit boxes for debugging purposes
+     */
     private void drawPlayerDebug() {
         ShapeRenderer collisionRenderer = mapManager.getCollisionRenderer();
         collisionRenderer.setProjectionMatrix(camera.combined);
@@ -314,6 +309,13 @@ public class PlayScreen implements Screen {
 
     }
 
+    /**
+     * Changes the map to the map defined by the current Trigger
+     * Also sets the player to the new position defined in the trigger
+     * and moves the camera
+     * @param currentTrigger The trigger containing information about
+     *                       the new map to switch to
+     */
     public void changeMap(MapProperties currentTrigger) {
         mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
         player.setPosition(new Vector2(
@@ -329,6 +331,21 @@ public class PlayScreen implements Screen {
                 )
             )
         );
+    }
+
+    /**
+     * Zooms the camera in/out
+     */
+    private void zoom() {
+        float temp = zoomLevel;
+        zoomLevel = zoomTarget;
+        zoomTarget = temp;
+        zoomProgress = 0f;
+        if (zoomCoordinates == null) {
+            zoomCoordinates = mapManager.getCentre();
+        } else {
+            zoomCoordinates = null;
+        }
     }
 
     /**
@@ -360,7 +377,6 @@ public class PlayScreen implements Screen {
      * Checks if a key press corresponds to a pause action. If so and the game is playing,
      * the game pauses. If so and the game is paused, the game resumes.
      * @param action An action related to a key press.
-     * @return Boolean
      */
     private void handlePauseAction(Action action) {
         if (action == Action.PAUSE && !isPaused) {

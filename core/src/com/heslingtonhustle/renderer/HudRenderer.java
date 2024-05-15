@@ -7,27 +7,27 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.actions.Actions;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.state.DialogueManager;
-import com.heslingtonhustle.state.State;
-import com.sun.org.apache.xpath.internal.operations.Bool;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.List;
 
 /**
  * A class to render static information to the screen that the player needs
  * Displays the time and date, and the current energy level
- * Also displays a label when the player can interact with an event
+ * Also displays a label when the player can interact with an event.
  */
 public class HudRenderer implements Disposable {
     private final OrthographicCamera hudCamera;
     private final FitViewport viewport;
     private final DialogueManager dialogueManager;
-    private final float width;
-
-
     private final Skin skin;
     private final Stage hudStage;
     private final Window dialogueWindow;
@@ -37,22 +37,21 @@ public class HudRenderer implements Disposable {
     private final TextButton timeButton;
     private final Label interactLabel;
     private final Image energyBar;
-    public final Image blackScreen;
+    private final Image blackScreen;
 
     /**
-     * Initalises images and labels to display to the screen
-     * Also initalises the dialogue window to display dialogue from
-     * dialogueManager
+     * Initialises images and labels to display to the screen.
+     * Also initialises the dialogue window to display dialogue from
+     * dialogueManager.
      *
      * @param dialogueManager The current dialogue manager
      * @param skin The loaded UI skin
      * @param width Width of the game window
      * @param height Height of the game window
      */
-    public HudRenderer(Skin skin, DialogueManager dialogueManager, int width, int height){
+    public HudRenderer(Skin skin, DialogueManager dialogueManager, int width, int height) {
         this.skin = skin;
         this.dialogueManager = dialogueManager;
-        this.width = width;
 
         // Camera and viewport
         hudCamera = new OrthographicCamera();
@@ -70,13 +69,13 @@ public class HudRenderer implements Disposable {
         // Display time
         timeButton = new TextButton("10:00am", skin, "informational");
         timeButton.setWidth(200);
-        timeButton.setPosition(width-timeButton.getWidth()-15, height-133);
+        timeButton.setPosition(width - timeButton.getWidth() - 15, height - 133);
         hudStage.addActor(timeButton);
 
         // Display day
         dayButton = new TextButton("Day 1", skin, "informational");
         dayButton.setWidth(200);
-        dayButton.setPosition(25, height-133);
+        dayButton.setPosition(25, height - 133);
         hudStage.addActor(dayButton);
 
         // Label to tell the user they can interact with something
@@ -122,7 +121,7 @@ public class HudRenderer implements Disposable {
 
     /**
      * Updates and renders the time and date to the screen
-     * Also displays the user's energy, and a prompt if they can itneract with
+     * Also displays the user's energy, and a prompt if they can interact with
      * a building.
      * Displays a dialogue window if dialogueQueue is not empty
      */
@@ -201,8 +200,8 @@ public class HudRenderer implements Disposable {
 
 
     /**
-     * Shows/hides the dialoueBox if there is dialogue in the queue
-     * Also restructures the dialoguebox table contents if there is an update
+     * Shows/hides the dialogueBox if there is dialogue in the queue
+     * Also restructures the dialogueBox table contents if there is an update
      */
     private void showDialogue() {
         if (dialogueManager.isEmpty()) {

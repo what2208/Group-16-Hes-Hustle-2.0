@@ -21,14 +21,12 @@ import com.heslingtonhustle.renderer.CharacterRenderer;
 import com.heslingtonhustle.state.Facing;
 import com.heslingtonhustle.state.NPC;
 
-import java.awt.geom.Arc2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
 /**
  * Facilitates communication about maps between the State and the Renderer.
  * Caches loaded maps, map renderers, and collision data.
- * Use this class to load all of your maps, handle collisions, and retrieve data such as map size.
  */
 public class MapManager implements Disposable {
     private TiledMap currentMap;
@@ -46,7 +44,7 @@ public class MapManager implements Disposable {
     private final BitmapFont labelFont;
 
     /**
-     * Instantiates a new map manager to to manage loading and switching
+     * Instantiates a new map manager to manage loading and switching
      * between maps loaded from Tiled
      */
     public MapManager() {
@@ -376,16 +374,6 @@ public class MapManager implements Disposable {
         );
     }
 
-    public Vector2 getCurrentMapPixelDimensions() {
-        if (currentMap == null) {
-            throw new NullPointerException("There is no currently loaded map!");
-        }
-        return new Vector2(
-                getCurrentMapWorldDimensions().x * getCurrentMapTileDimensions().x,
-                getCurrentMapWorldDimensions().y * getCurrentMapTileDimensions().y
-        );
-    }
-
     /**
      * Takes a player's coordinates and translates it to map coordinates
      * @param worldCoords The player's coordinates
@@ -455,6 +443,9 @@ public class MapManager implements Disposable {
     }
 
 
+    /**
+     * Correctly disposes of any loaded maps and any map renderers
+     */
     @Override
     public void dispose() {
         for (TiledMap map : loadedMaps.values()) {

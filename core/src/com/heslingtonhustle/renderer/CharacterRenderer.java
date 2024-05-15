@@ -17,7 +17,7 @@ public class CharacterRenderer {
     private final Sprite characterSprite;
     private final TextureAtlas textureAtlas;
     private final String textureRegionPrefix;
-    private Vector2 size;
+    private final Vector2 size;
 
 
     /**
@@ -54,7 +54,8 @@ public class CharacterRenderer {
      * @param x x position of the character
      * @param y y position of the character
      * @param direction The direction the character should be facing
-     * @param moving
+     * @param moving Whether teh character is moving or not, if so will play
+     *               a walking animation
      */
     public void render(SpriteBatch batch, float x, float y, Facing direction, Boolean moving) {
         String textureKey = getTextureKey(direction, moving);
@@ -84,13 +85,8 @@ public class CharacterRenderer {
      * Only used for players
      */
     public void addMovingTextures() {
-        // Now we need to add the textures that are used in animation.
-        // the findRegions() function will find all areas of the atlas that have the same name and a number suffix
-        // For example findRegions("walking_left") will find "walking_left_00", "walking_left_01", "walking_left_02 etc.
-
         float speed = 0.15f;
 
-        // NB: finderegion is quite an expensive method, if performance is an issue consider caching the TextureRegions.
         Array<TextureAtlas.AtlasRegion> walkingLeft = textureAtlas.findRegions(textureRegionPrefix+"-walking-left");
         characterTextures.addAnimation("walking-left", walkingLeft, speed);
         Array<TextureAtlas.AtlasRegion> walkingRight = textureAtlas.findRegions(textureRegionPrefix+"-walking-right");
@@ -101,8 +97,13 @@ public class CharacterRenderer {
         characterTextures.addAnimation("walking-down", walkingDown, speed);
     }
 
-
-
+    /**
+     * Returns the correct texture key used to identify an animation based
+     * on whether the character is moving and in what direction
+     * @param direction A direction from the Facing enum
+     * @param moving True if the player is moving
+     * @return The texture key used to identify an animation
+     */
     private String getTextureKey(Facing direction, Boolean moving) {
         String textureKey = "idle-down";
         if (moving) {
