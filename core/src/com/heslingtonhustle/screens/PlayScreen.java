@@ -194,7 +194,7 @@ public class PlayScreen implements Screen {
         }
 
         // The player needs to move out of any objects it is inside
-        // player.collide(mapManager.getOverlappingRectangles(player.getCollisionBox()));
+        player.collide(mapManager.getOverlappingRectangles(player.getCollisionBox()));
         // Also stay inside map
         player.setInBounds(mapManager.getCurrentMapWorldDimensions());
 
