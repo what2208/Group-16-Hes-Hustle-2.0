@@ -40,9 +40,9 @@ public class PlayScreen implements Screen {
     private final State gameState;
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
-    private boolean isPaused, isAnimating = false;
-    private Player player;
-    private DialogueManager dialogueManager;
+    private boolean isPaused;
+    private final Player player;
+    private final DialogueManager dialogueManager;
     private final FitViewport viewport;
     private final OrthographicCamera camera;
     private final SpriteBatch batch;
