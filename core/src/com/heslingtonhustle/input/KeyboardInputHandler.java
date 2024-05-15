@@ -48,9 +48,9 @@ public class KeyboardInputHandler extends InputAdapter implements InputHandler {
 
         inputMap.put(Keys.ESCAPE, Action.PAUSE);
 
-        inputMap.put(Keys.COMMA, Action.DEBUGGING_ACTION1);
-        inputMap.put(Keys.PERIOD, Action.DEBUGGING_ACTION2);
-        inputMap.put(Keys.SLASH, Action.DEBUGGING_ACTION3);
+//        inputMap.put(Keys.COMMA, Action.DEBUGGING_ACTION1);
+//        inputMap.put(Keys.PERIOD, Action.DEBUGGING_ACTION2);
+//        inputMap.put(Keys.SLASH, Action.DEBUGGING_ACTION3);
     }
 
     /**
