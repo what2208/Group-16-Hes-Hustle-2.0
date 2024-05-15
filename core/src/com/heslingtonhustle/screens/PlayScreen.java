@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
@@ -25,18 +28,19 @@ import com.heslingtonhustle.state.Action;
 import com.heslingtonhustle.state.DialogueManager;
 import com.heslingtonhustle.state.Player;
 import com.heslingtonhustle.state.State;
+import com.badlogic.gdx.math.Interpolation;
 
 import java.util.HashSet;
 
+
 public class PlayScreen implements Screen {
     private final HeslingtonHustleGame game;
-
     InputMultiplexer inputMultiplexer;
     private final InputHandler inputHandler;
     private final State gameState;
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
-    private boolean isPaused;
+    private boolean isPaused, isAnimating = false;
     private Player player;
     private DialogueManager dialogueManager;
     private final FitViewport viewport;
@@ -44,7 +48,11 @@ public class PlayScreen implements Screen {
     private final SpriteBatch batch;
     private final HudRenderer hudRenderer;
     private final CharacterRenderer playerRenderer;
-
+    private float zoomLevel = 7f;
+    private float zoomTarget = 1f;
+    private float zoomProgress = 1f;
+    private Vector2 zoomCoordinates = null;
+    MapProperties changeMapTrigger = null;
 
     /**
      * A screen to display the main game when the user is playing; importantly showing the map,
@@ -115,6 +123,8 @@ public class PlayScreen implements Screen {
 
         // <--- LOGIC ---> //
 
+        hudRenderer.screenIsBlack();
+
         // Get inputs
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
@@ -125,7 +135,7 @@ public class PlayScreen implements Screen {
         // Check for pause
         if (!isPaused) {
             // Let the player move if there is no dialogue on screen
-            if (dialogueManager.isEmpty()) {
+            if (dialogueManager.isEmpty() && camera.zoom == 1f && hudRenderer.screenClear()) {
                 player.move(heldActions, delta);
             } else {
                 player.dontMove();
@@ -135,14 +145,14 @@ public class PlayScreen implements Screen {
             // but no both at once
             if (!dialogueManager.isEmpty()) {
                 dialogueManager.handleAction(pressedActions);
-            } else {
+            } else if (camera.zoom == 1f) {
                 if (pressedActions.contains(Action.INTERACT)) {
                     gameState.handleInteraction();
                     // Check for map change
                     MapProperties currentTrigger = gameState.getNearestTrigger();
-                    if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
-                        changeMap(currentTrigger);
-                        return;
+                    if (currentTrigger != null && currentTrigger.containsKey("new_map") && hudRenderer.screenClear()) {
+                        changeMapTrigger = currentTrigger;
+                        hudRenderer.fadeIn(2f);
                     }
 
                     // Check for NPC to rotate
@@ -151,10 +161,36 @@ public class PlayScreen implements Screen {
                     }
                 }
             }
+
+            // Check for a zoom in
+            if (dialogueManager.isEmpty()) {
+                // Allow a zoom
+                if (pressedActions.contains(Action.MAP) && zoomProgress == 1) {
+                    float temp = zoomLevel;
+                    zoomLevel = zoomTarget;
+                    zoomTarget = temp;
+                    zoomProgress = 0f;
+                    if (zoomCoordinates == null) {
+                        zoomCoordinates = mapManager.getCentre();
+                    } else {
+                        zoomCoordinates = null;
+                    }
+                }
+            }
             gameState.passTime(delta);
 
         } else {
             player.dontMove();
+        }
+
+        // Zoom camera
+        if (zoomProgress < 0.98) {
+            camera.zoom = Interpolation.exp10Out.apply(zoomLevel, zoomTarget, zoomProgress);
+            zoomProgress += delta;
+
+        } else {
+            zoomProgress = 1;
+            camera.zoom = zoomTarget;
         }
 
         // The player needs to move out of any objects it is inside
@@ -169,23 +205,34 @@ public class PlayScreen implements Screen {
         hudRenderer.updateValues(gameState.getTime(), gameState.getDay(), gameState.getEnergy());
 
         // <--- RENDERING ---> //
-
-        // Draw map
         MapRenderer mapRenderer = mapManager.getCurrentMapRenderer(batch); // Maybe change how this works
-        mapRenderer.setView(camera);
-        // Draw background layers
-        mapRenderer.render(mapManager.getBackgroundLayers());
+        // Set this before slerping the camera to remove odd black bar errors
+        if (!(zoomTarget == 1 && zoomProgress < 0.6)) mapRenderer.setView(camera);
 
-        // Draw player
+        // Centre and zoom camera
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
         // Centre camera on the player
-        camera.position.slerp(
+        if (zoomCoordinates == null) {
+            camera.position.slerp(
+                    new Vector3(
+                            playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                            playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                            0
+                    ),
+                    delta*5);
+        } else {
+            camera.position.slerp(
                 new Vector3(
-                        playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
-                        playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                        zoomCoordinates.x,
+                        zoomCoordinates.y,
                         0
                 ),
                 delta*5);
+        }
+
+
+        // Draw map
+        mapRenderer.render(mapManager.getBackgroundLayers());
 
         // Draw player and NPCs
         batch.setProjectionMatrix(camera.combined);
@@ -195,21 +242,36 @@ public class PlayScreen implements Screen {
         playerRenderer.render(batch, playerPixelPosition.x, playerPixelPosition.y+1, player.getFacing(), player.getMoving());
         batch.end();
 
-        // Draw foreground layers
+        // Render layers in front of player
         mapRenderer.render(mapManager.getForegroundLayers());
 
-        // Draw HUD
-        // Pass the nearest trigger for interaction label#
-        if (isPaused) {
-            hudRenderer.render(null);
-        } else {
-            hudRenderer.render(nearestTrigger);
+        // Render map labels if zoomed out or zooming in
+        if (zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f)) {
+            batch.begin();
+            mapManager.renderLabels(batch);
+            batch.end();
+        }
+
+        // Draw HUD if not zoomed out
+        if (!(zoomTarget != 1f || (zoomTarget == 1 && zoomProgress < 0.2f))) {
+            if (isPaused) {
+                hudRenderer.render(null);
+            } else {
+                // Pass the nearest trigger for the interaction label
+                hudRenderer.render(nearestTrigger);
+            }
         }
         pauseMenu.render();
 
 //        drawPlayerDebug();
 
         // <--- FINAL CHECKS AND RESETS ---> //
+
+        if (changeMapTrigger != null && hudRenderer.screenIsBlack()) {
+            changeMap(changeMapTrigger);
+            changeMapTrigger = null;
+            hudRenderer.fadeOut(3f);
+        }
 
         inputHandler.resetPressedActions();
         camera.update();
@@ -254,8 +316,19 @@ public class PlayScreen implements Screen {
 
     public void changeMap(MapProperties currentTrigger) {
         mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
-        player.setPosition(new Vector2((float) currentTrigger.get("new_map_x"), (float) currentTrigger.get("new_map_y")));
-        return;
+        player.setPosition(new Vector2(
+                (float) currentTrigger.get("new_map_x"),
+                (float) currentTrigger.get("new_map_y")));
+        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+        camera.position.set(
+            camera.position.set(
+                new Vector3(
+                        playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+                        playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+                        0
+                )
+            )
+        );
     }
 
     /**

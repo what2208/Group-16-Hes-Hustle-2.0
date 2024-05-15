@@ -1,6 +1,7 @@
 package com.heslingtonhustle.map;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -14,13 +15,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.IntArray;
 import com.badlogic.gdx.utils.Disposable;
 import com.heslingtonhustle.renderer.CharacterRenderer;
 import com.heslingtonhustle.state.Facing;
 import com.heslingtonhustle.state.NPC;
 
+import java.awt.geom.Arc2D;
 import java.util.HashMap;
 import java.util.HashSet;
 
@@ -37,18 +38,31 @@ public class MapManager implements Disposable {
     private ShapeRenderer collisionRenderer;
     private MapObjects collisionObjects;
     private MapObjects triggerObjects;
+    private MapObjects labelObjects;
     private HashMap<MapProperties, NPC> NPCs;
     private int[] backgroundLayers;
     private int[] foregroundLayers;
     private final TextureAtlas npcAtlas;
+    private final BitmapFont labelFont;
 
+    /**
+     * Instantiates a new map manager to to manage loading and switching
+     * between maps loaded from Tiled
+     */
     public MapManager() {
         mapLoader = new TmxMapLoader();
         loadedMaps = new HashMap<>();
         loadedMapRenderers = new HashMap<>();
         npcAtlas = new TextureAtlas("Players/npcs.atlas");
+        labelFont = new BitmapFont(Gdx.files.internal("Fonts/labelfont.fnt"),false);
     }
 
+    /**
+     * Loads in the given map and the layers for collisions, NPCs
+     * and triggers.
+     * Also differentiates between foreground and background layers
+     * @param path The filepath of the map to load
+     */
     public void loadMap(String path) {
         if (!loadedMaps.containsKey(path)) {
             loadedMaps.put(path, mapLoader.load(path));
@@ -77,6 +91,14 @@ public class MapManager implements Disposable {
             createNPCs(triggerLayer.getObjects());
         } catch (NullPointerException e) {
             Gdx.app.debug("DEBUG", "NO NPC LAYER FOUND!");
+        }
+
+        // Get labels
+        try {
+            MapLayer labelLayer = currentMap.getLayers().get("Labels");
+            labelObjects = labelLayer.getObjects();
+        } catch (NullPointerException e) {
+            labelObjects = null;
         }
 
         // Get which layers are foreground and which are background
@@ -154,6 +176,11 @@ public class MapManager implements Disposable {
         }
     }
 
+    /**
+     * Rotates an NPC based on the player's centre point
+     * @param npc The properties of the NPC to rotate
+     * @param playerCentre The current centre position of the player
+     */
     public void rotateNPC(MapProperties npc, Vector2 playerCentre) {
         NPCs.get(npc).reposition(playerCentre);
     }
@@ -255,6 +282,21 @@ public class MapManager implements Disposable {
     }
 
     /**
+     * Renders any layers the map may have to the screen
+     * @param batch The sprite batch to render to
+     */
+    public void renderLabels(SpriteBatch batch) {
+        if (labelObjects == null) return;
+        for (MapObject object : labelObjects) {
+            MapProperties props = object.getProperties();
+            float x = props.get("x", Float.class);
+            float y = props.get("y", Float.class);
+
+            labelFont.draw(batch, props.get("text", String.class), x, y);
+        }
+    }
+
+    /**
      * Finds the coordinates of the spawn rectangle on the spawn layer
      * @return The spawn position to give to the player
      */
@@ -279,6 +321,22 @@ public class MapManager implements Disposable {
     }
 
     /**
+     * Returns the centre of the map in player's relative pixels
+     * @return A 2D vector representing the centre of the map
+     */
+    public Vector2 getCentre() {
+        if (currentMap == null) return null;
+
+        MapProperties props = currentMap.getProperties();
+
+        return new Vector2(
+                worldToPixelValue(props.get("width", Integer.class) / 2f),
+                worldToPixelValue(props.get("height", Integer.class) / 2f)
+        );
+
+    }
+
+    /**
      * Calculates the distance between the centre of two rectangles
      * @param rect1 The first rectangle
      * @param rect2 The second rectangle
@@ -292,6 +350,9 @@ public class MapManager implements Disposable {
     }
 
 
+    /**
+     * @return Returns the tile width and height of the current loaded map
+     */
     public Vector2 getCurrentMapTileDimensions() {
         if (currentMap == null) {
             throw new NullPointerException("There is no currently loaded map!");
@@ -302,6 +363,9 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * @return The dimensions of the current loaded map
+     */
     public Vector2 getCurrentMapWorldDimensions() {
         if (currentMap == null) {
             throw new NullPointerException("There is no currently loaded map!");
@@ -322,6 +386,11 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * Takes a player's coordinates and translates it to map coordinates
+     * @param worldCoords The player's coordinates
+     * @return The equivalent of these coordinates in the maps coordinate system
+     */
     public Vector2 worldToPixelCoords(Vector2 worldCoords) {
         return new Vector2(
                 worldCoords.x * getCurrentMapTileDimensions().x,
@@ -329,6 +398,11 @@ public class MapManager implements Disposable {
         );
     }
 
+    /**
+     * Converts a player's single coordinate to the map's coordinate
+     * @param worldValue The value to translate
+     * @return The translated value
+     */
     public float worldToPixelValue(float worldValue) {
         return worldValue * getCurrentMapTileDimensions().x;
     }
