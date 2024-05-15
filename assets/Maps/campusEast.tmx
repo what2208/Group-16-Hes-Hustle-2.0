@@ -1111,7 +1111,7 @@ The change of scenery really helps!</property>
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="7" name="Triggers" visible="0">
+ <objectgroup id="7" name="Triggers">
   <properties>
    <property name="foreground" type="bool" value="false"/>
   </properties>
@@ -1326,11 +1326,11 @@ South: Ron Cooke Hub</property>
 Open to all for exam week!</property>
    </properties>
   </object>
-  <object id="730" x="674" y="300" width="52" height="22">
+  <object id="730" x="673.75" y="300" width="52.25" height="22">
    <properties>
     <property name="new_map" value="urbanMap.tmx"/>
     <property name="new_map_x" type="float" value="118"/>
-    <property name="new_map_y" type="float" value="55"/>
+    <property name="new_map_y" type="float" value="54.3"/>
    </properties>
   </object>
  </objectgroup>

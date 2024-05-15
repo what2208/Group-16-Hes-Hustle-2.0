@@ -5,6 +5,7 @@ import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
@@ -13,6 +14,8 @@ import com.badlogic.gdx.maps.MapRenderer;
 import com.badlogic.gdx.math.Rectangle;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.utils.ScreenUtils;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.HeslingtonHustleGame;
@@ -32,13 +35,12 @@ import java.util.HashSet;
 
 public class PlayScreen implements Screen {
     private final HeslingtonHustleGame game;
-
     InputMultiplexer inputMultiplexer;
     private final InputHandler inputHandler;
     private final State gameState;
     private final MapManager mapManager;
     private final PauseMenu pauseMenu;
-    private boolean isPaused;
+    private boolean isPaused, isAnimating = false;
     private Player player;
     private DialogueManager dialogueManager;
     private final FitViewport viewport;
@@ -51,7 +53,6 @@ public class PlayScreen implements Screen {
     private float zoomProgress = 1f;
     private Vector2 zoomCoordinates = null;
     MapProperties changeMapTrigger = null;
-
 
     /**
      * A screen to display the main game when the user is playing; importantly showing the map,
@@ -121,7 +122,8 @@ public class PlayScreen implements Screen {
         delta = 0.01667f;
 
         // <--- LOGIC ---> //
-        changeMapTrigger = null;
+
+        hudRenderer.screenIsBlack();
 
         // Get inputs
         HashSet<Action> heldActions = inputHandler.getHeldActions();
@@ -133,7 +135,7 @@ public class PlayScreen implements Screen {
         // Check for pause
         if (!isPaused) {
             // Let the player move if there is no dialogue on screen
-            if (dialogueManager.isEmpty() && camera.zoom == 1f) {
+            if (dialogueManager.isEmpty() && camera.zoom == 1f && hudRenderer.screenClear()) {
                 player.move(heldActions, delta);
             } else {
                 player.dontMove();
@@ -148,8 +150,9 @@ public class PlayScreen implements Screen {
                     gameState.handleInteraction();
                     // Check for map change
                     MapProperties currentTrigger = gameState.getNearestTrigger();
-                    if (currentTrigger != null && currentTrigger.containsKey("new_map")) {
+                    if (currentTrigger != null && currentTrigger.containsKey("new_map") && hudRenderer.screenClear()) {
                         changeMapTrigger = currentTrigger;
+                        hudRenderer.fadeIn(2f);
                     }
 
                     // Check for NPC to rotate
@@ -191,7 +194,7 @@ public class PlayScreen implements Screen {
         }
 
         // The player needs to move out of any objects it is inside
-        player.collide(mapManager.getOverlappingRectangles(player.getCollisionBox()));
+        // player.collide(mapManager.getOverlappingRectangles(player.getCollisionBox()));
         // Also stay inside map
         player.setInBounds(mapManager.getCurrentMapWorldDimensions());
 
@@ -264,8 +267,10 @@ public class PlayScreen implements Screen {
 
         // <--- FINAL CHECKS AND RESETS ---> //
 
-        if (changeMapTrigger != null) {
+        if (changeMapTrigger != null && hudRenderer.screenIsBlack()) {
             changeMap(changeMapTrigger);
+            changeMapTrigger = null;
+            hudRenderer.fadeOut(3f);
         }
 
         inputHandler.resetPressedActions();
@@ -311,7 +316,9 @@ public class PlayScreen implements Screen {
 
     public void changeMap(MapProperties currentTrigger) {
         mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
-        player.setPosition(new Vector2((float) currentTrigger.get("new_map_x"), (float) currentTrigger.get("new_map_y")));
+        player.setPosition(new Vector2(
+                (float) currentTrigger.get("new_map_x"),
+                (float) currentTrigger.get("new_map_y")));
         Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
         camera.position.set(
             camera.position.set(

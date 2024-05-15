@@ -1,9 +1,12 @@
 package com.heslingtonhustle.renderer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
+import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.scenes.scene2d.Stage;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.scenes.scene2d.ui.*;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -34,7 +37,7 @@ public class HudRenderer implements Disposable {
     private final TextButton timeButton;
     private final Label interactLabel;
     private final Image energyBar;
-
+    public final Image blackScreen;
 
     /**
      * Initalises images and labels to display to the screen
@@ -57,6 +60,12 @@ public class HudRenderer implements Disposable {
 
         // Stage for UI elements
         hudStage = new Stage(new FitViewport(width, height));
+
+        // Black screen
+        blackScreen = new Image(new Texture(Gdx.files.internal("Graphics/black.png")));
+        blackScreen.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        blackScreen.addAction(Actions.alpha(0f));
+        hudStage.addActor(blackScreen);
 
         // Display time
         timeButton = new TextButton("10:00am", skin, "informational");
@@ -157,6 +166,38 @@ public class HudRenderer implements Disposable {
 
         energyBar.setScaleY(energy / 100f);
     }
+
+
+    /**
+     * Fades the black screen in
+     */
+    public void fadeIn(float duration) {
+        blackScreen.addAction(Actions.fadeIn(duration));
+    }
+
+    /**
+     * Fades the screen in from black
+     */
+    public void fadeOut(float duration) {
+        blackScreen.addAction(Actions.fadeOut(duration));
+    }
+
+    /**
+     * @return Returns true if the screen is black
+     */
+    public Boolean screenIsBlack() {
+        Color colour = blackScreen.getColor();
+        return colour.a == 1f;
+    }
+
+    /**
+     * @return True if a black screen is not being faded in or out
+     */
+    public Boolean screenClear() {
+        Color colour = blackScreen.getColor();
+        return colour.a == 0f;
+    }
+
 
 
     /**
