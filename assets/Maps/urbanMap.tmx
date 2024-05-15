@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<map version="1.10" tiledversion="1.10.2" orientation="orthogonal" renderorder="right-down" width="137" height="96" tilewidth="16" tileheight="16" infinite="0" nextlayerid="12" nextobjectid="129">
  <tileset firstgid="1" source="Tilesets/kenney_urban.tsx"/>
  <layer id="1" name="Ground Tiles" width="137" height="96">
   <data encoding="csv">
@@ -646,8 +645,8 @@
   <object id="51" x="1968" y="549" width="192" height="11"/>
   <object id="52" x="2161" y="560" width="16" height="310"/>
   <object id="53" x="1968" y="870" width="192" height="10"/>
-  <object id="54" x="1344" y="864" width="624" height="16"/>
-  <object id="55" x="1153" y="849" width="191" height="15"/>
+  <object id="54" x="1344" y="863" width="624" height="17"/>
+  <object id="55" x="1153" y="848" width="191" height="16"/>
   <object id="56" x="1040" y="865" width="113" height="14"/>
   <object id="58" x="256" y="848" width="785" height="17"/>
   <object id="59" x="257" y="865" width="15" height="15"/>
@@ -697,30 +696,6 @@
   <object id="109" x="2001" y="576" width="5" height="13"/>
   <object id="110" x="2138" y="576" width="5" height="13"/>
  </objectgroup>
- <objectgroup id="11" name="Labels">
-  <object id="124" x="1360" y="448" width="16" height="16">
-   <properties>
-    <property name="text" value="Cafe"/>
-   </properties>
-  </object>
-  <object id="126" x="656" y="528" width="16" height="16">
-   <properties>
-    <property name="text" value="The Club"/>
-   </properties>
-  </object>
-  <object id="127" x="960" y="448" width="16" height="16">
-   <properties>
-    <property name="text" value="Fountain"/>
-   </properties>
-  </object>
-  <object id="128" x="224" y="496" width="16" height="16">
-   <properties>
-    <property name="text" value="Library"/>
-   </properties>
-  </object>
- </objectgroup>
- <objectgroup id="10" name="NPCs" visible="0">
-  <object id="121" x="784" y="591" width="16" height="17">
    <properties>
     <property name="dialogue">*hic* They call me the uhh c-caveman, cos I *hic* loooove clubbin'!
 *hic* I don't feel very well...</property>
@@ -728,18 +703,74 @@
     <property name="type" value="npc-1"/>
    </properties>
   </object>
-  <object id="122" x="1585" y="640" width="15" height="15">
+  <object id="122" x="1585" y="637" width="15" height="15">
    <properties>
     <property name="dialogue" value="You should always wait for the green man before crossing the road!"/>
     <property name="direction" type="int" value="2"/>
     <property name="type" value="npc-5"/>
    </properties>
   </object>
-  <object id="123" x="1599" y="768" width="17" height="16">
+  <object id="123" x="1599" y="762" width="17" height="16">
    <properties>
     <property name="dialogue" value="I don't think the woman across the road realises the pedestrian lights are out of order. She's been stood there for over an hour..."/>
     <property name="direction" type="int" value="0"/>
     <property name="type" value="npc-4"/>
+   </properties>
+  </object>
+  <object id="124" x="1984" y="557" width="16" height="15">
+   <properties>
+    <property name="dialogue" value="I can't believe so many roads are closed! It's almost like someone's trying to prevent people from leaving this street..."/>
+    <property name="direction" type="int" value="0"/>
+    <property name="type" value="npc-13"/>
+   </properties>
+  </object>
+  <object id="125" x="368" y="583" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Yes! They finally had a copy of 'An Introduction To Continuous Integration' available at the library!"/>
+    <property name="direction" type="int" value="2"/>
+    <property name="type" value="npc-15"/>
+   </properties>
+  </object>
+  <object id="127" x="350" y="765" width="16" height="15">
+   <properties>
+    <property name="dialogue" value="A yellow cab in York? Now, there's something you don't see everyday."/>
+    <property name="direction" type="int" value="0"/>
+    <property name="type" value="npc-7"/>
+   </properties>
+  </object>
+  <object id="128" x="845" y="784" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="The trees smell gorgeous this time of year! *ACHOO* I just wish I didn't have hay fever..."/>
+    <property name="direction" type="int" value="3"/>
+    <property name="type" value="npc-17"/>
+   </properties>
+  </object>
+  <object id="129" x="1056" y="592" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="Have you tried relaxing by the fountain? I can lose myself for ages gazing into the crystal clear water."/>
+    <property name="direction" type="int" value="3"/>
+    <property name="type" value="npc-8"/>
+   </properties>
+  </object>
+  <object id="130" x="224" y="555" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="No members of the public allowed past here I'm afraid! We're busy building the rest of the game -err I mean fixing some HUUUGE potholes! Yep, that's it! Potholes. Nothing else at all, heheh..."/>
+    <property name="direction" type="int" value="2"/>
+    <property name="type" value="npc-10"/>
+   </properties>
+  </object>
+  <object id="131" x="1264" y="581" width="16" height="16">
+   <properties>
+    <property name="dialogue" value="GAHH! How can the shop be shut during exam week?! I need my energy drinks for crying out loud! Whatever, I'll just have to grab a coffee from the café next door I suppose."/>
+    <property name="direction" type="int" value="0"/>
+    <property name="type" value="npc-2"/>
+   </properties>
+  </object>
+  <object id="132" x="1088" y="869" width="16" height="17">
+   <properties>
+    <property name="dialogue" value="Oh, hey! I'm not too sure how I ended up on this side of the fence. Hopefully I can find my way back around, it's so boring over here!"/>
+    <property name="direction" type="int" value="0"/>
+    <property name="type" value="npc-11"/>
    </properties>
   </object>
  </objectgroup>
