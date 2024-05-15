@@ -418,7 +418,6 @@ public class GameOverScreen implements Screen {
      * Determines the secret achievements the player has achieved
      * based on the activities completed.
      * Adds these to the set of achievements
-     * TODO: Make these conditional
      */
     private void getAchievements() {
         if (stepAchievement) {
@@ -447,6 +446,18 @@ public class GameOverScreen implements Screen {
                         "Duck duck go",
                         "Feed the ducks 6 times",
                         300
+                ));
+                numAchievements += 1;
+            }
+        }
+
+        // Give if the player goes to the gym at least 3 times per week
+        if (activities.containsKey("gym")) {
+            if (activities.get("gym").getTimesCompleted() >= 3) {
+                achievements.add(new Achievement(
+                        "Gymbro",
+                        "Go to the gym at least 3 times per week",
+                        500
                 ));
                 numAchievements += 1;
             }
