@@ -333,4 +333,14 @@ public class State {
     public HashMap<String, Activity> getActivities() {
         return activities;
     }
+
+    /**
+     * @return The instance of the clock
+     */
+    public Clock getClock() { return clock; }
+
+    /**
+     * @return The current trigger
+     */
+    public MapProperties getCurrentTrigger() { return currentTrigger; }
 }

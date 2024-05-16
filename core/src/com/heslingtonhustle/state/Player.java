@@ -282,4 +282,8 @@ public class Player {
     public boolean getStepAchievement() {
         return daysWalkedOver200Steps == 7;
     }
+
+    public void setDistanceTravelled(float newDistanceTravelled) { distanceTravelled = newDistanceTravelled; }
+
+    public int getDaysWalkedOver200Steps() { return daysWalkedOver200Steps; }
 }

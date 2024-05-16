@@ -15,6 +15,12 @@ public class SoundController implements Disposable {
     private final HashMap<Sounds, Music> musicTypes = new HashMap<>();
     private final HashMap<Sounds, Sound> sfxTypes = new HashMap<>();
     private float musicVolume = 0.5f, sfxVolume = 0.8f;
+    public static final String MenuMusicAsset = "Sound/Music/menuMusic.mp3";
+    public static final String GameMusicAsset = "Sound/Music/gameMusic.mp3";
+    public static final String OpenSfxAsset = "Sound/SFX/open.ogg";
+    public static final String CloseSfxAsset = "Sound/SFX/close.ogg";
+    public static final String OptionSwitchSfxAsset = "Sound/SFX/switch.ogg";
+    public static final String ConfirmSfxAsset = "Sound/SFX/confirm3.ogg";
 
 
     /**
@@ -29,20 +35,20 @@ public class SoundController implements Disposable {
      */
     private void load() {
         // Menu Music
-        menuMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/menuMusic.mp3"));
+        menuMusic = Gdx.audio.newMusic(Gdx.files.internal(MenuMusicAsset));
         menuMusic.setLooping(true);
         menuMusic.setVolume(musicVolume);
 
         // Game music
-        gameMusic = Gdx.audio.newMusic(Gdx.files.internal("Sound/Music/gameMusic.mp3"));
+        gameMusic = Gdx.audio.newMusic(Gdx.files.internal(GameMusicAsset));
         gameMusic.setLooping(true);
         gameMusic.setVolume(musicVolume);
 
         // SFX
-        open = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/open.ogg"));
-        close = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/close.ogg"));
-        optionSwitch = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/switch.ogg"));
-        confirm = Gdx.audio.newSound(Gdx.files.internal("Sound/SFX/confirm3.ogg"));
+        open = Gdx.audio.newSound(Gdx.files.internal(OpenSfxAsset));
+        close = Gdx.audio.newSound(Gdx.files.internal(CloseSfxAsset));
+        optionSwitch = Gdx.audio.newSound(Gdx.files.internal(OptionSwitchSfxAsset));
+        confirm = Gdx.audio.newSound(Gdx.files.internal(ConfirmSfxAsset));
 
 
         // Map values in Sounds to sound effects to play
@@ -148,6 +154,11 @@ public class SoundController implements Disposable {
         optionSwitch.dispose();
         confirm.dispose();
     }
+
+    /**
+     * @return The current music
+     */
+    public Music getCurrentMusic() { return currentMusic; }
 
 
 }

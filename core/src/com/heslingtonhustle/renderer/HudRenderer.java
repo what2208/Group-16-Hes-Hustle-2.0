@@ -268,4 +268,9 @@ public class HudRenderer implements Disposable {
     public void dispose() {
 
     }
+
+    /**
+     * @return The day button
+     */
+    public TextButton getDayButton() { return dayButton; }
 }
