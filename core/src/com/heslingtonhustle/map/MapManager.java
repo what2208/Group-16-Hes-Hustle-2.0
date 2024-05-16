@@ -155,7 +155,14 @@ public class MapManager implements Disposable {
 
                 NPCs.put(npcObject.getProperties(), character);
                 // Also add a trigger
-                triggerObjects.add(npcObject);
+                if (npcObject.getProperties().containsKey("silent")) {
+                    if (!npcObject.getProperties().get("silent", Boolean.class)) {
+                        triggerObjects.add(npcObject);
+                    }
+                } else {
+                    triggerObjects.add(npcObject);
+                }
+
                 collisionObjects.add(npcObject);
 
             } catch (NullPointerException e) {
