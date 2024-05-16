@@ -458,4 +458,14 @@ public class MapManager implements Disposable {
             collisionRenderer.dispose();
         }
     }
+
+    /**
+     * @return The loaded maps
+     */
+    public HashMap<String, TiledMap> getLoadedMaps() { return loadedMaps; }
+
+    /**
+     * @return THe current map
+     */
+    public TiledMap getCurrentMap() { return currentMap; }
 }
