@@ -178,4 +178,9 @@ public class TutorialScreen implements Screen {
         tutStage.dispose();
         backgroundTexture.dispose();
     }
+
+    /**
+     * @return The viewport
+     */
+    public Viewport getViewport() { return viewport; }
 }
