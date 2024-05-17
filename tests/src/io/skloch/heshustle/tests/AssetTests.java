@@ -57,4 +57,10 @@ public class AssetTests {
                 Gdx.files.internal(HeslingtonHustleGame.UiSkinAsset).exists());
     }
 
+    @Test
+    public void testCreditsFilePath() {
+        assertTrue("The text file for the credits exists",
+                Gdx.files.internal(HeslingtonHustleGame.CreditsFilePath).exists());
+    }
+
 }
