@@ -885,7 +885,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="11" name="Labels" visible="0">
+ <objectgroup id="11" name="Labels">
   <object id="133" x="1360" y="480" width="16" height="16">
    <properties>
     <property name="text" value="Cafe"/>
@@ -904,11 +904,6 @@
   <object id="136" x="224" y="496" width="16" height="16">
    <properties>
     <property name="text" value="Library"/>
-   </properties>
-  </object>
-  <object id="140" x="928" y="1120" width="16" height="16">
-   <properties>
-    <property name="text" value="York Canal"/>
    </properties>
   </object>
  </objectgroup>
@@ -996,6 +991,7 @@ You lost 10 energy.</property>
     <property name="new_map" value="campusEast.tmx"/>
     <property name="new_map_x" type="float" value="42"/>
     <property name="new_map_y" type="float" value="75.8"/>
+    <property name="prompt" value="Do you want to head back to Campus East?"/>
    </properties>
   </object>
   <object id="120" x="1839" y="619" width="52" height="21">
@@ -1003,6 +999,7 @@ You lost 10 energy.</property>
     <property name="new_map" value="campusEast.tmx"/>
     <property name="new_map_x" type="float" value="42"/>
     <property name="new_map_y" type="float" value="75.8"/>
+    <property name="prompt" value="Do you want to head back to Campus East?"/>
    </properties>
   </object>
  </objectgroup>
