@@ -24,6 +24,7 @@ public class State {
     private MapProperties currentTrigger;
     private int energy;
     private int hoursSlept;
+    private MapProperties newMapTrigger;
 
 
     public State(SoundController soundController, DialogueManager dialogueManager) {
@@ -56,6 +57,16 @@ public class State {
         currentTrigger = trigger;
     }
 
+    /**
+     * Returns the trigger containing information about the new map to
+     * switch to
+     * @return The MapProperties of the trigger pointing to the new map,
+     * returns null if no map needs to be switched to
+     */
+    public MapProperties getNewMapTrigger() {
+        return newMapTrigger;
+    }
+
 
     public MapProperties getNearestTrigger() {
         return currentTrigger;
@@ -80,8 +91,16 @@ public class State {
             return;
         }
 
+        // Change map
         if (currentTrigger.containsKey("new_map")) {
-            return;
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            String prompt = currentTrigger.get("prompt", String.class);
+            dialogueManager.addDialogue(prompt, options, selectedOption -> {
+                        if (selectedOption == 0) {
+                            newMapTrigger = currentTrigger;
+                        }
+                    }
+            );
         }
 
         // Sleep at a house

@@ -1333,6 +1333,7 @@ Open to all for exam week!</property>
     <property name="new_map" value="urbanMap.tmx"/>
     <property name="new_map_x" type="float" value="118"/>
     <property name="new_map_y" type="float" value="54.3"/>
+    <property name="prompt" value="Do you want to head into town?"/>
    </properties>
   </object>
   <object id="745" x="935.455" y="685.091" width="23.8182" height="19.8182">

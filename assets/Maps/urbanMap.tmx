@@ -996,6 +996,7 @@ You lost 10 energy.</property>
     <property name="new_map" value="campusEast.tmx"/>
     <property name="new_map_x" type="float" value="42"/>
     <property name="new_map_y" type="float" value="75.8"/>
+    <property name="prompt" value="Do you want to head back to Campus East?"/>
    </properties>
   </object>
   <object id="120" x="1839" y="619" width="52" height="21">
@@ -1003,6 +1004,7 @@ You lost 10 energy.</property>
     <property name="new_map" value="campusEast.tmx"/>
     <property name="new_map_x" type="float" value="42"/>
     <property name="new_map_y" type="float" value="75.8"/>
+    <property name="prompt" value="Do you want to head back to Campus East?"/>
    </properties>
   </object>
  </objectgroup>
