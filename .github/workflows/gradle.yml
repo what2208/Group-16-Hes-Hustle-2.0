@@ -35,8 +35,9 @@ jobs:
 
       - name: Upload library JAR         # Uploads the JAR file as an artifact
         uses: actions/upload-artifact@v4.3.1
+        if: startsWith(matrix.os, 'windows')
         with:
-          name: lib-${{ matrix.os }}.jar
+          name: desktop-1.0.jar
           path: desktop/build/libs/desktop-1.0.jar       # where file can be found
 
       - name: Upload Checkstyle report   # Uploads the checkstyle report as an artifact
@@ -74,19 +75,11 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Ubuntu Build Artifact       # All Jar files downloaded to be included in release
-        uses: actions/download-artifact@v4.1.4
-        with:
-          name: lib-ubuntu-22.04.jar
-      - name: Download MacOS Build Artifact
-        uses: actions/download-artifact@v4.1.4
-        with:
-          name: lib-macos-12.jar
       - name: Download Windows Build Artifact
         uses: actions/download-artifact@v4.1.4
         with:
-          name: lib-windows-2022.jar
+          name: desktop-1.0.jar
       - name: Release                       # Create a new release for the project using the tag provided
         uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
         with:
-          files: lib-${{ matrix.os }}.jar            # The release will include the JAR files
+          files: desktop-1.0.jar            # The release will include the JAR files
