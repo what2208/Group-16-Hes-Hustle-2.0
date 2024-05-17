@@ -1,7 +1,6 @@
 package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.heslingtonhustle.sound.SoundController;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,20 +16,21 @@ public class State {
     private static final int MAX_DAYS = 7;
     private boolean gameOver;
     private final Clock clock;
-    private final SoundController soundController;
     private final DialogueManager dialogueManager;
     private final HashMap<String, Activity> activities = new HashMap<>();
     // A reference to the current closest trigger the player can interact with
     private MapProperties currentTrigger;
     private int energy;
     private int hoursSlept;
+    private MapProperties newMapTrigger;
+    private Boolean fading = false;
+    private Boolean sleeping = false;
 
 
-    public State(SoundController soundController, DialogueManager dialogueManager) {
+    public State(DialogueManager dialogueManager) {
         gameOver = false;
 
         clock = new Clock();
-        this.soundController = soundController;
         this.dialogueManager = dialogueManager;
 
         replenishEnergy();
@@ -56,12 +56,64 @@ public class State {
         currentTrigger = trigger;
     }
 
+    /**
+     * Returns the trigger containing information about the new map to
+     * switch to
+     * @return The MapProperties of the trigger pointing to the new map,
+     * returns null if no map needs to be switched to
+     */
+    public MapProperties getNewMapTrigger() {
+        return newMapTrigger;
+    }
 
+    /**
+     * Sets the new map trigger to null
+     */
+    public void resetNewMapTrigger() {
+        newMapTrigger = null;
+    }
+
+    /**
+     * Gets the nearest trigger object to the player
+     * @return The MapProperties representing the closest trigger to the player
+     */
     public MapProperties getNearestTrigger() {
         return currentTrigger;
     }
 
+    /**
+     * @return True if the screen needs to be fading to black
+     */
+    public boolean getFading() {
+        return fading;
+    }
 
+    /**
+     * Set the value of fading
+     * @param fading The boolean to set it to
+     */
+    public void setFading(Boolean fading) {
+        this.fading = fading;
+    }
+
+    /**
+     * True if the game needs to sleep on the next black screen
+     */
+    public Boolean getSleeping() {
+        return sleeping;
+    }
+
+    /**
+     * Set if the game needs to sleep on the next black screen
+     */
+    public void setSleeping(Boolean sleeping) {
+        this.sleeping = sleeping;
+    }
+
+    /**
+     * Performs various actions based on the current trigger
+     * nearest the player.
+     */
     public void handleInteraction() {
         if (currentTrigger == null) {
             return;
@@ -80,8 +132,17 @@ public class State {
             return;
         }
 
+        // Change map
         if (currentTrigger.containsKey("new_map")) {
-            return;
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            String prompt = currentTrigger.get("prompt", String.class);
+            dialogueManager.addDialogue(prompt, options, selectedOption -> {
+                        if (selectedOption == 0) {
+                            newMapTrigger = currentTrigger;
+                            fading = true;
+                        }
+                    }
+            );
         }
 
         // Sleep at a house
@@ -94,14 +155,11 @@ public class State {
                 );
             }
 
-            Activity activity  = activities.get("sleep");
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
             dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
                     if (selectedOption == 0) {
-                        addHoursSlept();
-                        advanceDay();
-                        activity.completeActivity();
-                        dialogueManager.addDialogue("You have just slept!");
+                        fading = true;
+                        sleeping = true;
                     }
                 }
             );
@@ -135,6 +193,16 @@ public class State {
         }
     }
 
+    /**
+     * Completes the actions needed when the player sleeps
+     */
+    public void sleep() {
+        hoursSlept += getHoursSlept();
+        activities.get("sleep").completeActivity();
+        dialogueManager.addDialogue("You have just slept!");
+        advanceDay();
+    }
+
 
     /**
      * Checks whether a player can do an activity, and if so updates
@@ -161,11 +229,20 @@ public class State {
         }
     }
 
+    /**
+     * Advances the game in the day, also displays a message, and ends the game
+     * if the max number of days has been reached
+     */
     private void advanceDay() {
-        if (clock.getDay() >= MAX_DAYS) {
+        clock.incrementDay();
+        addEnergy(getHoursSleptTonight());
+
+        if (clock.getDay() > MAX_DAYS) {
             dialogueManager.addDialogue("Today is the day of your exam!" +
                     "\nI hope you studied well!", selectedOption -> gameOver = true);
             return;
+        } else {
+            pushStartDayDialogue();
         }
 
         // The player is only allowed to do the same activity twice once
@@ -181,7 +258,6 @@ public class State {
             activity.dayAdvanced();
         }
 
-        nextDay();
     }
 
     //Debug function
@@ -218,11 +294,12 @@ public class State {
      */
     public void pushStartDayDialogue() {
         int day = clock.getDay();
-        if (day != MAX_DAYS) {
+        if (day == 7) {
+            dialogueManager.addDialogue(
+                    "You have 1 day left until your exam!\nMake sure you study, eat and have fun!");
+        } else if (day != MAX_DAYS+1) {
             dialogueManager.addDialogue(
                     String.format("You have %s days left until your exam!\nMake sure you study, eat and have fun!", MAX_DAYS-day+1));
-        } else {
-            dialogueManager.addDialogue("Your exam is tomorrow\nI hope you've been ");
         }
 
     }
@@ -257,21 +334,31 @@ public class State {
      * Sets the player's energy to 100
      */
     public void replenishEnergy() {
-        // This is the amount of energy that the player starts with at the beginning of each day
         energy = 100;
     }
 
     /**
-     * Adds the number of hours slept until 8 am to the total amount
-     * of hours slept
+     * Adds a certain amount of energy to the player's energy bar
+     * based on the amount of hours they slept
+     * @param hours The number of hours the player slept
      */
-    private void addHoursSlept() {
+    public void addEnergy(int hours) {
+        energy += hours*12;
+        if (energy >= 100) {
+            energy = 100;
+        }
+    }
+
+    /**
+     * Returns the number of hours slept in this night
+     */
+    private int getHoursSleptTonight() {
         // Before midnight
         if (clock.getRawTime() <= 1440) {
-            hoursSlept += (1440 - clock.getRawTime()) + 8*60;
+            return (int) Math.floor((1440 - clock.getRawTime()) + 8*60);
         } else {
             // After midnight
-            hoursSlept += (8*60) - clock.getRawTime();
+            return (int) Math.floor((8*60) - clock.getRawTime());
         }
     }
 
@@ -289,21 +376,6 @@ public class State {
      */
     private void exertEnergy(int energyCost) {
         energy -= energyCost;
-    }
-
-    /**
-     * @return True if the player is near a trigger that can be interacted with
-     */
-    public boolean isInteractionPossible() {
-        return currentTrigger != null;
-    }
-
-    /**
-     * Advances the game to the next day and restores the player's energy
-     */
-    public void nextDay() {
-        clock.incrementDay();
-        replenishEnergy();
     }
 
     /**

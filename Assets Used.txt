@@ -22,3 +22,7 @@ City & Characters - https://limezu.itch.io/serenevillagerevamped
 Town - https://kenney-assets.itch.io/rpg-urban-kit
 Grass textures - https://bagong-games.itch.io/cozy-island-tileset
 Buildings - https://nyknck.itch.io/citypackpixelart
+
+Animals:
+Cat - https://elthen.itch.io/2d-pixel-art-cat-sprites
+Ducks - https://deepdivegamestudio.itch.io/animalassetpack?download
