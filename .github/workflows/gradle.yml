@@ -74,7 +74,7 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Ubuntu Build Artifact
+      - name: Download Ubuntu Build Artifact       # All Jar files downloaded to be included in release
         uses: actions/download-artifact@v4.1.4
         with:
           name: lib-ubuntu-22.04.jar
