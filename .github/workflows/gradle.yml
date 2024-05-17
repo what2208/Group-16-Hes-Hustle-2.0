@@ -74,11 +74,25 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Ubuntu Build Artifact         # Download the Jar file that was uploaded as an artifact in the Build job
+      - name: Download Ubuntu Build Artifact
         uses: actions/download-artifact@v4.1.4
         with:
-          name: desktop-1.0.jar
+          name: lib-ubuntu-22.04.jar
+      - name: Ubuntu Build Artifact
+        run: mv lib.jar lib-ubuntu.jar
+      - name: Download MacOS Build Artifact
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: lib-macos-12.jar
+      - name: Rename MacOS Build Artifact
+        run: mv lib.jar lib-macos.jar
+      - name: Download Windows Build Artifact
+        uses: actions/download-artifact@v4.1.4
+        with:
+          name: lib-windows-2022.jar
+      - name: Rename Windows Build Artifact
+        run: mv lib.jar lib-windows.jar
       - name: Release                       # Create a new release for the project using the tag provided
         uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
         with:
-          files: desktop-1.0.jar            # The release will include the JAR file
+          files: lib*.jar            # The release will include the JAR file
