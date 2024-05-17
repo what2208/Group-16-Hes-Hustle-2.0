@@ -1,7 +1,6 @@
 package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.maps.MapProperties;
-import com.heslingtonhustle.sound.SoundController;
 import java.util.HashMap;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,7 +16,6 @@ public class State {
     private static final int MAX_DAYS = 7;
     private boolean gameOver;
     private final Clock clock;
-    private final SoundController soundController;
     private final DialogueManager dialogueManager;
     private final HashMap<String, Activity> activities = new HashMap<>();
     // A reference to the current closest trigger the player can interact with
@@ -25,13 +23,14 @@ public class State {
     private int energy;
     private int hoursSlept;
     private MapProperties newMapTrigger;
+    private Boolean fading = false;
+    private Boolean sleeping = false;
 
 
-    public State(SoundController soundController, DialogueManager dialogueManager) {
+    public State(DialogueManager dialogueManager) {
         gameOver = false;
 
         clock = new Clock();
-        this.soundController = soundController;
         this.dialogueManager = dialogueManager;
 
         replenishEnergy();
@@ -83,6 +82,35 @@ public class State {
     }
 
     /**
+     * @return True if the screen needs to be fading to black
+     */
+    public boolean getFading() {
+        return fading;
+    }
+
+    /**
+     * Set the value of fading
+     * @param fading The boolean to set it to
+     */
+    public void setFading(Boolean fading) {
+        this.fading = fading;
+    }
+
+    /**
+     * True if the game needs to sleep on the next black screen
+     */
+    public Boolean getSleeping() {
+        return sleeping;
+    }
+
+    /**
+     * Set if the game needs to sleep on the next black screen
+     */
+    public void setSleeping(Boolean sleeping) {
+        this.sleeping = sleeping;
+    }
+
+    /**
      * Performs various actions based on the current trigger
      * nearest the player.
      */
@@ -111,6 +139,7 @@ public class State {
             dialogueManager.addDialogue(prompt, options, selectedOption -> {
                         if (selectedOption == 0) {
                             newMapTrigger = currentTrigger;
+                            fading = true;
                         }
                     }
             );
@@ -126,14 +155,11 @@ public class State {
                 );
             }
 
-            Activity activity  = activities.get("sleep");
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
             dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
                     if (selectedOption == 0) {
-                        hoursSlept += getHoursSlept();
-                        activity.completeActivity();
-                        dialogueManager.addDialogue("You have just slept!");
-                        advanceDay();
+                        fading = true;
+                        sleeping = true;
                     }
                 }
             );
@@ -165,6 +191,16 @@ public class State {
                 }
             );
         }
+    }
+
+    /**
+     * Completes the actions needed when the player sleeps
+     */
+    public void sleep() {
+        hoursSlept += getHoursSlept();
+        activities.get("sleep").completeActivity();
+        dialogueManager.addDialogue("You have just slept!");
+        advanceDay();
     }
 
 

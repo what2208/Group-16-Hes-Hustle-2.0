@@ -885,7 +885,7 @@
    </properties>
   </object>
  </objectgroup>
- <objectgroup id="11" name="Labels" visible="0">
+ <objectgroup id="11" name="Labels">
   <object id="133" x="1360" y="480" width="16" height="16">
    <properties>
     <property name="text" value="Cafe"/>
@@ -904,11 +904,6 @@
   <object id="136" x="224" y="496" width="16" height="16">
    <properties>
     <property name="text" value="Library"/>
-   </properties>
-  </object>
-  <object id="140" x="928" y="1120" width="16" height="16">
-   <properties>
-    <property name="text" value="York Canal"/>
    </properties>
   </object>
  </objectgroup>
