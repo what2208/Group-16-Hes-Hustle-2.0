@@ -35,7 +35,6 @@ jobs:
 
       - name: Upload library JAR         # Uploads the JAR file as an artifact
         uses: actions/upload-artifact@v4.3.1
-        if: startsWith(matrix.os, 'ubuntu')
         with:
           name: lib-${{ matrix.os }}.jar
           path: desktop/build/libs/desktop-1.0.jar       # where file can be found
