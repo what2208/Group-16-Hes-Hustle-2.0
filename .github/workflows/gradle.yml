@@ -38,7 +38,7 @@ jobs:
         if: startsWith(matrix.os, 'ubuntu')
         with:
           name: lib-${{ matrix.os }}.jar
-          path: desktop/build/libs/desktop-1.0.jar
+          path: desktop/build/libs/desktop-1.0.jar       # where file can be found
 
       - name: Upload Checkstyle report   # Uploads the checkstyle report as an artifact
         uses: actions/upload-artifact@v4.3.1
