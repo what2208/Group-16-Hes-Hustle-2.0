@@ -67,12 +67,25 @@ public class State {
         return newMapTrigger;
     }
 
+    /**
+     * Sets the new map trigger to null
+     */
+    public void resetNewMapTrigger() {
+        newMapTrigger = null;
+    }
 
+    /**
+     * Gets the nearest trigger object to the player
+     * @return The MapProperties representing the closest trigger to the player
+     */
     public MapProperties getNearestTrigger() {
         return currentTrigger;
     }
 
-
+    /**
+     * Performs various actions based on the current trigger
+     * nearest the player.
+     */
     public void handleInteraction() {
         if (currentTrigger == null) {
             return;
@@ -117,10 +130,10 @@ public class State {
             List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
             dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
                     if (selectedOption == 0) {
-                        addHoursSlept();
-                        advanceDay();
+                        hoursSlept += getHoursSlept();
                         activity.completeActivity();
                         dialogueManager.addDialogue("You have just slept!");
+                        advanceDay();
                     }
                 }
             );
@@ -180,11 +193,20 @@ public class State {
         }
     }
 
+    /**
+     * Advances the game in the day, also displays a message, and ends the game
+     * if the max number of days has been reached
+     */
     private void advanceDay() {
-        if (clock.getDay() >= MAX_DAYS) {
+        clock.incrementDay();
+        addEnergy(getHoursSleptTonight());
+
+        if (clock.getDay() > MAX_DAYS) {
             dialogueManager.addDialogue("Today is the day of your exam!" +
                     "\nI hope you studied well!", selectedOption -> gameOver = true);
             return;
+        } else {
+            pushStartDayDialogue();
         }
 
         // The player is only allowed to do the same activity twice once
@@ -200,7 +222,6 @@ public class State {
             activity.dayAdvanced();
         }
 
-        nextDay();
     }
 
     //Debug function
@@ -237,11 +258,12 @@ public class State {
      */
     public void pushStartDayDialogue() {
         int day = clock.getDay();
-        if (day != MAX_DAYS) {
+        if (day == 7) {
+            dialogueManager.addDialogue(
+                    "You have 1 day left until your exam!\nMake sure you study, eat and have fun!");
+        } else if (day != MAX_DAYS+1) {
             dialogueManager.addDialogue(
                     String.format("You have %s days left until your exam!\nMake sure you study, eat and have fun!", MAX_DAYS-day+1));
-        } else {
-            dialogueManager.addDialogue("Your exam is tomorrow\nI hope you've been ");
         }
 
     }
@@ -276,21 +298,31 @@ public class State {
      * Sets the player's energy to 100
      */
     public void replenishEnergy() {
-        // This is the amount of energy that the player starts with at the beginning of each day
         energy = 100;
     }
 
     /**
-     * Adds the number of hours slept until 8 am to the total amount
-     * of hours slept
+     * Adds a certain amount of energy to the player's energy bar
+     * based on the amount of hours they slept
+     * @param hours The number of hours the player slept
      */
-    private void addHoursSlept() {
+    public void addEnergy(int hours) {
+        energy += hours*12;
+        if (energy >= 100) {
+            energy = 100;
+        }
+    }
+
+    /**
+     * Returns the number of hours slept in this night
+     */
+    private int getHoursSleptTonight() {
         // Before midnight
         if (clock.getRawTime() <= 1440) {
-            hoursSlept += (1440 - clock.getRawTime()) + 8*60;
+            return (int) Math.floor((1440 - clock.getRawTime()) + 8*60);
         } else {
             // After midnight
-            hoursSlept += (8*60) - clock.getRawTime();
+            return (int) Math.floor((8*60) - clock.getRawTime());
         }
     }
 
@@ -308,21 +340,6 @@ public class State {
      */
     private void exertEnergy(int energyCost) {
         energy -= energyCost;
-    }
-
-    /**
-     * @return True if the player is near a trigger that can be interacted with
-     */
-    public boolean isInteractionPossible() {
-        return currentTrigger != null;
-    }
-
-    /**
-     * Advances the game to the next day and restores the player's energy
-     */
-    public void nextDay() {
-        clock.incrementDay();
-        replenishEnergy();
     }
 
     /**

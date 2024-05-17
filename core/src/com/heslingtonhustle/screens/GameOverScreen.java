@@ -6,7 +6,13 @@ import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.TextField;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.Array;
 import com.badlogic.gdx.utils.viewport.FitViewport;
@@ -16,11 +22,9 @@ import com.heslingtonhustle.sound.Sounds;
 import com.heslingtonhustle.state.Achievement;
 import com.heslingtonhustle.state.Activity;
 import com.heslingtonhustle.state.LeaderboardManager;
-import sun.awt.image.ImageWatched;
 
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 
 /**
  * A screen to display the user's score, along with any secret achievements
@@ -32,25 +36,24 @@ public class GameOverScreen implements Screen {
     private final SoundController soundController;
     // UI Elements
     private final Stage stage;
-    private Table optionsTable;
     private final Texture backgroundTexture;
-    private Texture pageTexture;
-    private Window queryWindow, nameEntryWindow;
+    private final Window queryWindow;
+    private final Window nameEntryWindow;
 
     // Player game data
-    private HashMap<String, Activity> activities;
-    private boolean stepAchievement;
-    private HashSet<Achievement> achievements = new HashSet<>();
+    private final HashMap<String, Activity> activities;
+    private final boolean stepAchievement;
+    private final HashSet<Achievement> achievements = new HashSet<>();
     private int numAchievements = 0;
 
     // The scores for each category
-    private HashMap<String, Integer> categoryScores = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> categoryScores = new HashMap<String, Integer>();
     // The number of times an event in each category was completed
-    private HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
+    private final HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
 
 
     /**
-     * Creates the screen and fills in all the user's score information
+     * Creates the screen and fills in all the user's score information.
      * @param game Game class
      * @param activities Hashmap that maps a String to an Activity object
      */
@@ -107,9 +110,6 @@ public class GameOverScreen implements Screen {
             score += achievement.getScore();
         }
 
-//        if (score < 0) {
-//            return 0;
-//        }
         return score;
     }
 
@@ -137,7 +137,7 @@ public class GameOverScreen implements Screen {
 
             // Same with the number of times completed
             // For eating just add times done
-            if (activity.getScoreType() == "eat") {
+            if (activity.getScoreType().equals("eat")) {
                 int times = categoryHours.get(activity.getScoreType());
                 categoryHours.put("eat", times + activity.getTimesCompleted());
             } else {
@@ -155,7 +155,7 @@ public class GameOverScreen implements Screen {
      */
     private void drawScorePaper() {
         // Background page
-        pageTexture = new Texture("Graphics/UI/Gameover/page.png");
+        Texture pageTexture = new Texture("Graphics/UI/Gameover/page.png");
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
                 (game.width - pageImage.getWidth()) / 2,
@@ -174,7 +174,7 @@ public class GameOverScreen implements Screen {
         scoreLines.add("Hours studied: " + categoryHours.get("study"));
         scoreLines.add("Hours of fun: " + categoryHours.get("recreation"));
         scoreLines.add("Times ate: " + categoryHours.get("eat"));
-        scoreLines.add("Achievements: " + numAchievements);
+        scoreLines.add("Streaks: " + numAchievements);
         scoreLines.add("Penalties: " + (achievements.size() - numAchievements));
 
         // Draw lines of text
@@ -183,7 +183,7 @@ public class GameOverScreen implements Screen {
             int j = (i >= 4) ? 1 : 0;
             Label line = new Label(scoreLines.get(i), game.skin, "handwriting48px");
 
-            line.setPosition(game.width / 2 - 183, game.height - ((i+j)*48 + 239));
+            line.setPosition(game.width / 2f - 183, game.height - ((i+j)*48 + 239));
             stage.addActor(line);
         }
 

@@ -151,10 +151,6 @@ public class PlayScreen implements Screen {
                     gameState.handleInteraction();
                     // Check for map change
                     MapProperties currentTrigger = gameState.getNearestTrigger();
-                    if (currentTrigger != null && currentTrigger.containsKey("new_map") && hudRenderer.screenClear()) {
-                        changeMapTrigger = currentTrigger;
-                        hudRenderer.fadeIn(2f);
-                    }
 
                     // Check for NPC to rotate
                     if (currentTrigger != null && currentTrigger.containsKey("dialogue")) {
@@ -174,6 +170,12 @@ public class PlayScreen implements Screen {
 
         } else {
             player.dontMove();
+        }
+
+        // Start fading the screen in to black if a new map has been selected
+        if (gameState.getNewMapTrigger() != null && hudRenderer.screenClear()) {
+            changeMapTrigger = gameState.getNewMapTrigger();
+            hudRenderer.fadeIn(2f);
         }
 
         // Zoom camera
