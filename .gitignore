@@ -1,3 +1,7 @@
+## Game specific
+/assets/Players/raw/
+
+
 ## Java
 
 *.class
@@ -100,6 +104,7 @@ gradle-app.setting
 /desktop/build/
 /html/build/
 /ios/build/
+/tests/build/
 
 ## OS Specific
 .DS_Store
@@ -112,3 +117,6 @@ Thumbs.db
 /ios/xcode/native/
 /ios/IOSLauncher.app
 /ios/IOSLauncher.app.dSYM
+assets/leaderboard.txt
+assets/leaderboard.txt
+assets/Players/npcguide.png

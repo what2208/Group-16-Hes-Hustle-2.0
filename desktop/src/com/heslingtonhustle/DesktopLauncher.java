@@ -1,5 +1,6 @@
 package com.heslingtonhustle;
 
+import com.badlogic.gdx.Files;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3Application;
 import com.badlogic.gdx.backends.lwjgl3.Lwjgl3ApplicationConfiguration;
 import com.badlogic.gdx.graphics.glutils.HdpiMode;
@@ -16,7 +17,12 @@ public class DesktopLauncher {
 		config.setWindowedMode(WIDTH, HEIGHT);
 		config.setWindowSizeLimits(WIDTH/3, HEIGHT/3, 1920, 1080);
 		config.useVsync(true);
-		config.setTitle("Heslington Hustle");
+		config.setTitle("Heslington Hustle V2.0");
+
+		// Icons
+		config.setWindowIcon(Files.FileType.Internal, "Icons/icon_16x16.png");
+		config.setWindowIcon(Files.FileType.Internal, "Icons/icon_32x32.png");
+		config.setWindowIcon(Files.FileType.Internal, "Icons/icon_128x128.png");
 
 		new Lwjgl3Application(new HeslingtonHustleGame(WIDTH, HEIGHT), config);
 	}

@@ -1,31 +1,33 @@
 package com.heslingtonhustle.renderer;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.g2d.*;
-import com.badlogic.gdx.scenes.scene2d.Group;
+import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.maps.MapProperties;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.*;
-import com.badlogic.gdx.utils.Array;
+import com.badlogic.gdx.scenes.scene2d.actions.Actions;
 import com.badlogic.gdx.utils.Disposable;
 import com.badlogic.gdx.utils.viewport.FitViewport;
 import com.heslingtonhustle.state.DialogueManager;
-import com.heslingtonhustle.state.State;
+import com.badlogic.gdx.scenes.scene2d.ui.Window;
+import com.badlogic.gdx.scenes.scene2d.ui.Label;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
+import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
 import java.util.List;
 
 /**
  * A class to render static information to the screen that the player needs
  * Displays the time and date, and the current energy level
- * Also displays a label when the player can interact with an event
+ * Also displays a label when the player can interact with an event.
  */
 public class HudRenderer implements Disposable {
-    private final State gameState;
     private final OrthographicCamera hudCamera;
     private final FitViewport viewport;
     private final DialogueManager dialogueManager;
-
-
     private final Skin skin;
     private final Stage hudStage;
     private final Window dialogueWindow;
@@ -35,22 +37,21 @@ public class HudRenderer implements Disposable {
     private final TextButton timeButton;
     private final Label interactLabel;
     private final Image energyBar;
-
+    private final Image blackScreen;
 
     /**
-     * Initalises images and labels to display to the screen
-     * Also initalises the dialogue window to display dialogue from
-     * dialogueManager
+     * Initialises images and labels to display to the screen.
+     * Also initialises the dialogue window to display dialogue from
+     * dialogueManager.
      *
-     * @param gameState
-     * @param textureAtlas
+     * @param dialogueManager The current dialogue manager
      * @param skin The loaded UI skin
      * @param width Width of the game window
      * @param height Height of the game window
      */
-    public HudRenderer(State gameState, TextureAtlas textureAtlas, Skin skin, int width, int height){
-        this.gameState = gameState;
+    public HudRenderer(Skin skin, DialogueManager dialogueManager, int width, int height) {
         this.skin = skin;
+        this.dialogueManager = dialogueManager;
 
         // Camera and viewport
         hudCamera = new OrthographicCamera();
@@ -59,25 +60,30 @@ public class HudRenderer implements Disposable {
         // Stage for UI elements
         hudStage = new Stage(new FitViewport(width, height));
 
-        // Store a reference to the dialogueManager to fetch dialogue
-        dialogueManager = gameState.getDialogueManager();
+        // Black screen
+        blackScreen = new Image(new Texture(Gdx.files.internal("Graphics/black.png")));
+        blackScreen.setSize(viewport.getWorldWidth(), viewport.getWorldHeight());
+        blackScreen.addAction(Actions.alpha(0f));
+        hudStage.addActor(blackScreen);
 
         // Display time
         timeButton = new TextButton("10:00am", skin, "informational");
         timeButton.setWidth(200);
-        timeButton.setPosition(width-timeButton.getWidth()-15, height-133);
+        timeButton.setPosition(width - timeButton.getWidth() - 15, height - 133);
         hudStage.addActor(timeButton);
 
         // Display day
         dayButton = new TextButton("Day 1", skin, "informational");
         dayButton.setWidth(200);
-        dayButton.setPosition(25, height-133);
+        dayButton.setPosition(25, height - 133);
         hudStage.addActor(dayButton);
 
         // Label to tell the user they can interact with something
+        Table interactionTable = new Table();
+        hudStage.addActor(interactionTable);
+        interactionTable.setFillParent(true);
         interactLabel = new Label("E - Interact", skin, "interaction");
-        interactLabel.setPosition((width - interactLabel.getWidth()) / 2 + 15, 200);
-        hudStage.addActor(interactLabel);
+        interactionTable.add(interactLabel).expand().padTop(250);
 
         // Energy bar
         energyBar = new Image(skin, "energy_bar");
@@ -115,23 +121,29 @@ public class HudRenderer implements Disposable {
 
     /**
      * Updates and renders the time and date to the screen
-     * Also displays the user's energy, and a prompt if they can itneract with
+     * Also displays the user's energy, and a prompt if they can interact with
      * a building.
      * Displays a dialogue window if dialogueQueue is not empty
      */
-    public void render(){
+    public void render(MapProperties nearestTrigger){
         hudStage.setViewport(viewport);
         hudCamera.update();
-        // Update day and time labels
-        updateLabels();
-
-        updateEnergy();
 
         // Show an interaction label if player is near an interactable object
-        if (gameState.isInteractionPossible()) {
-            interactLabel.setVisible(true);
-        } else {
+        if (nearestTrigger == null) {
             interactLabel.setVisible(false);
+        } else if (nearestTrigger.containsKey("sign")) {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Read");
+        } else if (nearestTrigger.containsKey("sleep")) {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Sleep");
+        } else if (nearestTrigger.containsKey("dialogue")) {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Talk");
+        } else {
+            interactLabel.setVisible(true);
+            interactLabel.setText("E - Interact");
         }
 
         showDialogue();
@@ -140,26 +152,56 @@ public class HudRenderer implements Disposable {
         hudStage.draw();
     }
 
-    /**
-     * Fetches the correct values for time and date from gameState
-     * and updates the labels.
-     */
-    private void updateLabels() {
-        dayButton.setText("Day " + gameState.getDay());
-        timeButton.setText(gameState.getTime());
 
+    /**
+     * Updates hud's time, date and energy labels
+     * @param time The time represented as a string
+     * @param day The day number to display
+     * @param energy The amount of energy the player has left, between 0 and 100
+     */
+    public void updateValues(String time, int day, int energy) {
+        timeButton.setText(time);
+        dayButton.setText("Day " + day);
+
+        energyBar.setScaleY(energy / 100f);
+    }
+
+
+    /**
+     * Fades the black screen in
+     */
+    public void fadeIn(float duration) {
+        blackScreen.addAction(Actions.fadeIn(duration));
     }
 
     /**
-     * Scales the energy bar to the correct level
+     * Fades the screen in from black
      */
-    private void updateEnergy() {
-        energyBar.setScaleY(gameState.getEnergy() / 100f);
+    public void fadeOut(float duration) {
+        blackScreen.addAction(Actions.fadeOut(duration));
     }
 
     /**
-     * Shows/hides the dialoueBox if there is dialogue in the queue
-     * Also restructures the dialoguebox table contents if there is an update
+     * @return Returns true if the screen is black
+     */
+    public Boolean screenIsBlack() {
+        Color colour = blackScreen.getColor();
+        return colour.a == 1f;
+    }
+
+    /**
+     * @return True if a black screen is not being faded in or out
+     */
+    public Boolean screenClear() {
+        Color colour = blackScreen.getColor();
+        return colour.a == 0f;
+    }
+
+
+
+    /**
+     * Shows/hides the dialogueBox if there is dialogue in the queue
+     * Also restructures the dialogueBox table contents if there is an update
      */
     private void showDialogue() {
         if (dialogueManager.isEmpty()) {
@@ -192,7 +234,7 @@ public class HudRenderer implements Disposable {
         optionTable.clearChildren();
 
         // Only draw if the player has options to choose from
-        if (dialogueManager.getOptions() != null) {
+        if (options != null) {
             // Add player's options to the options table
             for (int i = 0; i < options.size(); i++) {
                 Label pointer = new Label(">>", skin, "dialoguesmall");

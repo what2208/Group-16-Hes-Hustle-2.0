@@ -4,45 +4,71 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
+import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.utils.Array;
-import com.heslingtonhustle.state.Action;
 import com.heslingtonhustle.state.Facing;
 
 /**
- * This class can be used to render the main character and any other NPC.
+ * A class used to store and render the animations for the player
+ * and other NPC characters
  */
 public class CharacterRenderer {
     private final TextureManager characterTextures;
     private final Sprite characterSprite;
     private final TextureAtlas textureAtlas;
     private final String textureRegionPrefix;
+    private final Vector2 size;
 
 
-    //
-    public CharacterRenderer(float width, float height, TextureAtlas textureAtlas, String textureRegionPrefix) {
-        // Because the idea is that this can be used for multiple characters, we use textureRegionPrefix
-        // For example, in the texture atlas, if you have regions such as 'main-player-idle-down', 'main-player-idle-right',
-        // the prefix is 'main-player'
+    /**
+     * Instantiates a new renderer for a specific character
+     * Because the idea is that this can be used for multiple characters, we use textureRegionPrefix
+     * For example, in the texture atlas, if you have regions such as 'main-player-idle-down', 'main-player-idle-right',
+     * the prefix is 'main-player'
+     * @param width Width of the character in real world pixels
+     * @param height Height of the character
+     * @param textureAtlas The atlas containing the character textures
+     * @param textureRegionPrefix The prefix to identify the character 'player-x'
+     */
+    public CharacterRenderer(float width, float height, TextureAtlas textureAtlas, String textureRegionPrefix, boolean npc) {
 
         this.textureAtlas = textureAtlas;
         this.textureRegionPrefix = textureRegionPrefix;
 
+        size = new Vector2(width, height);
+
         characterTextures = new TextureManager();
-        addCharacterTextures();
+
+        addStaticTextures();
+        if (!npc) addMovingTextures();
+
         characterSprite = new Sprite(characterTextures.retrieveTexture("idle-down"));
         characterSprite.setSize(width, height);
         characterSprite.setOriginCenter();
         characterSprite.setScale(1.2f);
     }
 
-    public void render(SpriteBatch batch, float x, float y, Facing direction, Action action) {
-        String textureKey = getTextureKey(direction, action);
+    /**
+     * Renders a character at a certain position
+     * @param batch The spritebatch to render to
+     * @param x x position of the character
+     * @param y y position of the character
+     * @param direction The direction the character should be facing
+     * @param moving Whether teh character is moving or not, if so will play
+     *               a walking animation
+     */
+    public void render(SpriteBatch batch, float x, float y, Facing direction, Boolean moving) {
+        String textureKey = getTextureKey(direction, moving);
         characterSprite.setRegion(characterTextures.retrieveTexture(textureKey));
         characterSprite.setPosition(x, y);
         characterSprite.draw(batch);
     }
 
-    private void addCharacterTextures() {
+    /**
+     * Specifically only loads the static characters for a texture.
+     * Useful since NPCs don't have any moving textures
+     */
+    private void addStaticTextures() {
         // First by adding the static textures (when the character is idle)
         TextureRegion idleLeft = textureAtlas.findRegion(textureRegionPrefix+"-idle-left");
         characterTextures.addTexture("idle-left", idleLeft);
@@ -52,14 +78,15 @@ public class CharacterRenderer {
         characterTextures.addTexture("idle-up", idleUp);
         TextureRegion idleDown = textureAtlas.findRegion(textureRegionPrefix+"-idle-down");
         characterTextures.addTexture("idle-down", idleDown);
+    }
 
-        // Now we need to add the textures that are used in animation.
-        // the findRegions() function will find all areas of the atlas that have the same name and a number suffix
-        // For example findRegions("walking_left") will find "walking_left_00", "walking_left_01", "walking_left_02 etc.
-
+    /**
+     * Specifically loads the frames for walking animations
+     * Only used for players
+     */
+    public void addMovingTextures() {
         float speed = 0.15f;
 
-        // NB: finderegion is quite an expensive method, if performance is an issue consider caching the TextureRegions.
         Array<TextureAtlas.AtlasRegion> walkingLeft = textureAtlas.findRegions(textureRegionPrefix+"-walking-left");
         characterTextures.addAnimation("walking-left", walkingLeft, speed);
         Array<TextureAtlas.AtlasRegion> walkingRight = textureAtlas.findRegions(textureRegionPrefix+"-walking-right");
@@ -70,23 +97,31 @@ public class CharacterRenderer {
         characterTextures.addAnimation("walking-down", walkingDown, speed);
     }
 
-    private String getTextureKey(Facing direction, Action action) {
+    /**
+     * Returns the correct texture key used to identify an animation based
+     * on whether the character is moving and in what direction
+     * @param direction A direction from the Facing enum
+     * @param moving True if the player is moving
+     * @return The texture key used to identify an animation
+     */
+    private String getTextureKey(Facing direction, Boolean moving) {
         String textureKey = "idle-down";
-        switch (action) {
-            case MOVE_LEFT:
-                textureKey = "walking-left";
-                break;
-            case MOVE_RIGHT:
-                textureKey = "walking-right";
-                break;
-            case MOVE_UP:
-                textureKey = "walking-up";
-                break;
-            case MOVE_DOWN:
-                textureKey = "walking-down";
-                break;
-            default:
-                // We are not trying to move, so we must be idle
+        if (moving) {
+            switch (direction) {
+                case LEFT:
+                    textureKey = "walking-left";
+                    break;
+                case RIGHT:
+                    textureKey = "walking-right";
+                    break;
+                case UP:
+                    textureKey = "walking-up";
+                    break;
+                case DOWN:
+                    textureKey = "walking-down";
+                    break;
+            }
+        } else {
                 switch (direction) {
                     case LEFT:
                         textureKey = "idle-left";
@@ -101,8 +136,16 @@ public class CharacterRenderer {
                         break;
                     default:
                         break;
-                }
+            }
         }
         return textureKey;
+    }
+
+    /**
+     * Returns the world width and height of the rendered sprite
+     * @return A vector of the width and height
+     */
+    public Vector2 getSize() {
+        return size;
     }
 }

@@ -9,75 +9,113 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.badlogic.gdx.scenes.scene2d.utils.ChangeListener;
 import com.badlogic.gdx.utils.viewport.FitViewport;
+import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.sound.SoundController;
 import com.heslingtonhustle.sound.Sounds;
-import com.heslingtonhustle.state.State;
 
 public class PauseMenu {
-    private final boolean DEBUG = false;
     private final Screen playScreen;
-    private final Stage stage;
-    private State gameState;
-    private Table optionsTable;
+    private final HeslingtonHustleGame game;
+
     private final Skin skin;
-    private boolean isVisible;
     private final SoundController soundController;
 
-    public PauseMenu(Screen parentClass, Skin skin, State gameState, SoundController soundController, int width, int height) {
+    private final Stage stage;
+    private Table optionsTable;
+    private boolean isVisible;
+
+    /**
+     * A class to display the pause menu on screen when it is called from PlayScreen.
+     * @param parentClass The parent screen.
+     * @param game The main game object.
+     */
+    public PauseMenu(Screen parentClass, HeslingtonHustleGame game) {
         playScreen = parentClass;
+        this.game = game;
+
+        this.soundController = game.soundController;
+        this.skin = game.skin;
+
         isVisible = false;
-        stage = new Stage(new FitViewport(width, height));
+        stage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(stage);
-        this.gameState = gameState;
-        this.soundController = soundController;
-        this.skin = skin;
 
         createTable();
         addOptions();
     }
 
+    /**
+     * A method to create a table for the pause menu options to be displayed in.
+     */
     private void createTable() {
         optionsTable = new Table();
         optionsTable.setFillParent(true);
-        optionsTable.setDebug(DEBUG);
         stage.addActor(optionsTable);
     }
 
+    /**
+     * A method to add the options into the pause menu's table and perform the corresponding actions if
+     * they're clicked.
+     */
     private void addOptions() {
+        // Resume button
         TextButton resumeButton = new TextButton("Resume", skin);
-        optionsTable.add(resumeButton).fillX().uniformX().prefWidth(350);
-        optionsTable.row().pad(10, 0, 10, 0);
         resumeButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                isVisible = false;
                 soundController.playSound(Sounds.CONFIRM);
                 playScreen.resume();
             }
         });
-
+        optionsTable.add(resumeButton).fillX().uniformX().prefWidth(350).padBottom(10);
         optionsTable.row();
+
+        // Options button
+        TextButton optionsButton = new TextButton("Settings", skin);
+        optionsButton.addListener(new ChangeListener() {
+            @Override
+            public void changed(ChangeListener.ChangeEvent event, Actor actor) {
+                soundController.playSound(Sounds.CONFIRM);
+                game.switchScreen(AvailableScreens.OptionsScreen, true);
+            }
+        });
+        optionsTable.add(optionsButton).fillX().uniformX().prefWidth(350).padBottom(10);
+        optionsTable.row();
+
+
+        // Menu Button
         TextButton mainMenuButton = new TextButton("Menu", skin);
-        optionsTable.add(mainMenuButton).fillX().uniformX();
-        optionsTable.row().pad(10, 0, 10, 0);
         mainMenuButton.addListener(new ChangeListener() {
             @Override
             public void changed(ChangeListener.ChangeEvent event, Actor actor) {
                 soundController.playSound(Sounds.CONFIRM);
-                gameState.setGameOver();
+                game.switchScreen(AvailableScreens.MenuScreen, false);
             }
         });
+        optionsTable.add(mainMenuButton).fillX().uniformX();
+        optionsTable.row();
     }
 
+    /**
+     * A method which makes the pause menu visible when needed.
+     */
     public void showPauseMenu() {
         isVisible = true;
         optionsTable.setVisible(true);
     }
 
+    /**
+     * A method which hides the pause menu when no longer needed.
+     */
     public void hidePauseMenu() {
         isVisible = false;
         optionsTable.setVisible(false);
     }
 
+    /**
+     * A method to render the pause stage, acting on delta.
+     */
     public void render() {
         if (isVisible) {
             stage.act(Math.min(Gdx.graphics.getDeltaTime(), 1 / 30f));
@@ -85,17 +123,35 @@ public class PauseMenu {
         }
     }
 
+    /**
+     * @return The current stage
+     */
     public Stage GetStage() {
         return stage;
     }
 
+    /**
+     * Correctly resizes the onscreen elements when the window is resized
+     * @param width The width of the game screen.
+     * @param height The height of the game screen.
+     */
     public void resize(int width, int height) {
         stage.getCamera().viewportWidth = Gdx.graphics.getWidth();
         stage.getCamera().viewportHeight = Gdx.graphics.getHeight();
         stage.getViewport().update(width, height, true);
     }
 
+    /**
+     * Method which disposes anything no longer required when changing screens
+     */
     public void dispose() {
         stage.dispose();
+    }
+
+    /**
+     * @return True if the pause menu is visible
+     */
+    public boolean isVisible() {
+        return isVisible;
     }
 }

@@ -1,12 +1,8 @@
 package com.heslingtonhustle.state;
 
-import com.badlogic.gdx.math.Rectangle;
-import com.badlogic.gdx.math.Vector2;
-import com.badlogic.gdx.utils.Array;
-import com.heslingtonhustle.map.MapManager;
+import com.badlogic.gdx.maps.MapProperties;
 import com.heslingtonhustle.sound.SoundController;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Arrays;
@@ -20,180 +16,118 @@ import java.util.Arrays;
 public class State {
     private static final int MAX_DAYS = 7;
     private boolean gameOver;
-    private final Player player;
     private final Clock clock;
-    private final MapManager mapManager;
-    private final DialogueManager dialogueManager;
     private final SoundController soundController;
-    private final HashMap<String, Activity> activities;
-    private Trigger currentTrigger;
-    private int score;
+    private final DialogueManager dialogueManager;
+    private final HashMap<String, Activity> activities = new HashMap<>();
+    // A reference to the current closest trigger the player can interact with
+    private MapProperties currentTrigger;
     private int energy;
+    private int hoursSlept;
 
-    public State(MapManager mapManager, SoundController soundController, float playerWidth, float playerHeight) {
+
+    public State(SoundController soundController, DialogueManager dialogueManager) {
         gameOver = false;
 
-        player = new Player(38.25f, 57.25f, playerWidth, playerHeight);
         clock = new Clock();
-        this.mapManager = mapManager;
-        dialogueManager = new DialogueManager(soundController);
         this.soundController = soundController;
+        this.dialogueManager = dialogueManager;
 
-        activities = new HashMap<>();
-        activities.put("eat", new Activity(2));
-        activities.put("recreation", new Activity(3));
-        activities.put("study", new Activity(2));
-        activities.put("sleep", new Activity());
-
-        score = 0;
         replenishEnergy();
         currentTrigger = null; // This stores the Tiled trigger box that we are currently stood inside of
     }
 
 
     /**
-     * Updates the game's state based on the pressed and held actions
-     * Handles player movement and collision, time as well as interactions
-     *
-     * @param heldActions A set of all held down actions
-     * @param pressedActions A set of all actions called only on this frame
-     * @param timeDelta Time passed since the last update
+     * Adds the amount of time passed to the in game clock
+     * @param delta The time to add in seconds
      */
-    public void update(HashSet<Action> heldActions, HashSet<Action> pressedActions, float timeDelta) {
-        currentTrigger = mapManager.getTrigger(player.getCollisionBox());
-
-        // Checks for an interaction or dialogue skip
-        for (Action action : pressedActions) {
-            handleAction(action);
-        }
-
-        // The player only deals with actions that are held down, for its movement
-        if (dialogueManager.isEmpty()) {
-            player.move(heldActions);
-        } else {
-            // Specifically tell the player not to move anywhere this frame
-            player.freeze();
-        }
-
-        // Store old pos in case player is colliding with something
-        Vector2 previousPlayerPos = player.getPosition();
-        // Move player
-        player.update();
-
-        // If collisions with anything, revert back to old position
-        handlePlayerCollisions(previousPlayerPos, player.getCollisionBox());
-
-        player.setInBounds(mapManager.getCurrentMapWorldDimensions());
-        clock.increaseTime(timeDelta);
+    public void passTime(float delta) {
+        clock.increaseTime(delta);
     }
+
 
     /**
-     * Checks if the player is colliding with any objects, and restores them to their original position if they are
-     * Note: Assumes the player was not colliding with anything in the position oldPos
-     * @param oldPos The position of the player on the previous frame
+     * Tells the game which trigger the player is nearest in
+     * case they want to interact with it.
+     * @param trigger The closest trigger object
      */
-    public void handlePlayerCollisions(Vector2 oldPos, Rectangle playerBox) {
-        // Get an array of objects the player is colliding with
-        Array<Rectangle> colliders = mapManager.getCollisionRectangles(player.getCollisionBox());
-        // Translate player's coordinates to world coordinates
-        playerBox = mapManager.worldRectangleToPixelRectangle(playerBox);
-        // We need a copy of the player's location not in world coordinates
-        Vector2 oldPosWorld = mapManager.worldToPixelCoords(oldPos);
-
-
-        // For each object
-        for (Rectangle collider : colliders) {
-            // If null then the player is not colliding with anything, so do nothing
-            if (collider != null) {
-                // Find which previous dimension was not overlapping, and then only reset that one to allow
-                // sliding to happen
-
-                // If previously not overlapping in x direction, revert them back
-                if (!(oldPosWorld.x < collider.x + collider.width &&
-                        oldPosWorld.x + playerBox.width > collider.x)) {
-                    player.setX(oldPos.x);
-                }
-                // Same with y dimension
-                if (!(oldPosWorld.y < collider.y + collider.height &&
-                        oldPosWorld.y + playerBox.height > collider.y)) {
-                    player.setY(oldPos.y);
-                }
-            }
-        }
-
+    public void setNearestTrigger(MapProperties trigger) {
+        currentTrigger = trigger;
     }
 
-    /**
-     * Passes the given action to dialogue box or interacting with a building
-     * @param action The action to pass
-     */
-    private void handleAction(Action action) {
-        if (!dialogueManager.isEmpty()) {
-            // A dialogue box is currently being displayed
-            handleDialogueAction(action);
-        } else if (action == Action.INTERACT) {
-            handleInteraction();
-        }
+
+    public MapProperties getNearestTrigger() {
+        return currentTrigger;
     }
 
-    private void handleDialogueAction(Action action) {
-        switch (action) {
-            case MOVE_UP:
-                dialogueManager.decreaseSelection();
-                break;
-            case MOVE_DOWN:
-                dialogueManager.increaseSelection();
-                break;
-            case INTERACT:
-                dialogueManager.submit();
-        }
-    }
 
-    private void handleInteraction() {
+    public void handleInteraction() {
         if (currentTrigger == null) {
             return;
         }
-        if (currentTrigger.getNewMap() != null) {
-            mapManager.loadMap("Maps/" + currentTrigger.getNewMap());
-            player.setPosition(currentTrigger.getNewMapCoords());
+
+        // Read sign
+        if (currentTrigger.containsKey("sign")) {
+            dialogueManager.addDialogue((String) currentTrigger.get("sign"));
+            return;
         }
 
+        // Talk to NPC
+        if (currentTrigger.containsKey("dialogue")) {
+            // Show dialogue
+            dialogueManager.addDialogue((String) currentTrigger.get("dialogue"));
+            return;
+        }
 
-        if (currentTrigger.canSleep()) {
-            Activity activity  = activities.get("sleep");
-            if (activity != null) {
-                List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
-                dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
-                        if (selectedOption == 0) {
-                            advanceDay();
-                            activity.increaseValue(1);
-                            dialogueManager.addDialogue("You have just slept!");
-                        }
-                    }
+        if (currentTrigger.containsKey("new_map")) {
+            return;
+        }
+
+        // Sleep at a house
+        if (currentTrigger.containsKey("sleep")) {
+            // If player has not slept yet
+            if (!activities.containsKey("sleep")) {
+                activities.put("sleep", new Activity(
+                        "sleep", "sleep",
+                        5, 0, 8, -1)
                 );
             }
+
+            Activity activity  = activities.get("sleep");
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            dialogueManager.addDialogue("Do you want to sleep?", options, selectedOption -> {
+                    if (selectedOption == 0) {
+                        addHoursSlept();
+                        advanceDay();
+                        activity.completeActivity();
+                        dialogueManager.addDialogue("You have just slept!");
+                    }
+                }
+            );
+            return;
         }
-        
-        String activityID = currentTrigger.getActivity();
-        if (activityID != null) {
-            if (!activities.containsKey(activityID)) {
-                activities.put(activityID, new Activity()); // Useful feature?
-            }
-            Activity activity = activities.get(activityID);
-            // Call confirmation box
-            // Get prompt message if one exists
-            String prompt;
-            if (currentTrigger.hasProperty("prompt_message")) {
-                prompt = currentTrigger.getPromptMessage();
-            } else {
-                prompt = String.format("Do you want to %s?", activityID);
+
+        // Call an activity that is not sleeping
+        if (currentTrigger.containsKey("activity")) {
+            String activityName = (String) currentTrigger.get("activity");
+
+            // On the first encounter with an activity, create a new Activity class
+            // to store how many times this activity has been completed
+            if (!activities.containsKey(activityName)) {
+                // Creates an activity class from MapProperties and stores it
+                // with the activity name
+                activities.put(activityName, Activity.toActivity(currentTrigger));
             }
 
-            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            Activity activity = activities.get(activityName);
+
             // Call a dialogue box to prompt the player if they want to do
             // the listed activity
-            dialogueManager.addDialogue(prompt, options, selectedOption -> {
+            List<String> options = new ArrayList<>(Arrays.asList("Yes", "No"));
+            dialogueManager.addDialogue((String) currentTrigger.get("prompt_message"), options, selectedOption -> {
                     if (selectedOption == 0) {
+                        // If 'yes', do activity
                         doActivity(activity);
                     }
                 }
@@ -201,50 +135,46 @@ public class State {
         }
     }
 
+
+    /**
+     * Checks whether a player can do an activity, and if so updates
+     * appropriate values
+     * Also shows a success/fail dialogue box
+     * @param activity The activity to complete
+     */
     private void doActivity(Activity activity) {
-        if (canDoActivity(activity)) {
-            activity.increaseValue(currentTrigger.getValue());
-            exertEnergy(currentTrigger.getEnergyCost());
-            score += currentTrigger.changeScore();
-            dialogueManager.addDialogue(currentTrigger.getSuccessMessage());
-        } else if (!activity.canIncreaseValue()) {
+
+        // Various checks for if the player can do the activity
+        if (!activity.canDoActivity()) {
             dialogueManager.addDialogue("You've done this too much today!\nGo do something else!");
-        } else if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
+        } else if (energy < activity.getEnergyUse()) {
             dialogueManager.addDialogue("You don't have enough energy to do this right now!");
         } else if (!(clock.getRawTime() > 480)) {
             dialogueManager.addDialogue("This building opens at 8am.");
         } else {
-            dialogueManager.addDialogue(currentTrigger.getFailedMessage());
+            // They can do it
+            activity.completeActivity();
+            exertEnergy(activity.getEnergyUse());
+            clock.passHours(activity.getHours());
+            // Gets the success message from the most recent trigger
+            dialogueManager.addDialogue((String) currentTrigger.get("success_message"));
         }
-    }
-
-    private boolean canDoActivity(Activity activity) {
-        // Check if the player is allowed to do the activity that is assigned to the current
-        // trigger that the player is stood in
-        if (!activity.canIncreaseValue()) {
-            return false;
-        }
-        if (!hasEnoughEnergy(currentTrigger.getEnergyCost())) {
-            return false;
-        }
-
-        // Can't do things before 8am
-        return clock.getRawTime() > 480;
     }
 
     private void advanceDay() {
         if (clock.getDay() >= MAX_DAYS) {
-            printActivities();
-            dialogueManager.addDialogue("Game Over. Your score was: "
-                    + score, selectedOption -> gameOver = true);
+            dialogueManager.addDialogue("Today is the day of your exam!" +
+                    "\nI hope you studied well!", selectedOption -> gameOver = true);
             return;
         }
 
         // The player is only allowed to do the same activity twice once
         // in a day
-        Activity study = activities.get("study");
-        if (study.getTimesPerformedToday() == 2) {
-            study.changeMaxTimesPerDay(1);
+        if (activities.containsKey("study")) {
+            Activity study = activities.get("study");
+            if (study.getTimesCompletedToday() == 2) {
+                study.setMaxPerDay(1);
+            }
         }
 
         for (Activity activity : activities.values()) {
@@ -259,16 +189,12 @@ public class State {
         StringBuilder builder = new StringBuilder();
 
         for (String s : activities.keySet()) {
-            builder.append(s).append(" count: ").append(activities.get(s).getCount()).append("\n");
+            builder.append(s).append(" count: ").append(activities.get(s).getTimesCompleted()).append("\n");
             //builder.append(s).append(" value: ").append(activities.get(s).getValue()).append("\n");
         }
 
         String result = builder.toString();
         dialogueManager.addDialogue(result);
-    }
-
-    public Vector2 getPlayerPosition() {
-        return player.getPosition();
     }
 
     public String getTime() {
@@ -280,43 +206,39 @@ public class State {
     public String getDebugTime() {
         return clock.getDebugString();
     }
-    public Facing getPlayerFacing() {
-        return player.getFacing();
-    }
-
-    public float getPlayerWidth() {
-        return player.getPlayerWidth();
-    }
-
-    public float getPlayerHeight() {
-        return player.getPlayerHeight();
-    }
-
-    public Action getPlayerMovement() {
-        return player.getMovement().iterator().next();
-    }
-
     public DialogueManager getDialogueManager() {
         return dialogueManager;
     }
-
     public boolean noDialogueOnScreen() {
         return dialogueManager.queueEmpty();
     }
 
-    public void pushWelcomeDialogue() {
-        dialogueManager.addDialogue("Welcome to the Heslington Hustle v2.0 game by SKLOCH and Pitstop Piazza\n"
-                + "You can move around the map with W,A,S,D and interact with buildings with SPACE to do activities.\n"
-                + "You cannot do anything at night time and must sleep by interacting with a house. Good luck!");
+    /**
+     * Gives the player an intro dialogue
+     */
+    public void pushStartDayDialogue() {
+        int day = clock.getDay();
+        if (day != MAX_DAYS) {
+            dialogueManager.addDialogue(
+                    String.format("You have %s days left until your exam!\nMake sure you study, eat and have fun!", MAX_DAYS-day+1));
+        } else {
+            dialogueManager.addDialogue("Your exam is tomorrow\nI hope you've been ");
+        }
+
     }
 
+    /**
+     * DEBUG
+     * Displays a debug panel
+     * TODO: Remove
+     */
     public void pushTestDialogue() {
         // This is a debugging function that creates a useful control dialog box when you press '/'
-        List<String> options = new ArrayList<>(Arrays.asList("Increment day", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
+        List<String> options = new ArrayList<>(Arrays.asList("End Game", "Decrement day", "Set time speed to VERY FAST", "Set time speed to normal", "Close"));
         dialogueManager.addDialogue("This is the debugging console. Please select an option", options, selectedOption -> {
             switch (selectedOption) {
                 case 0: // Option 0 selected
-                    advanceDay();
+                    setGameOver();
                     break;
                 case 1: // Option 1 selected
                     clock.decrementDay();
@@ -331,37 +253,84 @@ public class State {
         });
     }
 
+    /**
+     * Sets the player's energy to 100
+     */
     public void replenishEnergy() {
         // This is the amount of energy that the player starts with at the beginning of each day
         energy = 100;
     }
-    
+
+    /**
+     * Adds the number of hours slept until 8 am to the total amount
+     * of hours slept
+     */
+    private void addHoursSlept() {
+        // Before midnight
+        if (clock.getRawTime() <= 1440) {
+            hoursSlept += (1440 - clock.getRawTime()) + 8*60;
+        } else {
+            // After midnight
+            hoursSlept += (8*60) - clock.getRawTime();
+        }
+    }
+
+
+    /**
+     * @return The total hours slept in the game
+     */
+    public int getHoursSlept() {
+        return hoursSlept;
+    }
+
+    /**
+     * Decreases the player's energy by a set amount
+     * @param energyCost The amount to decrease by
+     */
     private void exertEnergy(int energyCost) {
         energy -= energyCost;
     }
 
-    private boolean hasEnoughEnergy(int energyCost) {
-        return energy - energyCost >= 0;
-    }
-
+    /**
+     * @return True if the player is near a trigger that can be interacted with
+     */
     public boolean isInteractionPossible() {
-        return  currentTrigger != null;
+        return currentTrigger != null;
     }
 
+    /**
+     * Advances the game to the next day and restores the player's energy
+     */
     public void nextDay() {
         clock.incrementDay();
         replenishEnergy();
     }
 
+    /**
+     * @return True if the last day has finished
+     */
     public boolean isGameOver() {
         return gameOver;
     }
 
+    /**
+     * Sets the game to be over
+     */
     public void setGameOver() {
         gameOver = true;
     }
 
+    /**
+     * @return The player's energy level, max is 100
+     */
     public int getEnergy() {
         return energy;
+    }
+
+    /**
+     * @return A hashmap of activities so their data can be used for scoring
+     */
+    public HashMap<String, Activity> getActivities() {
+        return activities;
     }
 }
