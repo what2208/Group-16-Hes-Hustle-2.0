@@ -144,7 +144,8 @@ public class PlayScreen implements Screen {
             if (!dialogueManager.isEmpty()) {
                 dialogueManager.handleAction(pressedActions);
             } else if (camera.zoom == 1f) {
-                if (pressedActions.contains(Action.INTERACT)) {
+                // Only interact if button pressed and screen clear
+                if (pressedActions.contains(Action.INTERACT) && hudRenderer.screenClear()) {
                     gameState.handleInteraction();
 
                     MapProperties currentTrigger = gameState.getNearestTrigger();

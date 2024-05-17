@@ -132,17 +132,19 @@ public class GameOverScreen implements Screen {
         // For each activity
         for (Activity activity : activities.values()) {
             // Find the score for this type, and add this activity's score
-            int score = categoryScores.get(activity.getScoreType());
-            categoryScores.put(activity.getScoreType(), score + activity.getScore() * activity.getTimesCompleted());
+            if (categoryScores.containsKey(activity.getScoreType())) {
+                int score = categoryScores.get(activity.getScoreType());
+                categoryScores.put(activity.getScoreType(), score + activity.getScore() * activity.getTimesCompleted());
 
-            // Same with the number of times completed
-            // For eating just add times done
-            if (activity.getScoreType().equals("eat")) {
-                int times = categoryHours.get(activity.getScoreType());
-                categoryHours.put("eat", times + activity.getTimesCompleted());
-            } else {
-                int hours = categoryHours.get(activity.getScoreType());
-                categoryHours.put(activity.getScoreType(), hours + activity.getHoursSpent());
+                // Same with the number of times completed
+                // For eating just add times done
+                if (activity.getScoreType().equals("eat")) {
+                    int times = categoryHours.get(activity.getScoreType());
+                    categoryHours.put("eat", times + activity.getTimesCompleted());
+                } else {
+                    int hours = categoryHours.get(activity.getScoreType());
+                    categoryHours.put(activity.getScoreType(), hours + activity.getHoursSpent());
+                }
             }
         }
 
