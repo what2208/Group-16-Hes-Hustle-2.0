@@ -89,4 +89,4 @@ jobs:
       - name: Release                       # Create a new release for the project using the tag provided
         uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
         with:
-          files: lib*.jar            # The release will include the JAR files
+          files: lib-${{ matrix.os }}.jar            # The release will include the JAR files
