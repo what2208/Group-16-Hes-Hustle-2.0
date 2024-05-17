@@ -149,7 +149,7 @@ public class PlayScreen implements Screen {
             } else if (camera.zoom == 1f) {
                 if (pressedActions.contains(Action.INTERACT)) {
                     gameState.handleInteraction();
-                    // Check for map change
+
                     MapProperties currentTrigger = gameState.getNearestTrigger();
 
                     // Check for NPC to rotate
@@ -264,6 +264,7 @@ public class PlayScreen implements Screen {
             changeMap(changeMapTrigger);
             changeMapTrigger = null;
             hudRenderer.fadeOut(3f);
+            gameState.resetNewMapTrigger();
         }
 
         inputHandler.resetPressedActions();
