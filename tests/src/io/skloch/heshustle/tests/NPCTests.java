@@ -25,6 +25,7 @@ public class NPCTests {
                 new TextureAtlas(),
                 "test",
                 true);
+        characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
         Vector2 newPosition = new Vector2();
 
@@ -55,6 +56,7 @@ public class NPCTests {
         boolean isNpc = false;
         CharacterRenderer characterRenderer = new CharacterRenderer(
                 width, height, textureAtlas, textureRegionPrefix, isNpc);
+        characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
 
         npc.reposition(newPlayerPos);
@@ -76,6 +78,7 @@ public class NPCTests {
         boolean isNpc = false;
         CharacterRenderer characterRenderer = new CharacterRenderer(
                 width, height, textureAtlas, textureRegionPrefix, isNpc);
+        characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
 
         npc.reposition(newPlayerPos);
@@ -97,6 +100,7 @@ public class NPCTests {
         boolean isNpc = false;
         CharacterRenderer characterRenderer = new CharacterRenderer(
                 width, height, textureAtlas, textureRegionPrefix, isNpc);
+        characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
 
         npc.reposition(newPlayerPos);
@@ -118,6 +122,7 @@ public class NPCTests {
         boolean isNpc = false;
         CharacterRenderer characterRenderer = new CharacterRenderer(
                 width, height, textureAtlas, textureRegionPrefix, isNpc);
+        characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
 
         npc.reposition(newPlayerPos);
