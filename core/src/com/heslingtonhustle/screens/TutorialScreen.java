@@ -26,6 +26,8 @@ public class TutorialScreen implements Screen {
     private final Viewport viewport;
     private final Texture backgroundTexture;
     public static final String tutorialBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
+    public static final String tutorialAsset1 = "Graphics/UI/Tutorial/tut2.jpg";
+    public static final String tutorialAsset2 = "Graphics/UI/Tutorial/tut1.jpg";
 
     /**
      * A screen that shows a brief tutorial of how to play the game and
@@ -79,7 +81,7 @@ public class TutorialScreen implements Screen {
         mainTable.row();
 
         // First image
-        Image img1 = new Image(new Texture(Gdx.files.internal("Graphics/UI/Tutorial/tut2.jpg")));
+        Image img1 = new Image(new Texture(Gdx.files.internal(tutorialAsset1)));
         mainTable.add(img1).prefSize(938/2f, 423/2f).left();
 
         // Padding
@@ -106,7 +108,7 @@ public class TutorialScreen implements Screen {
         mainTable.add(info3).padTop(30).prefWidth(650).colspan(2);
 
         // Second image
-        Image img2 = new Image(new Texture(Gdx.files.internal("Graphics/UI/Tutorial/tut1.jpg")));
+        Image img2 = new Image(new Texture(Gdx.files.internal(tutorialAsset2)));
         mainTable.add(img2).prefSize(582/2f, 468/2f).right();
         mainTable.row();
 

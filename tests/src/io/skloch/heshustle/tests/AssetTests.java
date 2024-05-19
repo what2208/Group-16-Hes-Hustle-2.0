@@ -105,15 +105,29 @@ public class AssetTests {
     }
 
     // OptionsScreen assets
+    @Test
     public void testOptionsBackgroundAsset() {
         assertTrue("The background for the options screen exists",
                 Gdx.files.internal(OptionsScreen.optionsBackgroundAsset).exists());
     }
 
     // TutorialScreen assets
+    @Test
     public void testTutorialBackgroundAsset() {
         assertTrue("The background for the tutorial screen exists",
                 Gdx.files.internal(TutorialScreen.tutorialBackgroundAsset).exists());
+    }
+
+    @Test
+    public void testTutorialAsset1() {
+        assertTrue("The first tutorial image asset exists",
+                Gdx.files.internal(TutorialScreen.tutorialAsset1).exists());
+    }
+
+    @Test
+    public void testTutorialAsset2() {
+        assertTrue("The second tutorial image asset exists",
+                Gdx.files.internal(TutorialScreen.tutorialAsset2).exists());
     }
 
 }
