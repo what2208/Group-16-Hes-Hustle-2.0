@@ -463,4 +463,11 @@ public class PlayScreen implements Screen {
 //        renderer.dispose();
         pauseMenu.dispose();
     }
+
+    /**
+     * @return whether the screen is paused or not
+     */
+    public boolean isPaused() { return isPaused; }
+
+    public PauseMenu getPauseMenu() { return pauseMenu; }
 }
