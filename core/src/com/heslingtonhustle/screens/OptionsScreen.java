@@ -177,4 +177,9 @@ public class OptionsScreen implements Screen {
         optionStage.dispose();
         backgroundTexture.dispose();
     }
+
+    /**
+     * @return The viewport (for testing)
+     */
+    public Viewport getViewport() { return viewport; }
 }
