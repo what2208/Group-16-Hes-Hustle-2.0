@@ -335,12 +335,12 @@ public class State {
     }
 
     /**
-     * @return The instance of the clock
+     * @return The instance of the clock (for testing)
      */
     public Clock getClock() { return clock; }
 
     /**
-     * @return The current trigger
+     * @return The current trigger (for testing)
      */
     public MapProperties getCurrentTrigger() { return currentTrigger; }
 }

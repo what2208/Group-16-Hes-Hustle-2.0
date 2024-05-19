@@ -94,28 +94,38 @@ public class StateTests {
         assertFalse(state.getActivities().isEmpty());
     }
 
-//    @Test
-//    public void testActivityHandleInteraction() {
-//        SoundController soundController = new SoundController();
-//        DialogueManager dialogueManager = new DialogueManager(soundController);
-//        State state = new State(soundController, dialogueManager);
-//        MapProperties trigger = new MapProperties();
-//        String activityType = "activity";
-//        String activityName = "Dance";
-//        trigger.put(activityType, activityName);
-//        state.setNearestTrigger(trigger);
-//        HashMap<String, Activity> newActivities = new HashMap<>();
-//        MapProperties mapProperties = new MapProperties();
-//        mapProperties.put("activity", "Dance");
-//        mapProperties.put("type", "recreational");
-//        mapProperties.put("score", 5);
-//        mapProperties.put("energy_cost", 5);
-//        mapProperties.put("hours", 1);
-//        mapProperties.put("limit", 3);
-//        newActivities.put(activityName, Activity.toActivity(mapProperties));
-//
-//        state.handleInteraction();
-//
-//        assertFalse(state.getActivities().isEmpty());
-//    }
+    @Test
+    public void testNextDay() {
+        SoundController soundController = new SoundController();
+        DialogueManager dialogueManager = new DialogueManager(soundController);
+        State state = new State(soundController, dialogueManager);
+        int newDay = 2;
+        int newEnergy = 100;
+
+        state.decrementDay();
+
+        assertEquals(newDay, state.getClock().getDay());
+        assertEquals(newEnergy, state.getEnergy());
+    }
+
+    @Test
+    public void testIsInteractionPossibleWhenCurrentTriggerNull() {
+        SoundController soundController = new SoundController();
+        DialogueManager dialogueManager = new DialogueManager(soundController);
+        State state = new State(soundController, dialogueManager);
+
+        assertFalse(state.isInteractionPossible());
+    }
+
+    @Test
+    public void testIsInteractionPossibleWhenCurrentTriggerNotNull() {
+        SoundController soundController = new SoundController();
+        DialogueManager dialogueManager = new DialogueManager(soundController);
+        State state = new State(soundController, dialogueManager);
+        MapProperties newTrigger = new MapProperties();
+
+        state.setNearestTrigger(newTrigger);
+
+        assertTrue(state.isInteractionPossible());
+    }
 }
