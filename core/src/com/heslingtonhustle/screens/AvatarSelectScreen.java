@@ -35,6 +35,8 @@ public class AvatarSelectScreen implements Screen {
     private final InputHandler inputHandler;
     private ImageButton avatar0, avatar1;
 
+    public static final String avatarMenuBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
+
     /**
      * A screen to allow the player to select their avatar
      * @param game The main game object
@@ -54,7 +56,7 @@ public class AvatarSelectScreen implements Screen {
         camera.setToOrtho(false, game.width, game.height);
 
         // Background texture
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(avatarMenuBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         tutStage.addActor(backgroundImage);
 

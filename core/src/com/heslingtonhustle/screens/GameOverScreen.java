@@ -49,6 +49,7 @@ public class GameOverScreen implements Screen {
     private HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
 
     public static final String gameOverPath = "Graphics/UI/Gameover/page.png";
+    public static final String gameOverTableBackgroundAsset = "Graphics/UI/Backgrounds/table_background.jpg";
 
 
     /**
@@ -69,7 +70,7 @@ public class GameOverScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Background table image
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/table_background.jpg");
+        backgroundTexture = new Texture(gameOverTableBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
 

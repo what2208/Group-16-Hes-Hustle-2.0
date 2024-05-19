@@ -27,6 +27,7 @@ public class OptionsScreen implements Screen {
     private Slider musicSlider;
     private Slider sfxSlider;
     private final Texture backgroundTexture;
+    public static final String optionsBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
 
     /**
      * A screen to display a set of changeable options to the player,
@@ -48,7 +49,7 @@ public class OptionsScreen implements Screen {
         camera.setToOrtho(false, game.width, game.height);
 
         // Background texture
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(optionsBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         optionStage.addActor(backgroundImage);
 

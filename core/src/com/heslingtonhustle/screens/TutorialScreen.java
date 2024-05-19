@@ -25,6 +25,7 @@ public class TutorialScreen implements Screen {
     private final OrthographicCamera camera;
     private final Viewport viewport;
     private final Texture backgroundTexture;
+    public static final String tutorialBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
 
     /**
      * A screen that shows a brief tutorial of how to play the game and
@@ -45,7 +46,7 @@ public class TutorialScreen implements Screen {
         camera.setToOrtho(false, game.width, game.height);
 
         // Background texture
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(tutorialBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         tutStage.addActor(backgroundImage);
 

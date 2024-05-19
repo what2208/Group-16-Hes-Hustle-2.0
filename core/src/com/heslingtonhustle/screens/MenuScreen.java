@@ -22,6 +22,7 @@ public class MenuScreen implements Screen {
     private final Stage stage;
     private Table optionsTable;
     private final Texture backgroundTexture;
+    public static final String menuBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
 
     /**
      * A screen to display the main menu, providing the opportunity to start the game,
@@ -38,7 +39,7 @@ public class MenuScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Add a background texture to the menu
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(menuBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
 

@@ -1,6 +1,6 @@
 package io.skloch.heshustle.tests;
 
-import com.heslingtonhustle.screens.GameOverScreen;
+import com.heslingtonhustle.screens.*;
 import org.junit.Test;
 import com.badlogic.gdx.Gdx;
 
@@ -9,7 +9,6 @@ import static org.junit.Assert.assertTrue;
 import org.junit.runner.RunWith;
 
 import com.heslingtonhustle.sound.SoundController;
-import com.heslingtonhustle.screens.MenuScreen;
 import com.heslingtonhustle.HeslingtonHustleGame;
 
 @RunWith(GdxTestRunner.class)
@@ -69,6 +68,52 @@ public class AssetTests {
     public void testgameOverFilePath() {
         assertTrue("The UI file for the Game Over screen exists",
                 Gdx.files.internal(GameOverScreen.gameOverPath).exists());
+    }
+
+    @Test
+    public void testGameOverTableBackgroundAsset() {
+        assertTrue("The table background asset for the Game Over screen exists",
+                Gdx.files.internal(GameOverScreen.gameOverTableBackgroundAsset).exists());
+    }
+
+    // AvatarSelectScreen assets
+    @Test
+    public void testAvatarMenuBackgroundAsset() {
+        assertTrue("The background for the avatar selection screen exists",
+                Gdx.files.internal(AvatarSelectScreen.avatarMenuBackgroundAsset).exists());
+    }
+
+    // CreditScreen assets
+    @Test
+    public void testCreditMenuBackgroundAsset() {
+        assertTrue("The background for the credit screen exists",
+                Gdx.files.internal(CreditScreen.creditMenuBackgroundAsset).exists());
+    }
+
+    // LeaderboardScreen assets
+    @Test
+    public void testLeaderboardBackgroundAsset() {
+        assertTrue("The background for the leaderboard screen exists",
+                Gdx.files.internal(LeaderboardScreen.leaderboardBackgroundAsset).exists());
+    }
+
+    // MenuScreen assets
+    @Test
+    public void testMenuBackgroundAsset() {
+        assertTrue("The background for the menu screen exists",
+                Gdx.files.internal(MenuScreen.menuBackgroundAsset).exists());
+    }
+
+    // OptionsScreen assets
+    public void testOptionsBackgroundAsset() {
+        assertTrue("The background for the options screen exists",
+                Gdx.files.internal(OptionsScreen.optionsBackgroundAsset).exists());
+    }
+
+    // TutorialScreen assets
+    public void testTutorialBackgroundAsset() {
+        assertTrue("The background for the tutorial screen exists",
+                Gdx.files.internal(TutorialScreen.tutorialBackgroundAsset).exists());
     }
 
 }
