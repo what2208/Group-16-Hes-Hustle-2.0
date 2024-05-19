@@ -1,5 +1,6 @@
 package io.skloch.heshustle.tests;
 
+import com.heslingtonhustle.screens.GameOverScreen;
 import org.junit.Test;
 import com.badlogic.gdx.Gdx;
 
@@ -61,6 +62,13 @@ public class AssetTests {
     public void testCreditsFilePath() {
         assertTrue("The text file for the credits exists",
                 Gdx.files.internal(HeslingtonHustleGame.CreditsFilePath).exists());
+    }
+
+    // GameOverScreen assets
+    @Test
+    public void testgameOverFilePath() {
+        assertTrue("The UI file for the Game Over screen exists",
+                Gdx.files.internal(GameOverScreen.gameOverPath).exists());
     }
 
 }

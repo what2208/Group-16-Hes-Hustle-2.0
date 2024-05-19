@@ -48,6 +48,8 @@ public class GameOverScreen implements Screen {
     // The number of times an event in each category was completed
     private HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
 
+    public static final String gameOverPath = "Graphics/UI/Gameover/page.png";
+
 
     /**
      * Creates the screen and fills in all the user's score information
@@ -155,7 +157,7 @@ public class GameOverScreen implements Screen {
      */
     private void drawScorePaper() {
         // Background page
-        pageTexture = new Texture("Graphics/UI/Gameover/page.png");
+        pageTexture = new Texture(gameOverPath);
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
                 (game.width - pageImage.getWidth()) / 2,
