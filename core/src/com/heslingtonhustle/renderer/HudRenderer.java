@@ -270,7 +270,22 @@ public class HudRenderer implements Disposable {
     }
 
     /**
-     * @return The day button
+     * @return The day button (for testing)
      */
     public TextButton getDayButton() { return dayButton; }
+
+    /**
+     * @return The viewport (for testing)
+     */
+    public FitViewport getViewport() { return viewport; }
+
+    /**
+     * @return The time button (for testing)
+     */
+    public TextButton getTimeButton() { return timeButton; }
+
+    /**
+     * @return The energy bar (for testing)
+     */
+    public Image getEnergyBar() { return energyBar; }
 }

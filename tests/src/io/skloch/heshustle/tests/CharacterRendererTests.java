@@ -13,7 +13,7 @@ import static org.junit.Assert.assertTrue;
 @RunWith(GdxTestRunner.class)
 public class CharacterRendererTests {
     @Test
-    public void testRender() {
+    public void testCharacterRenderer() {
         float width = 25f;
         float height = 40f;
         TextureAtlas textureAtlas = new TextureAtlas();
@@ -38,9 +38,27 @@ public class CharacterRendererTests {
         assertEquals(scale, characterRenderer.getCharacterSprite().getScaleY(), 0f);
         assertEquals(width/2f, characterRenderer.getCharacterSprite().getOriginX(), 0f);
         assertEquals(height/2f, characterRenderer.getCharacterSprite().getOriginY(), 0f);
-//        assertEquals(0, characterRenderer.getCharacterSprite().getRegionHeight());
-//        assertEquals(0, characterRenderer.getCharacterSprite().getRegionWidth());
-//        assertEquals(0, characterRenderer.getCharacterSprite().getRegionX());
-//        assertEquals(0, characterRenderer.getCharacterSprite().getRegionY());
+    }
+
+    @Test
+    public void testRender() {
+        float width = 25f;
+        float height = 40f;
+        TextureAtlas textureAtlas = new TextureAtlas();
+        String textureRegionPrefix = "Prefix";
+        boolean npc = false;
+        CharacterRenderer characterRenderer = new CharacterRenderer(
+                width, height, textureAtlas, textureRegionPrefix, npc);
+        characterRenderer.addMovingTextures();
+        int newX = 20;
+        int newY = 30;
+        characterRenderer.render(
+                new SpriteBatch(),
+                newX,
+                newY,
+                Facing.UP,
+                false);
+        assertEquals(newX, characterRenderer.getCharacterSprite().getX(), 0f);
+        assertEquals(newY, characterRenderer.getCharacterSprite().getY(), 0f);
     }
 }
