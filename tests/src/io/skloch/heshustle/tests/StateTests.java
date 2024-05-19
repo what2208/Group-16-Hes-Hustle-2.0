@@ -102,7 +102,7 @@ public class StateTests {
         int newDay = 2;
         int newEnergy = 100;
 
-        state.decrementDay();
+        state.nextDay();
 
         assertEquals(newDay, state.getClock().getDay());
         assertEquals(newEnergy, state.getEnergy());
