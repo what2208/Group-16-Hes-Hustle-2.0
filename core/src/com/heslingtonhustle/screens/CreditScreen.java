@@ -158,4 +158,9 @@ public class CreditScreen implements Screen{
         creditStage.dispose();
         backgroundTexture.dispose();
     }
+
+    /**
+     * @return The viewport (for testing)
+     */
+    public Viewport getViewport() { return viewport; }
 }
