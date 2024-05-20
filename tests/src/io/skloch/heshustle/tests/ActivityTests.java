@@ -3,7 +3,7 @@ package io.skloch.heshustle.tests;
 import com.heslingtonhustle.state.Activity;
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class ActivityTests {
     /**
@@ -62,25 +62,58 @@ public class ActivityTests {
         assertEquals(2, activity.getHoursSpent());
     }
 
-//counter++;
-//        timesPerformedToday+
-/** World world = new World();
- Castle castle = new Castle(world);
- int healthPoints = castle.getHealthPoints();
+    @Test
+    public void testCanDoActivityWhenMaxPerDayMinusOne() {
+        Activity activity = new Activity(
+                "fishing",
+                "recreational",
+                100,
+                15,
+                2,
+                -1);
 
- castle.damage();
- assertEquals(healthPoints - 1, castle.getHealthPoints());*/
+        assertTrue(activity.canDoActivity());
+    }
 
-/**public Activity() {
- counter = 0;
- value = 0; // Represents different things depending on the type of activity
- // The value can be specified in the Tiled trigger (e.g. eat: 2)
- timesPerformedToday = 0;
- maxTimesPerDay = 1;
- }
+    @Test
+    public void testCanDoActivityWhenLessThanMax() {
+        Activity activity = new Activity(
+                "fishing",
+                "recreational",
+                100,
+                15,
+                2,
+                3);
 
- public void increaseValue(int value) {
- this.value += value;
- incrementCounter();
- }*/
+        assertTrue(activity.canDoActivity());
+    }
+
+    @Test
+    public void testCanDoActivityWhenCant() {
+        Activity activity = new Activity(
+                "fishing",
+                "recreational",
+                100,
+                15,
+                2,
+                1);
+        activity.completeActivity();
+
+        assertFalse(activity.canDoActivity());
+    }
+
+    @Test
+    public void testDayAdvanced() {
+        Activity activity = new Activity(
+                "fishing",
+                "recreational",
+                100,
+                15,
+                2,
+                1);
+
+        activity.dayAdvanced();
+
+        assertEquals(0, activity.getTimesCompletedToday());
+    }
 }

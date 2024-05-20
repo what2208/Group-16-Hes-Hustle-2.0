@@ -24,6 +24,7 @@ public class LeaderboardScreen implements Screen {
     private final SoundController soundController;
     private final Stage stage;
     private final Texture backgroundTexture;
+    public static final String leaderboardBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
 
 
     /**
@@ -39,7 +40,7 @@ public class LeaderboardScreen implements Screen {
         stage = new Stage(new FitViewport(game.width, game.height));
         Gdx.input.setInputProcessor(stage);
 
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(leaderboardBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
 

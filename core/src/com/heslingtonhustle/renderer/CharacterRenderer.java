@@ -148,4 +148,9 @@ public class CharacterRenderer {
     public Vector2 getSize() {
         return size;
     }
+
+    /**
+     * @return The character's sprite
+     */
+    public Sprite getCharacterSprite() { return characterSprite; }
 }

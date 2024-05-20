@@ -28,6 +28,8 @@ public class CreditScreen implements Screen{
     private Viewport viewport;
     private Texture backgroundTexture;
 
+    public static final String creditMenuBackgroundAsset = "Graphics/UI/Backgrounds/menu_background.jpg";
+
     /**
      * A screen which displays the required credits of the game. This includes assets used and their
      * respective attributions.
@@ -45,7 +47,7 @@ public class CreditScreen implements Screen{
         camera.setToOrtho(false, game.width, game.height);
 
         // Background texture
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/menu_background.jpg");
+        backgroundTexture = new Texture(creditMenuBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         creditStage.addActor(backgroundImage);
 
@@ -156,4 +158,9 @@ public class CreditScreen implements Screen{
         creditStage.dispose();
         backgroundTexture.dispose();
     }
+
+    /**
+     * @return The viewport (for testing)
+     */
+    public Viewport getViewport() { return viewport; }
 }

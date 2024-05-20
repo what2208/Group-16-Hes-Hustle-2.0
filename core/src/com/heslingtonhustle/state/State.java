@@ -410,4 +410,14 @@ public class State {
     public HashMap<String, Activity> getActivities() {
         return activities;
     }
+
+    /**
+     * @return The instance of the clock (for testing)
+     */
+    public Clock getClock() { return clock; }
+
+    /**
+     * @return The current trigger (for testing)
+     */
+    public MapProperties getCurrentTrigger() { return currentTrigger; }
 }

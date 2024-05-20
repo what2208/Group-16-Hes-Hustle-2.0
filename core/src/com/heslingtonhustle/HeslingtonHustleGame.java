@@ -24,6 +24,9 @@ public class HeslingtonHustleGame extends Game {
 	public SoundController soundController;
 	public String credits;
 
+	public static final String UiSkinAsset = "Graphics/uiskin/uiskin.json";
+	public static final String CreditsFilePath = "Text/credits.txt";
+
 
 	/**
 	 * Constructor, gets the width and height of the game window
@@ -42,9 +45,9 @@ public class HeslingtonHustleGame extends Game {
 	public void create() {
 		Gdx.app.setLogLevel(Application.LOG_DEBUG); // Logs all messages to the console
 		// Load skin
-		skin = new Skin(Gdx.files.internal("Graphics/uiskin/uiskin.json"));
+		skin = new Skin(Gdx.files.internal(UiSkinAsset));
 
-		credits = readTextFile("Text/credits.txt");
+		credits = readTextFile(CreditsFilePath);
 
 		soundController = new SoundController();
 
@@ -161,4 +164,19 @@ public class HeslingtonHustleGame extends Game {
 		}
 
 	}
+
+	/**
+	 * @return The current screen (for testing)
+	 */
+	public Screen getCurrentScreen() { return currentScreen; }
+
+	/**
+	 * @return The previous screen (for testing)
+	 */
+	public Screen getPreviousScreen() { return previousScreen; }
+
+	/**
+	 * @return The SoundController instance (for testing)
+	 */
+	public SoundController getSoundController() { return soundController; }
 }

@@ -39,6 +39,7 @@ public class GameOverScreen implements Screen {
     private final Texture backgroundTexture;
     private final Window queryWindow;
     private final Window nameEntryWindow;
+    private final Texture pageTexture;
 
     // Player game data
     private final HashMap<String, Activity> activities;
@@ -50,6 +51,9 @@ public class GameOverScreen implements Screen {
     private final HashMap<String, Integer> categoryScores = new HashMap<String, Integer>();
     // The number of times an event in each category was completed
     private final HashMap<String, Integer> categoryHours = new HashMap<String, Integer>();
+
+    public static final String gameOverPath = "Graphics/UI/Gameover/page.png";
+    public static final String gameOverTableBackgroundAsset = "Graphics/UI/Backgrounds/table_background.jpg";
 
 
     /**
@@ -70,7 +74,7 @@ public class GameOverScreen implements Screen {
         Gdx.input.setInputProcessor(stage);
 
         // Background table image
-        backgroundTexture = new Texture("Graphics/UI/Backgrounds/table_background.jpg");
+        backgroundTexture = new Texture(gameOverTableBackgroundAsset);
         Image backgroundImage = new Image(backgroundTexture);
         stage.addActor(backgroundImage);
 
@@ -157,7 +161,7 @@ public class GameOverScreen implements Screen {
      */
     private void drawScorePaper() {
         // Background page
-        Texture pageTexture = new Texture("Graphics/UI/Gameover/page.png");
+        pageTexture = new Texture(gameOverPath);
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
                 (game.width - pageImage.getWidth()) / 2,

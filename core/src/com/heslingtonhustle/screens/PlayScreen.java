@@ -52,6 +52,8 @@ public class PlayScreen implements Screen {
     private float zoomTarget = 1f;
     private float zoomProgress = 1f;
     private Vector2 zoomCoordinates = null;
+    MapProperties changeMapTrigger = null;
+    public static final String campusEastMapPath = "Maps/campusEast.tmx";
 
     /**
      * A screen to display the main game when the user is playing; importantly rendering the map,
@@ -80,7 +82,7 @@ public class PlayScreen implements Screen {
         dialogueManager = new DialogueManager(game.soundController);
 
         mapManager = new MapManager();
-        mapManager.loadMap("Maps/campusEast.tmx");
+        mapManager.loadMap(campusEastMapPath);
 
         gameState = new State(dialogueManager);
         hudRenderer = new HudRenderer(game.skin, dialogueManager, game.width, game.height);
@@ -485,4 +487,17 @@ public class PlayScreen implements Screen {
 //        renderer.dispose();
         pauseMenu.dispose();
     }
+
+    /**
+     * @return whether the screen is paused or not
+     */
+    public boolean isPaused() { return isPaused; }
+
+    public PauseMenu getPauseMenu() { return pauseMenu; }
+
+    public HudRenderer getHudRenderer() { return hudRenderer; }
+
+    public MapManager getMapManager() { return mapManager; }
+
+    public State getState() { return gameState; }
 }
