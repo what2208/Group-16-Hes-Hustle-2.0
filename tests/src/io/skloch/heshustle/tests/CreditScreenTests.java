@@ -11,6 +11,7 @@ public class CreditScreenTests {
     @Test
     public void testResize() {
         HeslingtonHustleGame game = new HeslingtonHustleGame(600,400);
+        game.create();
         CreditScreen creditScreen = new CreditScreen(game);
         int newWidth = 650;
         int newHeight = 450;

@@ -130,9 +130,7 @@ public class StateTests {
     }
 
     @Test
-    public void test() {
-        //        assertEquals("Today is the day of your exam!" +
-        //                "\nI hope you studied well!", state.getDialogueManager().getMessage());
+    public void testHandleSleepInteractionDialogue() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
         State state = new State(soundController, dialogueManager);
@@ -156,7 +154,6 @@ public class StateTests {
 
         state.handleInteraction();
 
-        assertEquals("Today is the day of your exam!" +
-                                "\nI hope you studied well!", state.getDialogueManager().getMessage());
+        assertEquals("Do you want to sleep?", state.getDialogueManager().getMessage());
     }
 }

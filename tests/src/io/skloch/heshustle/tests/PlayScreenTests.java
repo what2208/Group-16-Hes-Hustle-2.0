@@ -6,11 +6,13 @@ import com.badlogic.gdx.maps.tiled.TmxMapLoader;
 import com.heslingtonhustle.HeslingtonHustleGame;
 import com.heslingtonhustle.screens.PlayScreen;
 import org.junit.Test;
+import org.junit.runner.RunWith;
 
 import java.util.HashMap;
 
 import static org.junit.Assert.*;
 
+@RunWith(GdxTestRunner.class)
 public class PlayScreenTests {
     @Test
     public void testPause() {

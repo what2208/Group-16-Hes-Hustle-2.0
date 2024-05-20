@@ -22,8 +22,8 @@ public class NPCTests {
         CharacterRenderer characterRenderer = new CharacterRenderer(
                 15,
                 30,
-                new TextureAtlas(),
-                "test",
+                new TextureAtlas("Players/npcs.atlas"),
+                "npc-16",
                 true);
         characterRenderer.addMovingTextures();
         npc.setRenderer(characterRenderer);
