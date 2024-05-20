@@ -19,7 +19,7 @@ public class StateTests {
     public void testPassTime() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         float delta = 0.5f;
         float newTimeUnits = 480 + delta * 1.5f;
 
@@ -32,7 +32,7 @@ public class StateTests {
     public void testSetNearestTrigger() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         MapProperties newTrigger = new MapProperties();
 
         state.setNearestTrigger(newTrigger);
@@ -44,7 +44,7 @@ public class StateTests {
     public void testReplenishEnergy() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         int newEnergy = 100;
 
         state.replenishEnergy();
@@ -56,7 +56,7 @@ public class StateTests {
     public void testSignHandleInteraction() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         MapProperties trigger = new MapProperties();
         String key = "sign";
         String text = "Piazza Building";
@@ -73,7 +73,7 @@ public class StateTests {
     public void testSleepHandleInteraction() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         MapProperties trigger = new MapProperties();
         String key = "sleep";
         String text = "Your House";
@@ -98,42 +98,21 @@ public class StateTests {
     public void testNextDay() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         int newDay = 2;
         int newEnergy = 100;
 
-        state.nextDay();
+        state.sleep();
 
         assertEquals(newDay, state.getClock().getDay());
         assertEquals(newEnergy, state.getEnergy());
     }
 
     @Test
-    public void testIsInteractionPossibleWhenCurrentTriggerNull() {
-        SoundController soundController = new SoundController();
-        DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
-
-        assertFalse(state.isInteractionPossible());
-    }
-
-    @Test
-    public void testIsInteractionPossibleWhenCurrentTriggerNotNull() {
-        SoundController soundController = new SoundController();
-        DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
-        MapProperties newTrigger = new MapProperties();
-
-        state.setNearestTrigger(newTrigger);
-
-        assertTrue(state.isInteractionPossible());
-    }
-
-    @Test
     public void testHandleSleepInteractionDialogue() {
         SoundController soundController = new SoundController();
         DialogueManager dialogueManager = new DialogueManager(soundController);
-        State state = new State(soundController, dialogueManager);
+        State state = new State(dialogueManager);
         MapProperties trigger = new MapProperties();
         String key = "sleep";
         String text = "Your House";

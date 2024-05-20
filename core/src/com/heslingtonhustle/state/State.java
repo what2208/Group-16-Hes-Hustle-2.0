@@ -196,6 +196,14 @@ public class State {
      */
     public void sleep() {
         hoursSlept += getHoursSlept();
+
+        if (!activities.containsKey("sleep")) {
+            activities.put("sleep", new Activity(
+                    "sleep", "sleep",
+                    5, 0, 8, -1)
+            );
+        }
+
         activities.get("sleep").completeActivity();
         dialogueManager.addDialogue("You have just slept!");
         advanceDay();
@@ -312,7 +320,6 @@ public class State {
     /**
      * DEBUG
      * Displays a debug panel
-     * TODO: Remove
      */
     public void pushTestDialogue() {
         // This is a debugging function that creates a useful control dialog box when you press '/'

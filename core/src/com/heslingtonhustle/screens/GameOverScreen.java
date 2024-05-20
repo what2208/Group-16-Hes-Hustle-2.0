@@ -39,7 +39,6 @@ public class GameOverScreen implements Screen {
     private final Texture backgroundTexture;
     private final Window queryWindow;
     private final Window nameEntryWindow;
-    private final Texture pageTexture;
 
     // Player game data
     private final HashMap<String, Activity> activities;
@@ -161,7 +160,7 @@ public class GameOverScreen implements Screen {
      */
     private void drawScorePaper() {
         // Background page
-        pageTexture = new Texture(gameOverPath);
+        Texture pageTexture = new Texture(gameOverPath);
         Image pageImage = new Image(pageTexture);
         pageImage.setPosition(
                 (game.width - pageImage.getWidth()) / 2,
