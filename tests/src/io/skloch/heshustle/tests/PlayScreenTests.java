@@ -86,4 +86,40 @@ public class PlayScreenTests {
 
         assertEquals(newLoadedMaps, playScreen.getMapManager().getLoadedMaps());
     }
+
+    @Test
+    public void testChangeMap() {
+        HeslingtonHustleGame game = new HeslingtonHustleGame(600,400);
+        String player = "player-0";
+        PlayScreen playScreen = new PlayScreen(game, player);
+        MapProperties trigger = new MapProperties();
+        String key = "new_map";
+        String text = "urbanMap.tmx";
+        trigger.put(key, text);
+        playScreen.getState().setNearestTrigger(trigger);
+        playScreen.getState().handleInteraction();
+        String newPath = "Maps/urbanMap.tmx";
+        TmxMapLoader tmxMapLoader = new TmxMapLoader();
+        TiledMap newMap = tmxMapLoader.load(newPath);
+
+        playScreen.changeMap(trigger);
+
+        assertEquals(newMap, playScreen.getMapManager().getCurrentMap());
+    }
 }
+//    public void changeMap(MapProperties currentTrigger) {
+//        mapManager.loadMap("Maps/" + currentTrigger.get("new_map"));
+//        player.setPosition(new Vector2(
+//                (float) currentTrigger.get("new_map_x"),
+//                (float) currentTrigger.get("new_map_y")));
+//        Vector2 playerPixelPosition = mapManager.worldToPixelCoords(player.getPosition());
+//        camera.position.set(
+//            camera.position.set(
+//                new Vector3(
+//                        playerPixelPosition.x + (mapManager.worldToPixelValue(player.getPlayerWidth())/2),
+//                        playerPixelPosition.y + (mapManager.worldToPixelValue(player.getPlayerHeight())/2),
+//                        0
+//                )
+//            )
+//        );
+//    }

@@ -475,4 +475,6 @@ public class PlayScreen implements Screen {
     public HudRenderer getHudRenderer() { return hudRenderer; }
 
     public MapManager getMapManager() { return mapManager; }
+
+    public State getState() { return gameState; }
 }
