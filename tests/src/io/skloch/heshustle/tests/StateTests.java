@@ -128,4 +128,35 @@ public class StateTests {
 
         assertTrue(state.isInteractionPossible());
     }
+
+    @Test
+    public void test() {
+        //        assertEquals("Today is the day of your exam!" +
+        //                "\nI hope you studied well!", state.getDialogueManager().getMessage());
+        SoundController soundController = new SoundController();
+        DialogueManager dialogueManager = new DialogueManager(soundController);
+        State state = new State(soundController, dialogueManager);
+        MapProperties trigger = new MapProperties();
+        String key = "sleep";
+        String text = "Your House";
+        trigger.put(key, text);
+        state.setNearestTrigger(trigger);
+        for (int i = 0; i < 7; i++) {
+            state.getClock().incrementDay();
+        }
+        HashMap<String, Activity> newActivities = new HashMap<>();
+        Activity sleepActivity = new Activity(
+                "sleep",
+                "sleep",
+                5,
+                0,
+                8,
+                -1);
+        newActivities.put("sleep", sleepActivity);
+
+        state.handleInteraction();
+
+        assertEquals("Today is the day of your exam!" +
+                                "\nI hope you studied well!", state.getDialogueManager().getMessage());
+    }
 }
