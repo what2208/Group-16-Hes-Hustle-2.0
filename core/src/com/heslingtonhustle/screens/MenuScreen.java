@@ -182,4 +182,6 @@ public class MenuScreen implements Screen {
         stage.dispose();
         backgroundTexture.dispose();
     }
+
+    public Table getOptionsTable() { return optionsTable; }
 }
