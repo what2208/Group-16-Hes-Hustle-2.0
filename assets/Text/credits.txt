@@ -13,9 +13,23 @@ Tiled Map Editor
 UI:
 Buttons - https://cupnooble.itch.io/sprout-lands-ui-pack
 Energy Bar - https://bdragon1727.itch.io/basic-pixel-health-bar-and-scroll-bar
-Game over background - https://github.com/minetest/minetest_game
+Game Over Background - https://github.com/minetest/minetest_game
+Paper Texture and some Borders - https://srtoasty.itch.io/ui-assets-pack-2
+Time and Day Backgrounds - Hand Drawn
+Dialogue Box Window - Hand Drawn
 
 Fonts:
-Title/Button font - https://www.1001fonts.com/pixelfj8pt1-font.html
-Buttons and text - https://www.dafont.com/minecraftia.font?text=10%3A00am
-Handwriting font - https://www.dafont.com/notepen.font
+Title/Button Font - https://www.1001fonts.com/pixelfj8pt1-font.html
+Buttons and Text - https://www.dafont.com/minecraftia.font?text=10%3A00am
+Handwriting Font - https://www.dafont.com/notepen.font
+
+Tilemaps:
+City & Characters - https://limezu.itch.io/serenevillagerevamped
+Town - https://kenney-assets.itch.io/rpg-urban-kit
+Grass textures - https://bagong-games.itch.io/cozy-island-tileset
+Buildings - @nyk_nck - https://nyknck.itch.io/citypackpixelart
+Town Building Signs - Hand Drawn
+
+Music:
+Menu Music - Debora by Kangwa, taken from Free Music Archive (CC BY) - https://freemusicarchive.org/music/Dilating_Times/single/debora/
+Overworld Music - https://pixabay.com/music/acoustic-group-fresh-apple-190890/

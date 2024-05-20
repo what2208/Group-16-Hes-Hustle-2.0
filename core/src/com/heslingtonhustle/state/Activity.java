@@ -9,11 +9,11 @@ import com.badlogic.gdx.maps.MapProperties;
  * A max number of times completed in a day can also be set
  */
 public class Activity {
-    private String name;
-    private String scoreType;
-    private int score;
-    private int energyUse;
-    private int hours;
+    private final String name;
+    private final String scoreType;
+    private final int score;
+    private final int energyUse;
+    private final int hours;
     private int timesCompleted = 0;
     private int timesCompletedToday = 0;
     private int hoursSpent = 0;

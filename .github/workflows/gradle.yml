@@ -35,10 +35,10 @@ jobs:
 
       - name: Upload library JAR         # Uploads the JAR file as an artifact
         uses: actions/upload-artifact@v4.3.1
-        if: startsWith(matrix.os, 'ubuntu')
+        if: startsWith(matrix.os, 'windows')
         with:
           name: desktop-1.0.jar
-          path: desktop/build/libs/desktop-1.0.jar
+          path: desktop/build/libs/desktop-1.0.jar       # where file can be found
 
       - name: Upload Checkstyle report   # Uploads the checkstyle report as an artifact
         uses: actions/upload-artifact@v4.3.1
@@ -75,11 +75,11 @@ jobs:
       contents: write
 
     steps:
-      - name: Download Ubuntu Build Artifact         # Download the Jar file that was uploaded as an artifact in the Build job
+      - name: Download Windows Build Artifact
         uses: actions/download-artifact@v4.1.4
         with:
           name: desktop-1.0.jar
       - name: Release                       # Create a new release for the project using the tag provided
         uses: softprops/action-gh-release@9d7c94cfd0a1f3ed45544c887983e9fa900f0564
         with:
-          files: desktop-1.0.jar            # The release will include the JAR file
+          files: desktop-1.0.jar            # The release will include the JAR files

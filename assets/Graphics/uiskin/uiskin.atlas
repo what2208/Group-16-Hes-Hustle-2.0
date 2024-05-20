@@ -4,38 +4,6 @@ size: 2048, 2048
 format: RGBA8888
 filter: Linear, Linear
 repeat: none
-avatarborder
-  rotate: false
-  xy: 772, 172
-  size: 227, 301
-  split: 58, 60, 102, 76
-  pad: 0, 0, 0, 0
-  orig: 227, 301
-  offset: 0, 0
-  index: -1
-avatarborder_hover
-  rotate: false
-  xy: 1001, 172
-  size: 227, 301
-  split: 64, 54, 70, 61
-  pad: 0, 0, 0, 0
-  orig: 227, 301
-  offset: 0, 0
-  index: -1
-avatar0
-  rotate: false
-  xy: 1223, 1407
-  size: 180, 210
-  orig: 180, 210
-  offset: 0, 0
-  index: -1
-avatar1
-  rotate: false
-  xy: 1023, 1149
-  size: 180, 210
-  orig: 180, 210
-  offset: 0, 0
-  index: -1
 Minecraftia-Regular(3)
   rotate: false
   xy: 1537, 1905
@@ -120,6 +88,38 @@ achievement
   split: 51, 51, 16, 16
   pad: 0, 0, 0, 0
   orig: 160, 80
+  offset: 0, 0
+  index: -1
+avatar0
+  rotate: false
+  xy: 1223, 1407
+  size: 180, 210
+  orig: 180, 210
+  offset: 0, 0
+  index: -1
+avatar1
+  rotate: false
+  xy: 1023, 1149
+  size: 180, 210
+  orig: 180, 210
+  offset: 0, 0
+  index: -1
+avatarborder
+  rotate: false
+  xy: 772, 172
+  size: 227, 301
+  split: 58, 60, 102, 76
+  pad: 0, 0, 0, 0
+  orig: 227, 301
+  offset: 0, 0
+  index: -1
+avatarborder_hover
+  rotate: false
+  xy: 1001, 172
+  size: 227, 301
+  split: 64, 54, 70, 61
+  pad: 0, 0, 0, 0
+  orig: 227, 301
   offset: 0, 0
   index: -1
 button_hover
@@ -373,7 +373,7 @@ radio-on
   index: -1
 round-white
   rotate: false
-  xy: 1022, 486
+  xy: 1102, 891
   size: 42, 42
   split: 13, 13, 13, 13
   pad: 9, 9, 5, 5
@@ -434,7 +434,7 @@ sliderbar
   index: -1
 sliderknob
   rotate: false
-  xy: 1102, 891
+  xy: 1022, 486
   size: 42, 42
   orig: 42, 42
   offset: 0, 0

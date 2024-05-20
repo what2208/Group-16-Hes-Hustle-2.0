@@ -14,8 +14,15 @@ Music:
 Menu Music - https://www.zapsplat.com/music/easy-cheesy-fun-up-tempo-funky-retro-action-arcade-game-music-great-for-menu-or-pause-sections/
 Overworld Music - https://pixabay.com/music/funk-keyboard-collection-progressive-pop-143378/
 
+Sound effects:
+UI - https://coloralpha.itch.io/50-menu-interface-sfx
+
 Tilemaps:
 City & Characters - https://limezu.itch.io/serenevillagerevamped
 Town - https://kenney-assets.itch.io/rpg-urban-kit
 Grass textures - https://bagong-games.itch.io/cozy-island-tileset
 Buildings - https://nyknck.itch.io/citypackpixelart
+
+Animals:
+Cat - https://elthen.itch.io/2d-pixel-art-cat-sprites
+Ducks - https://deepdivegamestudio.itch.io/animalassetpack?download

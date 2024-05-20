@@ -92,7 +92,7 @@ public class TutorialScreen implements Screen {
         // Second text
         Label info2 = new Label("Over the next 7 days you will need to make sure you study at least once" +
                 " per day, complete enough recreational activities," +
-                " and eat 3 times per day.", skin, "minecraftia24px");
+                " eat 3 times per day and get enough sleep!", skin, "minecraftia24px");
         info2.setAlignment(Align.right);
         info2.setWrap(true);
         mainTable.add(info2).padTop(30).prefWidth(500);
@@ -101,7 +101,7 @@ public class TutorialScreen implements Screen {
         // Third text
         Label info3 = new Label("You can walk around campus with the arrow or WASD keys." +
                 " Press 'E' or the spacebar to interact with buildings to complete activities and advance" +
-                " dialogue. And make sure you sleep at the end of the" +
+                " dialogue. Press 'M' to view the whole map. And make sure you sleep at the end of the" +
                 " day to replenish your energy!", skin, "minecraftia24px");
         info3.setAlignment(Align.left);
         info3.setWrap(true);

@@ -84,7 +84,7 @@ public class PlayScreen implements Screen {
         mapManager = new MapManager();
         mapManager.loadMap(campusEastMapPath);
 
-        gameState = new State(game.soundController, dialogueManager);
+        gameState = new State(dialogueManager);
         hudRenderer = new HudRenderer(game.skin, dialogueManager, game.width, game.height);
         pauseMenu = new PauseMenu(this, game);
 
@@ -125,8 +125,6 @@ public class PlayScreen implements Screen {
 
         // <--- LOGIC ---> //
 
-        hudRenderer.screenIsBlack();
-
         // Get inputs
         HashSet<Action> heldActions = inputHandler.getHeldActions();
         HashSet<Action> pressedActions = inputHandler.getPressedActions();
@@ -148,18 +146,17 @@ public class PlayScreen implements Screen {
             if (!dialogueManager.isEmpty()) {
                 dialogueManager.handleAction(pressedActions);
             } else if (camera.zoom == 1f) {
-                if (pressedActions.contains(Action.INTERACT)) {
+                // Only interact if button pressed and screen clear
+                if (pressedActions.contains(Action.INTERACT) && hudRenderer.screenClear()) {
                     gameState.handleInteraction();
-                    // Check for map change
-                    MapProperties currentTrigger = gameState.getNearestTrigger();
-                    if (currentTrigger != null && currentTrigger.containsKey("new_map") && hudRenderer.screenClear()) {
-                        changeMapTrigger = currentTrigger;
-                        hudRenderer.fadeIn(2f);
-                    }
 
-                    // Check for NPC to rotate
-                    if (currentTrigger != null && currentTrigger.containsKey("dialogue")) {
-                        mapManager.rotateNPC(currentTrigger, mapManager.worldToPixelCoords(player.getCentre()));
+                    MapProperties currentTrigger = gameState.getNearestTrigger();
+
+                    // Check for NPC to rotate and sleep fade ins
+                    if (currentTrigger != null) {
+                        if (currentTrigger.containsKey("dialogue")) {
+                            mapManager.rotateNPC(currentTrigger, mapManager.worldToPixelCoords(player.getCentre()));
+                        }
                     }
                 }
             }
@@ -175,6 +172,12 @@ public class PlayScreen implements Screen {
 
         } else {
             player.dontMove();
+        }
+
+        // Start fading the screen in to black if needed
+        if (gameState.getFading() && hudRenderer.screenClear()) {
+            hudRenderer.fadeIn(2f);
+            gameState.setFading(false);
         }
 
         // Zoom camera
@@ -258,12 +261,7 @@ public class PlayScreen implements Screen {
         pauseMenu.render();
 
         // <--- FINAL CHECKS AND RESETS ---> //
-
-        if (changeMapTrigger != null && hudRenderer.screenIsBlack()) {
-            changeMap(changeMapTrigger);
-            changeMapTrigger = null;
-            hudRenderer.fadeOut(3f);
-        }
+        doBlackScreenActions();
 
         inputHandler.resetPressedActions();
         camera.update();
@@ -308,6 +306,31 @@ public class PlayScreen implements Screen {
             handleDebugAction(action);
         }
 
+    }
+
+    /**
+     * Actions that need to be performed when the game screen
+     * is fully black, includes sleeping and changing maps
+     */
+    private void doBlackScreenActions() {
+        if (hudRenderer.screenIsBlack()) {
+            // Always fade out if the screen is fully black
+            hudRenderer.fadeOut(3f);
+            gameState.setFading(false);
+
+            // Change map
+            if (gameState.getNewMapTrigger() != null) {
+                changeMap(gameState.getNewMapTrigger());
+                gameState.resetNewMapTrigger();
+            }
+
+            // Sleep
+            if (gameState.getSleeping()) {
+                gameState.sleep();
+                gameState.setSleeping(false);
+            }
+
+        }
     }
 
     /**
