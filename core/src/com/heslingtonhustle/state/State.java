@@ -1,10 +1,8 @@
 package com.heslingtonhustle.state;
 
 import com.badlogic.gdx.maps.MapProperties;
-import java.util.HashMap;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Arrays;
+
+import java.util.*;
 
 
 /**
@@ -212,12 +210,19 @@ public class State {
      */
     private void doActivity(Activity activity) {
 
+        // Activities that can be done any time
+        HashSet<String> doAnytime = new HashSet<>(3);
+        doAnytime.add("cat");
+        doAnytime.add("ducks");
+        doAnytime.add("picnic");
+
+
         // Various checks for if the player can do the activity
         if (!activity.canDoActivity()) {
             dialogueManager.addDialogue("You've done this too much today!\nGo do something else!");
         } else if (energy < activity.getEnergyUse()) {
             dialogueManager.addDialogue("You don't have enough energy to do this right now!");
-        } else if (!(clock.getRawTime() > 480)) {
+        } else if (!(clock.getRawTime() > 480) && !doAnytime.contains(activity.getName())) {
             dialogueManager.addDialogue("This building opens at 8am.");
         } else {
             // They can do it
